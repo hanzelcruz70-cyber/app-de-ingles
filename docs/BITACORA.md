@@ -27,6 +27,11 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-11 · Error en setup.html ("No se pudo conectar con Supabase")
+- El dueño completó los pasos 1 a 3 y al crear la escuela salió ese mensaje. Significa que el `fetch` a `/functions/v1/admin-users` falló antes de recibir respuesta (función no publicada, URL mal o red). No es un error de código o contraseña.
+- `setup.html` ahora muestra la URL usada, las causas probables y el detalle técnico del error.
+- Pendiente: confirmar que el workflow "Publicar función de cuentas" salió en verde y que `admin-users` aparece en Supabase → Edge Functions.
+
 ## 2026-10-11 · Conexión con el proyecto de Supabase
 - Se llenó `config.js` con el proyecto `itaxhosmkmlnoqdpljzh` (solo la URL y la llave anon, que son públicas).
 - No se pudo verificar el proyecto desde aquí: la red del espacio de trabajo en la nube y la de la máquina virtual del dueño bloquean `*.supabase.co`. La verificación se hará desde el teléfono, con la app publicada y `setup.html`.

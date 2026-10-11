@@ -52,7 +52,10 @@ document.getElementById('f').addEventListener('submit', async e => {
     const j = await r.json().catch(() => ({}));
     if (!r.ok) show(j.error || ('Error ' + r.status + '. Revisa que la función admin-users esté publicada.'), true);
     else show('¡Listo! Escuela creada. Ya puedes entrar a la app con el usuario "' + v('user').toLowerCase() + '".');
-  } catch (err) { show('No se pudo conectar con Supabase. Revisa la URL en config.js.', true); }
+  } catch (err) {
+    const base = c.supabaseUrl.replace(/\/$/, '');
+    show('No se pudo conectar con ' + base + '. Posibles causas: (1) la función admin-users no está publicada (revisa Actions y Supabase → Edge Functions), (2) la URL en config.js está mal, (3) no hay internet. Detalle técnico: ' + (err && err.message ? err.message : err), true);
+  }
   btn.disabled = false;
 });
 function v(id){ return document.getElementById(id).value.trim(); }
