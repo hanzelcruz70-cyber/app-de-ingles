@@ -1,0 +1,7 @@
+__pycache__/
+.DS_Store
+*.zip
+.env
+supabase/.temp/
+tests/e2e/demo_build.html
+tests/e2e/*.png

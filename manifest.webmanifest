@@ -1,0 +1,17 @@
+{
+  "name": "Pandi English",
+  "short_name": "Pandi",
+  "description": "Practica inglés con lecciones, juegos y tareas de tu profe.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F1F6FD",
+  "theme_color": "#2FA84F",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
