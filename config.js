@@ -5,7 +5,7 @@
 // NUNCA pongas aquí la llave "service_role".
 // Si dejas estos campos vacíos, la app funciona en modo demo (datos solo en ese teléfono).
 window.PANDI_CONFIG = {
-  supabaseUrl: '',        // ej. 'https://abcdefghijkl.supabase.co'
-  supabaseAnonKey: '',    // ej. 'eyJhbGciOiJIUzI1NiIs...'
+  supabaseUrl: 'https://itaxhosmkmlnoqdpljzh.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0YXhob3Nta21sbm9xZHBsanpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3MTg4OTMsImV4cCI6MjEwNzI5NDg5M30.aFtCt68q7AUp_QRLUjNCEvUiCYmwOBOpwj-4jFN46II',
   emailDomain: 'alumnos.pandienglish.app'  // debe coincidir con PANDI_EMAIL_DOMAIN de la función (si la cambias)
 };

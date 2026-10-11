@@ -16,7 +16,7 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 2. [ ] En Authentication → Email, apagar "Confirm email". Opcional: apagar el registro público.
 3. [ ] En GitHub (Settings → Secrets and variables → Actions), crear `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` y `PANDI_SETUP_TOKEN`, y correr el workflow "Publicar función de cuentas".
 4. [ ] En GitHub, Settings → Pages → Source, elegir **GitHub Actions**.
-5. [ ] Pasar la Project URL y la llave anon para llenar `config.js`.
+5. [x] Project URL y llave anon puestas en `config.js` (proyecto `itaxhosmkmlnoqdpljzh`). La app publicada ya arranca en modo servidor.
 6. [ ] Crear la escuela en `setup.html`, entrar como admin, crear un grupo y estudiantes, y probar en el celular ("Agregar a pantalla principal").
 
 ### Siguientes ideas (no comprometidas)
@@ -26,6 +26,11 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 - Notificaciones de recordatorio, reporte para padres y empaquetar para Google Play (TWA o Capacitor).
 
 ---
+
+## 2026-10-11 · Conexión con el proyecto de Supabase
+- Se llenó `config.js` con el proyecto `itaxhosmkmlnoqdpljzh` (solo la URL y la llave anon, que son públicas).
+- No se pudo verificar el proyecto desde aquí: la red del espacio de trabajo en la nube y la de la máquina virtual del dueño bloquean `*.supabase.co`. La verificación se hará desde el teléfono, con la app publicada y `setup.html`.
+- La vista previa de claude.ai sigue en modo demo: se genera sin `config.js`.
 
 ## 2026-10-11 · Repositorio, CLAUDE.md y documentación
 - El dueño conectó GitHub. Claude puede leer el repositorio, pero **todavía no puede subir cambios**: falta instalar la app de Claude con permiso de escritura (https://github.com/apps/claude/installations/select_target). El commit inicial está listo en la copia local del dueño; se sube con `git push -u origin main` desde esa carpeta.
