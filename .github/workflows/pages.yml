@@ -23,7 +23,7 @@ jobs:
       - name: Armar la carpeta del sitio
         run: |
           mkdir _site
-          cp index.html setup.html config.js manifest.webmanifest sw.js _site/
+          cp index.html setup.html owner.html config.js manifest.webmanifest sw.js _site/
           cp -r icons _site/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

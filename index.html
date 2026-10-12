@@ -387,6 +387,7 @@ select.in{appearance:auto;min-width:0}
       <p class="err" id="lgErr" hidden></p>
       <button class="btn" type="submit">Iniciar sesión</button>
     </form>
+    <button class="linkbtn" id="lgAudio" type="button" style="align-self:center;margin:10px auto 0">¿No se oye? Probar audio y micrófono</button>
     <div class="demo">
       <div class="lbl">Cuentas de prueba · toca una para llenar los datos</div>
       <button class="demo-row" type="button" data-fill="estudiante|1234"><span class="tag">ESTUDIANTE</span><span class="r">Ana<small>usuario: estudiante · clave: 1234</small></span></button>
@@ -658,7 +659,7 @@ const MEDALS = [
 
 /* ---------- data (demo: saved in this browser) ---------- */
 const KEY = 'pandi-english-v2';
-const P = (extra) => Object.assign({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, hw:null}, extra || {});
+const P = (extra) => Object.assign({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, hw:null}, extra || {});
 const doneMap = (ids, stars) => Object.fromEntries(ids.map((id, i) => [id, stars[i % stars.length]]));
 function seed(){
   return {
@@ -751,6 +752,19 @@ function streakOf(p){
 const weekXP = p => Object.entries(p.xpDays || {}).filter(([d]) => d >= dayKey(6)).reduce((a, [, v]) => a + v, 0);
 const doneOf = p => Object.keys(p.done).length;
 const lastSeen = p => { if (!p.days.length) return 'Nunca'; const d = p.days.slice().sort().at(-1); if (d === today()) return 'Hoy'; if (d === dayKey(1)) return 'Ayer'; const n = Math.round((Date.parse(today()) - Date.parse(d)) / 864e5); return `Hace ${n} días`; };
+const missKey = s => s.w || s.text || s.sentence || (s.t === 'fill' ? s.answer : null);
+function noteMiss(s){
+  if (!S || (L && L.preview)) return;
+  const k = missKey(s); if (!k) return;
+  const m = S.miss || (S.miss = {}); m[k] = (m[k] || 0) + 1;
+  const ks = Object.keys(m); if (ks.length > 40) ks.sort((a, b) => m[a] - m[b]).slice(0, ks.length - 40).forEach(x => delete m[x]);
+}
+function topMissed(st, n){
+  const m = {};
+  st.forEach(u => Object.entries(prog(u.id).miss || {}).forEach(([w, c]) => { const e = m[w] || (m[w] = {w, n:0, who:0}); e.n += c; e.who++; }));
+  return Object.values(m).sort((a, b) => b.n - a.n || b.who - a.who).slice(0, n || 6);
+}
+const daysSince = p => { if (!p.days.length) return null; const d = p.days.slice().sort().at(-1); return Math.round((Date.parse(today()) - Date.parse(d)) / 864e5); };
 const streak = () => streakOf(S);
 const doneCount = () => doneOf(S);
 function unitDone(u, p){ if (!u) return false; const ls = playLessons(u); return ls.length > 0 && ls.every(l => (p || S).done[l.id]); }
@@ -765,28 +779,81 @@ function checkMedals(extra){
   return got;
 }
 
+/* ---------- recordatorios ---------- */
+const remKey = () => 'pandi-remind-' + (U ? U.id : '');
+function remGet(){ try { return Object.assign({on:false, time:'17:00', last:''}, JSON.parse(localStorage.getItem(remKey()))); } catch (e) { return {on:false, time:'17:00', last:''}; } }
+function remSet(r){ try { localStorage.setItem(remKey(), JSON.stringify(r)); } catch (e) {} }
+async function notifyNow(title, body){
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return false;
+    const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
+    const opts = {body, icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag:'pandi-remind'};
+    if (reg && reg.showNotification) await reg.showNotification(title, opts); else new Notification(title, opts);
+    return true;
+  } catch (e) { return false; }
+}
+function remCheck(){
+  if (!U || U.role !== 'student' || !S) return;
+  const r = remGet(); if (!r.on || r.last === today()) return;
+  const now = new Date(), hhmm = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+  if (hhmm < r.time || S.days.includes(today())) return;
+  notifyNow('¡Pandi te espera! 🐼', streak() > 0 ? `Tu racha de ${streak()} día${streak() > 1 ? 's' : ''} está en peligro. ¡Practica un ratito!` : 'Hoy todavía no has practicado. ¡Con una lección basta!').then(ok => { if (ok){ r.last = today(); remSet(r); } });
+}
+setInterval(remCheck, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) remCheck(); });
+function remindCard(){
+  const r = remGet();
+  const supported = 'Notification' in window;
+  const time = h('input', {class:'in', id:'remTime', type:'time', value:r.time, style:'max-width:160px', 'aria-label':'Hora del recordatorio'});
+  time.addEventListener('change', () => { const x = remGet(); x.time = time.value || '17:00'; x.last = ''; remSet(x); toast('Hora guardada'); });
+  const btn = h('button', {class:'btn' + (r.on ? ' ghost' : ''), type:'button', onclick:async () => {
+    const x = remGet();
+    if (x.on){ x.on = false; remSet(x); renderMe(); return toast('Recordatorio apagado'); }
+    if (!supported) return toast('Este navegador no puede mostrar avisos. Instala la app en tu pantalla de inicio.');
+    let perm = Notification.permission;
+    if (perm === 'default') perm = await Notification.requestPermission();
+    if (perm !== 'granted') return toast('Permite las notificaciones de Pandi English en los ajustes del teléfono.');
+    x.on = true; x.last = ''; x.time = time.value || x.time; remSet(x);
+    notifyNow('¡Listo! 🐼', 'Así se verá tu recordatorio de Pandi English.'); renderMe(); toast('Recordatorio activado');
+  }}, r.on ? 'Apagar recordatorio' : 'Activar recordatorio');
+  return h('div', {class:'card', style:'margin-top:18px;display:flex;flex-direction:column;gap:10px'},
+    h('h3', {style:'font-size:19px'}, '⏰ Recordatorio diario'),
+    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Pandi te avisa a esta hora si ese día todavía no has practicado. Funciona con la app instalada en tu pantalla de inicio; si el teléfono la cierra, el aviso sale al volver a abrirla.'),
+    h('div', {class:'field'}, h('label', {for:'remTime'}, 'Hora'), time), btn);
+}
+
 /* ---------- audio ---------- */
 let voice = null;
+function voiceScore(v){
+  let n = 0;
+  if (/^en[-_]US$/i.test(v.lang)) n += 50; else if (/^en/i.test(v.lang)) n += 30; else return -1;
+  if (/samantha|ava|allison|aria|jenny|google us/i.test(v.name)) n += 20;
+  if (/enhanced|premium|natural|neural/i.test(v.name)) n += 15;
+  if (/compact|espeak|robot|novelty|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|pipe organ|trinoids|whisper|zarvox|albert|fred|junior|kathy|ralph/i.test(v.name)) n -= 40;
+  if (v.localService) n += 3;
+  return n;
+}
 function pickVoice(){
-  try {
-    const vs = speechSynthesis.getVoices();
-    voice = vs.find(v => /en[-_]US/i.test(v.lang) && /samantha|google us|aria|jenny|female/i.test(v.name)) || vs.find(v => /en[-_]US/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
-  } catch (e) {}
+  try { voice = speechSynthesis.getVoices().map(v => [voiceScore(v), v]).filter(x => x[0] >= 0).sort((a, b) => b[0] - a[0]).map(x => x[1])[0] || null; } catch (e) {}
 }
 if ('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+let ttsWarned = false;
 function say(text, slow){
   try {
-    if (!('speechSynthesis' in window)) return;
-    speechSynthesis.cancel();
+    if (!('speechSynthesis' in window)){ if (!ttsWarned){ ttsWarned = true; toast('Este teléfono no puede reproducir voz. Pide ayuda a tu profe.'); } return; }
+    if (!voice) pickVoice();
+    speechSynthesis.cancel(); try { speechSynthesis.resume(); } catch (e) {}
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US'; if (voice) u.voice = voice; u.rate = slow ? 0.55 : 0.85; u.pitch = 1.1;
-    speechSynthesis.speak(u);
+    u.lang = 'en-US'; if (voice) u.voice = voice; u.rate = slow ? 0.55 : 0.85; u.pitch = 1.1; u.volume = 1;
+    u.onerror = ev => { const er = ev && ev.error; if (er && er !== 'canceled' && er !== 'interrupted' && !ttsWarned){ ttsWarned = true; toast('No se oyó la voz. Sube el volumen o quita el modo silencio.'); } };
+    setTimeout(() => { try { speechSynthesis.speak(u); } catch (e) {} }, 30);
   } catch (e) {}
 }
 let actx = null;
 function sfx(ok){
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
     (ok ? [660, 880] : [300, 220]).forEach((f, i) => {
       const o = actx.createOscillator(), g = actx.createGain();
       o.type = ok ? 'triangle' : 'sawtooth'; o.frequency.value = f;
@@ -795,6 +862,51 @@ function sfx(ok){
       o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.2);
     });
   } catch (e) {}
+}
+let audioUnlocked = false;
+function unlockAudio(){
+  if (audioUnlocked) return; audioUnlocked = true;
+  try { if ('speechSynthesis' in window){ const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {}
+}
+['pointerdown', 'keydown', 'touchend'].forEach(ev => document.addEventListener(ev, unlockAudio, {once:true, passive:true}));
+const SRC = window.SpeechRecognition || window.webkitSpeechRecognition;
+// Compara lo que escuchó el micrófono con la frase, con tolerancia para niños (plural, una letra distinta, homófonos).
+const SOUNDS_LIKE = {four:'for', to:'two', too:'two', ate:'eight', won:'one', its:'it', hi:'hello', yeah:'yes', ok:'okay', mom:'mum', color:'colour', grey:'gray'};
+function wordKey(w){ w = SOUNDS_LIKE[w] || w; return w.length > 3 ? w.replace(/(es|s)$/, '') : w; }
+function lev(a, b){ const d = Array.from({length:b.length + 1}, (_, i) => i); for (let i = 1; i <= a.length; i++){ let prev = d[0]; d[0] = i; for (let j = 1; j <= b.length; j++){ const t = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = t; } } return d[b.length]; }
+const sameWord = (a, b) => { a = wordKey(a); b = wordKey(b); return a === b || (Math.min(a.length, b.length) >= 4 && lev(a, b) <= 1); };
+function speechScore(target, heard){
+  const tw = norm(target).split(' ').filter(Boolean); if (!tw.length) return 1;
+  return Math.max(0, ...heard.map(t => { const hw = norm(t).split(' ').filter(Boolean); return tw.filter(w => hw.some(x => sameWord(w, x))).length / tw.length; }));
+}
+function micErrorMsg(er){
+  if (er === 'not-allowed' || er === 'service-not-allowed') return 'El micrófono está bloqueado. Permítelo en los ajustes del navegador.';
+  if (er === 'no-speech') return 'No te escuché. Acércate al teléfono e inténtalo otra vez.';
+  if (er === 'network') return 'Sin internet no puedo escuchar.';
+  if (er === 'audio-capture') return 'No encuentro el micrófono de este teléfono.';
+  return 'No pude usar el micrófono aquí.';
+}
+function audioTestSheet(){
+  const hasTTS = 'speechSynthesis' in window;
+  if (hasTTS && !voice) pickVoice();
+  const voiceInfo = h('p', {class:'muted', style:'margin:0;font-size:15px'}, !hasTTS ? 'Este teléfono no puede reproducir voz.' : voice ? 'Voz en inglés: ' + voice.name : 'No encontré una voz en inglés. En Android instala “Texto a voz de Google” y descarga inglés (EE. UU.).');
+  const micInfo = h('p', {class:'muted', style:'margin:0;font-size:15px', 'aria-live':'polite'}, SRC ? 'Toca “Probar micrófono” y di: Hello' : 'Este navegador no escucha la voz. En las lecciones de hablar usarás el botón “Ya lo dije”. Para mejor resultado usa Chrome en Android.');
+  const testMic = () => {
+    try {
+      const rec = new SRC(); rec.lang = 'en-US'; rec.interimResults = false;
+      micInfo.textContent = 'Te escucho… di: Hello';
+      rec.onresult = e => { micInfo.textContent = 'Escuché: “' + e.results[0][0].transcript + '”. ¡El micrófono funciona!'; };
+      rec.onerror = ev => { micInfo.textContent = micErrorMsg(ev && ev.error); };
+      rec.start();
+    } catch (e) { micInfo.textContent = 'No pude usar el micrófono aquí.'; }
+  };
+  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Probar audio y micrófono'), voiceInfo,
+    h('button', {class:'btn', type:'button', onclick:() => say('Hello! I am Pandi. Let us learn English!')}, 'Probar sonido'),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sfx(true)}, 'Probar efectos'),
+    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Si no oyes nada: sube el volumen y quita el modo silencio (en iPhone, el interruptor al lado del teléfono).'),
+    micInfo, SRC ? h('button', {class:'btn blue', type:'button', onclick:testMic}, 'Probar micrófono') : null,
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
 }
 function audioBtn(text, slow, big){
   return h('button', {class:'abtn' + (slow ? ' slow' : '') + (big ? ' big' : ''), type:'button', 'aria-label': slow ? 'Escuchar lento' : 'Escuchar', html: ICON.speaker + (big ? '' : (slow ? 'Lento' : 'Escuchar')), onclick:() => say(text, slow)});
@@ -813,6 +925,7 @@ function confirmSheet(title, text, okLabel, onOk){
 
 /* ---------- login & routing ---------- */
 function show(id){ $$('.screen').forEach(s => s.hidden = s.id !== id); }
+$('#lgAudio').addEventListener('click', audioTestSheet);
 $$('[data-fill]').forEach(b => b.addEventListener('click', () => { const [u, p] = b.dataset.fill.split('|'); $('#lgUser').value = u; $('#lgPass').value = p; $('#lgErr').hidden = true; }));
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -860,6 +973,7 @@ function renderMap(){
   const root = $('#tab-learn'); root.innerHTML = '';
   const cur = currentLesson();
   root.append(h('div', {class:'panda-say'}, panda('full'), h('div', {class:'bubble'}, `¡Hello, ${U.name}! `, cur ? 'Toca la lección que brilla para seguir practicando.' : '¡Terminaste todo lo disponible! Tu profe abrirá más unidades pronto.')));
+  if (cur && !S.days.includes(today())) root.append(h('div', {class:'card', style:'margin-bottom:14px;border-color:var(--orange)'}, h('b', {}, streak() > 0 ? `🔥 ¡Tu racha de ${streak()} día${streak() > 1 ? 's' : ''} está en peligro!` : '🐼 ¡Hoy todavía no has practicado!'), h('div', {class:'muted', style:'font-size:15px'}, 'Con una lección es suficiente.')));
   for (const u of units()){
     const open = openMap()[u.id];
     const ls = playLessons(u);
@@ -961,7 +1075,9 @@ function renderMe(){
       h('div', {class:'stat'}, h('b', {}, doneCount()), h('span', {}, 'Lecciones'))),
     h('h2', {class:'section-title'}, 'Medallas'),
     h('div', {class:'medals'}, ...MEDALS.map(m => h('div', {class:'medal' + (S.medals.includes(m.id) ? '' : ' off')}, h('div', {class:'m'}, m.g), h('b', {}, m.name), h('small', {}, m.desc)))),
+    remindCard(),
     h('div', {class:'stack', style:'margin-top:24px'},
+      h('button', {class:'btn ghost', type:'button', onclick:audioTestSheet}, 'Probar audio y micrófono'),
       h('button', {class:'btn ghost', type:'button', onclick:() => confirmSheet('¿Cerrar sesión?', 'Volverás a la pantalla de inicio de sesión.', 'Cerrar sesión', logout)}, 'Cerrar sesión'),
       REMOTE ? null : h('button', {class:'btn ghost', type:'button', style:'color:var(--ink-2)', onclick:() => confirmSheet('¿Reiniciar la demo?', 'Se borran todas las cuentas creadas y el progreso guardado en este dispositivo.', 'Reiniciar demo', () => { DB = seed(); migrate(); route(); })}, 'Reiniciar demo')));
 }
@@ -1003,11 +1119,21 @@ function renderSum(){
     h('div', {class:'card', style:'margin-top:16px;padding:8px'},
       h('div', {style:'display:flex;justify-content:space-between;align-items:center;padding:8px 8px 4px'}, h('h3', {style:'font-size:19px'}, 'Ranking de la semana'), h('span', {class:'pill'}, wk + ' XP en total')),
       ...top.map((r, i) => h('div', {class:'rank-row'}, h('div', {class:'pos'}, i + 1), avatar(r.u), h('div', {class:'nm'}, r.u.name, h('small', {}, 'Última práctica: ' + lastSeen(r.p))), h('div', {class:'xpv'}, r.pts + ' XP')))),
+    missedCard(st),
     h('div', {class:'card', style:'margin-top:16px'},
       h('h3', {style:'font-size:19px;margin-bottom:4px'}, 'Necesitan un empujón'),
       h('p', {class:'muted', style:'margin:0 0 6px;font-size:14px'}, 'Estudiantes que no han practicado en los últimos 7 días.'),
-      ...(st.filter(u => weekXP(prog(u.id)) === 0).map(u => h('div', {class:'stu', style:'cursor:default'}, avatar(u), h('div', {class:'nm'}, u.name, h('small', {}, 'Última práctica: ' + lastSeen(prog(u.id))))))),
+      ...(st.filter(u => weekXP(prog(u.id)) === 0).map(u => h('div', {class:'stu', style:'cursor:default'}, avatar(u), h('div', {class:'nm'}, u.name, h('small', {}, 'Última práctica: ' + lastSeen(prog(u.id)))), h('button', {class:'btn small', type:'button', style:'width:auto', onclick:() => remindSheet(u)}, 'Recordar')))),
       st.every(u => weekXP(prog(u.id)) > 0) ? h('p', {style:'margin:0'}, 'Todos practicaron esta semana.') : null));
+}
+function missedCard(st){
+  const top = topMissed(st, 6);
+  return h('div', {class:'card', style:'margin-top:16px'},
+    h('h3', {style:'font-size:19px;margin-bottom:4px'}, 'Palabras que más se fallan'),
+    h('p', {class:'muted', style:'margin:0 0 6px;font-size:14px'}, 'Para repasar en clase. Cuenta los errores de todos los estudiantes del grupo.'),
+    ...(top.length ? top.map(t => h('div', {class:'stu', style:'cursor:default'}, V[t.w] ? pic(V[t.w].img) : null,
+      h('div', {class:'nm'}, t.w, h('small', {}, (V[t.w] ? V[t.w].es + ' · ' : '') + `${t.n} error${t.n > 1 ? 'es' : ''} · ${t.who} estudiante${t.who > 1 ? 's' : ''}`)),
+      h('button', {class:'btn blue small', type:'button', style:'width:48px;padding:8px;flex:none', 'aria-label':'Escuchar ' + t.w, html:'<span style="display:inline-block;width:22px;height:22px">' + ICON.speaker + '</span>', onclick:() => say(t.w)}))) : [h('p', {style:'margin:0'}, 'Todavía no hay errores registrados. Aparecerán cuando los estudiantes practiquen.')]));
 }
 function renderStudents(){
   const root = $('#atab-stu'); root.innerHTML = '';
@@ -1090,6 +1216,48 @@ function addStudentSheet(){
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
   setTimeout(() => name.focus(), 50);
 }
+/* ---------- reportes y recordatorios por WhatsApp ---------- */
+const PHONES_KEY = 'pandi-phones';
+const phoneGet = id => { try { return (JSON.parse(localStorage.getItem(PHONES_KEY)) || {})[id] || ''; } catch (e) { return ''; } };
+const phoneSet = (id, v) => { try { const m = JSON.parse(localStorage.getItem(PHONES_KEY)) || {}; if (v) m[id] = v; else delete m[id]; localStorage.setItem(PHONES_KEY, JSON.stringify(m)); } catch (e) {} };
+function shareSheet(title, text, userId){
+  const ta = h('textarea', {class:'in', rows:'11', style:'font-size:15px;line-height:1.4;resize:vertical', 'aria-label':'Mensaje'}); ta.value = text;
+  const ph = h('input', {class:'in', id:'shPhone', type:'tel', inputmode:'tel', placeholder:'Ej. 8888 8888 (opcional)', maxlength:'20'}); ph.value = userId ? phoneGet(userId) : '';
+  const sh = sheet(h('h2', {style:'font-size:24px'}, title),
+    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Puedes editar el mensaje antes de enviarlo.'), ta,
+    userId ? h('div', {class:'field'}, h('label', {for:'shPhone'}, 'WhatsApp del papá o la mamá'), ph) : null,
+    h('button', {class:'btn', type:'button', onclick:() => {
+      let d = ph.value.replace(/\D/g, ''); if (d.length === 8) d = '505' + d;
+      if (userId) phoneSet(userId, ph.value.trim());
+      window.open('https://wa.me/' + d + '?text=' + encodeURIComponent(ta.value), '_blank', 'noopener');
+    }}, 'Enviar por WhatsApp'),
+    navigator.share ? h('button', {class:'btn blue', type:'button', onclick:() => { navigator.share({text:ta.value}).catch(() => {}); }}, 'Compartir…') : null,
+    h('button', {class:'btn ghost', type:'button', onclick:async () => {
+      try { await navigator.clipboard.writeText(ta.value); toast('Mensaje copiado'); }
+      catch (e) { ta.focus(); ta.select(); try { document.execCommand('copy'); toast('Mensaje copiado'); } catch (x) { toast('Selecciona el texto y cópialo'); } }
+    }}, 'Copiar mensaje'),
+    userId ? h('p', {class:'muted', style:'margin:0;font-size:13px'}, 'El número se guarda solo en este teléfono o computadora. Si lo dejas vacío, WhatsApp te deja elegir el contacto.') : null,
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
+}
+function weekRange(){ const a = new Date(); a.setDate(a.getDate() - 6); const f = d => d.toLocaleDateString('es-NI', {day:'numeric', month:'short'}); return f(a) + ' al ' + f(new Date()); }
+function reportText(u){
+  const p = prog(u.id), first = u.name.trim().split(/\s+/)[0];
+  const days = new Set((p.days || []).filter(d => d >= dayKey(6))).size;
+  const hws = DB.assignments.filter(a => (a.groups || []).includes(u.groupId) && a.due >= dayKey(7));
+  const sent = hws.filter(a => (hwOf(p, a.id) || {}).sentAt).length;
+  const miss = Object.entries(p.miss || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
+  const lines = ['📚 *Pandi English* · Reporte semanal', '👦 ' + u.name, '🗓️ ' + weekRange(), '',
+    `⭐ Puntos esta semana: ${weekXP(p)} XP`, `📅 Días que practicó: ${days} de 7`, `🔥 Racha actual: ${streakOf(p)} día${streakOf(p) === 1 ? '' : 's'}`, `✅ Lecciones completadas: ${doneOf(p)} de ${allLessons().length}`];
+  if (hws.length) lines.push(`📒 Tareas de la semana entregadas: ${sent} de ${hws.length}`);
+  if (miss.length) lines.push('🔁 Para repasar en casa: ' + miss.join(', '));
+  lines.push('', days >= 4 ? `¡Excelente trabajo! ${first} está practicando mucho 🌟` : days >= 1 ? `${first} va bien. Con un poquito de práctica cada día aprenderá más rápido 💪` : `${first} no practicó esta semana. Ayúdele a entrar a Pandi English unos minutos al día 🐼`);
+  return lines.join('\n');
+}
+function reportSheet(u){ shareSheet('Reporte para padres', reportText(u), u.id); }
+function remindSheet(u){
+  const first = u.name.trim().split(/\s+/)[0], n = daysSince(prog(u.id));
+  shareSheet('Recordar a ' + first, `Hola 👋 le escribo de parte del profe. ${first} ${n === null ? 'todavía no ha entrado' : 'no ha practicado'} en Pandi English esta semana. Con 10 minutos al día va mejorando mucho 🐼 ¿Le ayuda a entrar hoy?`, u.id);
+}
 function studentSheet(u){
   const p = prog(u.id);
   const sh = sheet(
@@ -1102,6 +1270,8 @@ function studentSheet(u){
       ...units().filter(x => playLessons(x).length).map(x => { const ls = playLessons(x), d = ls.filter(l => p.done[l.id]).length; return h('div', {class:'unit-prog c-' + x.c}, h('div', {class:'nm'}, `${unitNo(x)}. ${x.title}`), h('div', {class:'bar'}, h('i', {style:`width:${Math.round(d / ls.length * 100)}%;background:var(--uc)`})), h('div', {class:'v'}, `${d}/${ls.length}`)); })),
     h('div', {}, h('div', {class:'lbl', style:'margin-bottom:6px'}, 'Medallas'), h('div', {style:'font-size:26px;letter-spacing:4px'}, p.medals.length ? p.medals.map(id => (MEDALS.find(m => m.id === id) || {}).g).join('') : h('span', {class:'muted', style:'font-size:15px;letter-spacing:0'}, 'Todavía no tiene medallas'))),
     h('div', {class:'muted', style:'font-size:14px'}, 'Última práctica: ' + lastSeen(p)),
+    Object.keys(p.miss || {}).length ? h('div', {}, h('div', {class:'lbl', style:'margin-bottom:4px'}, 'Le cuesta'), h('div', {style:'font-size:16px'}, Object.entries(p.miss).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]).join(' · '))) : null,
+    h('button', {class:'btn blue', type:'button', onclick:() => { sh.remove(); reportSheet(u); }}, 'Reporte para padres'),
     (() => { const gs = groupSelect('mvGroup', u.groupId); gs.addEventListener('change', () => { u.groupId = gs.value; save(); renderStudents(); toast(`${u.name} ahora está en ${groupById(gs.value).name}`); }); return h('div', {class:'field'}, h('label', {for:'mvGroup'}, 'Grupo'), gs); })(),
     REMOTE ? h('button', {class:'btn ghost', type:'button', onclick:() => { sh.remove(); resetPasswordSheet(u); }}, 'Cambiar contraseña') : null,
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'),
@@ -1723,7 +1893,7 @@ function grade(ok, correct){
   const s = L.cur, foot = $('#lfoot'), btn = $('#lbtn');
   L.graded++;
   if (ok){ L.xp += 10; sfx(true); }
-  else { L.mistakes++; sfx(false); if (!L.requeued.has(s)){ L.requeued.add(s); L.queue.push(s); } }
+  else { L.mistakes++; sfx(false); noteMiss(s); if (!L.requeued.has(s)){ L.requeued.add(s); L.queue.push(s); } }
   foot.className = 'lfoot ' + (ok ? 'ok' : 'bad');
   const fb = $('#fbMsg'); fb.innerHTML = '';
   fb.append(h('strong', {}, ok ? rnd(PRAISE) : 'Casi… ¡tú puedes!'));
@@ -1833,16 +2003,20 @@ const R = {
     const mic = h('button', {class:'mic', type:'button', 'aria-label':'Hablar', html:ICON.mic, onclick:() => {
       if (!SR) return fallback('Repite la frase en voz alta y luego toca el botón.');
       try {
-        const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 3;
+        const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 5;
         mic.classList.add('on'); status.textContent = 'Te escucho…';
+        const stopT = setTimeout(() => { try { rec.stop(); } catch (x) {} }, 9000);
+        rec.addEventListener('end', () => clearTimeout(stopT));
         rec.onresult = e => {
-          const alts = [...e.results[0]].map(a => norm(a.transcript));
-          const target = norm(s.text).split(' ');
-          const best = Math.max(...alts.map(t => { const ws = t.split(' '); return target.filter(w => ws.includes(w)).length / target.length; }));
+          const best = speechScore(s.text, [...e.results[0]].map(a => a.transcript));
           if (best >= 0.6){ status.textContent = 'Escuché: “' + e.results[0][0].transcript + '”'; done(); }
           else { tries++; status.textContent = 'Escuché: “' + e.results[0][0].transcript + '”. ¡Intenta otra vez!'; sfx(false); if (tries >= 2) fallback('Escuché algo diferente. Si ya lo dijiste bien, toca el botón.'); }
         };
-        rec.onerror = () => fallback('No pude usar el micrófono aquí. Repite la frase en voz alta y toca el botón.');
+        rec.onerror = ev => {
+          const er = ev && ev.error;
+          if (er === 'no-speech'){ tries++; status.textContent = micErrorMsg(er); sfx(false); if (tries >= 2) fallback(micErrorMsg(er) + ' Si ya lo dijiste, toca el botón.'); }
+          else fallback(micErrorMsg(er) + ' Repite la frase en voz alta y toca el botón.');
+        };
         rec.onend = () => mic.classList.remove('on');
         rec.start();
       } catch (e) { mic.classList.remove('on'); fallback('No pude usar el micrófono aquí. Repite la frase en voz alta y toca el botón.'); }

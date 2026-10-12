@@ -3,6 +3,8 @@
 //
 // Acciones (POST JSON):
 //   create_school   {setup_token, school_name, name, username, password}   → crea una escuela y su admin
+//   list_schools    {setup_token}                                          → lista de escuelas con sus conteos (panel del dueño)
+//   owner_reset_admin_password {setup_token, username, password}           → el dueño cambia la clave de un profe (admin)
 //   create_student  {name, username, password, group_id}                   → solo admin
 //   reset_password  {user_id, password}                                    → solo admin
 //   delete_student  {user_id}                                              → solo admin
@@ -66,6 +68,36 @@ export async function handle(req, admin) {
       const { error: pe } = await admin.from('profiles').insert({ id: created.id, school_id: school.id, role: 'admin', username, name });
       if (pe) { await admin.auth.admin.deleteUser(created.id); await admin.from('schools').delete().eq('id', school.id); throw pe; }
       return json({ school_id: school.id, user_id: created.id });
+    }
+
+    // Acciones del dueño (requieren el código de configuración)
+    if (action === 'list_schools' || action === 'owner_reset_admin_password') {
+      if (!SETUP_TOKEN || body.setup_token !== SETUP_TOKEN) return json({ error: 'Código de configuración incorrecto' }, 403);
+      if (action === 'list_schools') {
+        const { data: schools, error: e1 } = await admin.from('schools').select('*');
+        if (e1) throw e1;
+        const { data: profs, error: e2 } = await admin.from('profiles').select('id,school_id,role,username,name');
+        if (e2) throw e2;
+        const { data: progs } = await admin.from('progress').select('school_id,updated_at');
+        const list = (schools ?? []).map((sc) => {
+          const mine = (profs ?? []).filter((p) => p.school_id === sc.id);
+          const last = (progs ?? []).filter((p) => p.school_id === sc.id).map((p) => p.updated_at).sort().pop() ?? null;
+          return {
+            id: sc.id, name: sc.name, created_at: sc.created_at ?? null,
+            students: mine.filter((p) => p.role === 'student').length,
+            admins: mine.filter((p) => p.role === 'admin').map((p) => ({ username: p.username, name: p.name })),
+            last_activity: last
+          };
+        });
+        return json({ schools: list });
+      }
+      const username = clean(body.username).toLowerCase(), password = String(body.password ?? '');
+      if (password.length < 6) return json({ error: 'La contraseña debe tener al menos 6 caracteres.' }, 400);
+      const { data: adm } = await admin.from('profiles').select('*').eq('username', username).maybeSingle();
+      if (!adm || adm.role !== 'admin') return json({ error: 'No encontré un profe (admin) con ese usuario.' }, 404);
+      const { error } = await admin.auth.admin.updateUserById(adm.id, { password });
+      if (error) throw error;
+      return json({ ok: true });
     }
 
     // Todo lo demás lo puede hacer solo el admin de la escuela

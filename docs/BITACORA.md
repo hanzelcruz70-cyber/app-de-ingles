@@ -7,25 +7,35 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 ## Estado actual (resumen rápido)
 
 - **App:** completa en modo demo y con backend Supabase listo. Tiene Nivel 1 con 5 unidades y 28 lecciones, 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
-- **Backend:** el esquema y las reglas RLS están probados en Postgres 16 (26/26 casos). La Edge Function se probó con Supabase simulado. **Todavía no se ha probado contra el Supabase real del dueño.**
-- **Repositorio:** `hanzelcruz70-cyber/app-de-ingles` (todavía vacío en GitHub; falta el primer push). Copia local del dueño: `C:\Users\Hanzel\Documents\Pandi Ingles`.
+- **Backend:** funcionando con el Supabase real del dueño (proyecto `itaxhosmkmlnoqdpljzh`). El 11 de octubre se creó la primera escuela desde `setup.html` (admin `pruebaapp`). RLS probado en Postgres 16 (26/26).
+- **Funciones nuevas (11 oct):** estadísticas del profe (palabras más falladas, quién no practicó), reporte para padres y aviso por WhatsApp, recordatorio diario, prueba de audio y micrófono, y panel del dueño (`owner.html`).
+- **Repositorio:** `hanzelcruz70-cyber/app-de-ingles` (publicado en GitHub Pages: https://hanzelcruz70-cyber.github.io/app-de-ingles/). Copia local del dueño: `C:\Users\Hanzel\Documents\Pandi Ingles`.
 - **Fecha clave:** el dueño presenta el producto al cliente el fin de semana del 17 y 18 de octubre de 2026. El plazo del MVP es de 2 meses desde el 10 de octubre de 2026.
 
 ### Pendiente inmediato (lo hace el dueño)
-1. [ ] Correr `supabase/schema.sql` en el proyecto **nuevo** de Supabase, si no está hecho. El dueño dijo el 11 de octubre que "ya hizo la base de datos"; falta confirmar que corrió el script.
-2. [ ] En Authentication → Email, apagar "Confirm email". Opcional: apagar el registro público.
-3. [ ] En GitHub (Settings → Secrets and variables → Actions), crear `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` y `PANDI_SETUP_TOKEN`, y correr el workflow "Publicar función de cuentas".
-4. [ ] En GitHub, Settings → Pages → Source, elegir **GitHub Actions**.
+1. [x] Correr `supabase/schema.sql` en el proyecto **nuevo** de Supabase, si no está hecho. El dueño dijo el 11 de octubre que "ya hizo la base de datos"; falta confirmar que corrió el script.
+2. [x] En Authentication → Email, apagar "Confirm email". Opcional: apagar el registro público.
+3. [x] En GitHub (Settings → Secrets and variables → Actions), crear `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` y `PANDI_SETUP_TOKEN`, y correr el workflow "Publicar función de cuentas".
+4. [x] En GitHub, Settings → Pages → Source, elegir **GitHub Actions**.
 5. [x] Project URL y llave anon puestas en `config.js` (proyecto `itaxhosmkmlnoqdpljzh`). La app publicada ya arranca en modo servidor.
-6. [ ] Crear la escuela en `setup.html`, entrar como admin, crear un grupo y estudiantes, y probar en el celular ("Agregar a pantalla principal").
+6. [x] Crear la escuela en `setup.html` (hecho). [ ] Entrar como admin, crear un grupo y estudiantes, y probar en el celular ("Agregar a pantalla principal").
 
 ### Siguientes ideas (no comprometidas)
 - Mover las fotos del banco de palabras a Supabase Storage. Hoy van en base64 dentro de `courses.data`.
 - Usar el micrófono de verdad en la app instalada. En la vista previa de claude.ai no hay micrófono y existe el botón "Ya lo dije".
 - Niveles 2 a 6, y que cada grupo tenga su nivel.
-- Notificaciones de recordatorio, reporte para padres y empaquetar para Google Play (TWA o Capacitor).
+- Recordatorios con Web Push desde el servidor (hoy son locales). Empaquetar para Google Play (TWA o Capacitor).
 
 ---
+
+## 2026-10-11 · Estadísticas, reportes, recordatorios, audio y panel del dueño
+- **Palabras falladas:** `grade()` llama a `noteMiss(step)`, que suma en `progress.miss[palabra]` (máximo 40 palabras por niño; no cuenta en vista previa). Viaja con el progreso al servidor, sin cambios en el esquema. El resumen del admin muestra "Palabras que más se fallan" (`missedCard`/`topMissed`) y la ficha del estudiante muestra "Le cuesta".
+- **Quién no practicó:** "Necesitan un empujón" ahora tiene un botón **Recordar** que arma un mensaje por WhatsApp (`remindSheet`).
+- **Reporte para padres:** en la ficha del estudiante (`reportSheet`/`reportText`). Incluye XP de la semana, días que practicó, racha, lecciones, tareas y palabras para repasar. Se manda por `wa.me` (si el número tiene 8 dígitos se le agrega 505), por "Compartir…" o se copia. **Decisión:** el teléfono del papá se guarda solo en el dispositivo del profe (`localStorage` `pandi-phones`), para no guardar datos de contacto en el servidor.
+- **Recordatorio diario:** en el perfil del estudiante (`remindCard`). Pide permiso de notificaciones y guarda la hora en `localStorage` (`pandi-remind-<id>`). Revisa cada 30 s y al volver a la app, y avisa si ese día no practicó. En el mapa aparece un aviso "tu racha está en peligro". **Limitación:** es local: si el teléfono cierra la app, el aviso sale al volver a abrirla. Para avisos con la app cerrada hace falta Web Push (claves VAPID, tabla de suscripciones y una función programada); quedó como siguiente paso.
+- **Audio:** elige la mejor voz en inglés (`voiceScore`), desbloquea el audio en el primer toque (iPhone), reanuda la voz trabada de Chrome y avisa si no suena. El reconocimiento de voz es más tolerante (`speechScore`: plurales, una letra distinta, homófonos como four/for), usa 5 alternativas, se corta a los 9 s y da mensajes claros por tipo de error. Hay una hoja "Probar audio y micrófono" en el login y en el perfil (`audioTestSheet`).
+- **Panel del dueño:** `owner.html` (enlazado desde `setup.html`). Con `PANDI_SETUP_TOKEN` lista las escuelas (estudiantes, profes, última actividad), crea escuelas y cambia la clave de un profe. La Edge Function tiene las acciones nuevas `list_schools` y `owner_reset_admin_password`. El token no se guarda en el navegador.
+- **Pruebas:** `tests/e2e/new_features.js` (nuevo) y casos nuevos en `tests/edge`. Todo PASS.
 
 ## 2026-10-11 · Error en setup.html ("No se pudo conectar con Supabase")
 - El dueño completó los pasos 1 a 3 y al crear la escuela salió ese mensaje. Significa que el `fetch` a `/functions/v1/admin-users` falló antes de recibir respuesta (función no publicada, URL mal o red). No es un error de código o contraseña.

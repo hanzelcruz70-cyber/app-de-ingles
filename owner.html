@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pandi English · Panel del dueño</title>
+<link rel="icon" href="icons/icon-192.png">
+<script src="config.js"></script>
+<style>
+:root{--bg:#F1F6FD;--surface:#fff;--ink:#14233B;--ink-2:#5A6B85;--line:#D5E0EF;--green:#2FA84F;--green-d:#1F7F39;--red:#B92620;--blue:#1F6FD1}
+@media (prefers-color-scheme: dark){:root{--bg:#0E1626;--surface:#17223A;--ink:#EAF1FF;--ink-2:#9FB0CC;--line:#2A3A5A;--red:#FF8A80;--blue:#7FB2FF;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:600 16px "Segoe UI",system-ui,sans-serif}
+main{max-width:560px;margin:0 auto;padding:24px 16px 48px;display:flex;flex-direction:column;gap:14px}
+h1{margin:0;font-size:26px} h2{margin:0;font-size:20px} p{margin:0;color:var(--ink-2)}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+input{font:inherit;font-size:17px;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);text-transform:none;letter-spacing:0;width:100%}
+button{font:inherit;font-size:17px;padding:13px;border:0;border-radius:14px;background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green-d);cursor:pointer}
+button.ghost{background:transparent;color:var(--blue);box-shadow:none;border:2px solid var(--line)}
+button:disabled{opacity:.6}
+.msg{padding:12px;border-radius:12px;background:var(--surface);border:2px solid var(--line);overflow-wrap:anywhere} .bad{color:var(--red)}
+.stats{display:flex;gap:8px;flex-wrap:wrap;color:var(--ink-2);font-size:15px}
+.stats b{color:var(--ink)}
+.school{display:flex;flex-direction:column;gap:6px;border-top:2px solid var(--line);padding-top:12px}
+.school:first-child{border-top:0;padding-top:0}
+.row{display:flex;gap:8px} .row>*{flex:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <h1>Panel del dueño</h1>
+  <p>Aquí ves todas las escuelas, creas escuelas nuevas y cambias la clave de un profe. Usa el código de configuración (<b>PANDI_SETUP_TOKEN</b>). No se guarda en el navegador.</p>
+
+  <form id="tokenForm" class="card">
+    <label>Código de configuración<input id="token" type="password" required autocomplete="off"></label>
+    <button type="submit" id="enter">Entrar</button>
+  </form>
+
+  <div id="panel" hidden>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2>Escuelas</h2><button type="button" class="ghost" id="reload" style="padding:8px 14px;font-size:15px">Actualizar</button></div>
+      <div id="list"></div>
+    </div>
+
+    <form id="newForm" class="card" style="margin-top:14px">
+      <h2>Crear escuela nueva</h2>
+      <label>Nombre de la escuela<input id="school" required placeholder="Ej. Academia de inglés del centro"></label>
+      <label>Nombre del profe<input id="name" required placeholder="Ej. Luis Pérez"></label>
+      <label>Usuario del profe<input id="user" required autocapitalize="off" spellcheck="false" placeholder="Ej. profe.luis"></label>
+      <label>Contraseña (mínimo 6)<input id="pass" required type="password" minlength="6" autocomplete="new-password"></label>
+      <button type="submit" id="create">Crear escuela</button>
+    </form>
+
+    <form id="resetForm" class="card" style="margin-top:14px">
+      <h2>Cambiar la clave de un profe</h2>
+      <p>Para cuando un profe olvida su contraseña.</p>
+      <label>Usuario del profe<input id="rUser" required autocapitalize="off" spellcheck="false"></label>
+      <label>Contraseña nueva (mínimo 6)<input id="rPass" required type="password" minlength="6" autocomplete="new-password"></label>
+      <button type="submit" id="reset">Cambiar clave</button>
+    </form>
+  </div>
+  <div id="out" class="msg" hidden></div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const out = $('out');
+let TOKEN = '';
+const v = id => $(id).value.trim();
+const show = (t, bad) => { out.hidden = false; out.className = 'msg' + (bad ? ' bad' : ''); out.textContent = t; };
+async function call(body){
+  const c = window.PANDI_CONFIG || {};
+  if (!c.supabaseUrl || !c.supabaseAnonKey) return {error: 'Primero llena config.js con la URL y la llave anon de tu proyecto de Supabase.'};
+  const base = c.supabaseUrl.replace(/\/$/, '');
+  try {
+    const r = await fetch(base + '/functions/v1/admin-users', {method: 'POST', headers: {'Content-Type': 'application/json', apikey: c.supabaseAnonKey, Authorization: 'Bearer ' + c.supabaseAnonKey}, body: JSON.stringify({...body, setup_token: TOKEN})});
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) return {error: j.error || ('Error ' + r.status + '. Revisa que la función admin-users esté publicada y actualizada (Actions → Publicar función de cuentas).')};
+    return j;
+  } catch (err) { return {error: 'No se pudo conectar con ' + base + '. Revisa tu internet y que la función admin-users esté publicada. Detalle: ' + (err && err.message ? err.message : err)}; }
+}
+const fmt = d => d ? new Date(d).toLocaleDateString('es-NI', {day: 'numeric', month: 'short', year: 'numeric'}) : 'sin actividad';
+function el(tag, attrs, ...kids){ const e = document.createElement(tag); Object.entries(attrs || {}).forEach(([k, val]) => e.setAttribute(k, val)); kids.forEach(k => e.append(k)); return e; }
+async function load(){
+  const r = await call({action: 'list_schools'});
+  if (r.error){ show(r.error, true); return false; }
+  out.hidden = true;
+  const box = $('list'); box.textContent = '';
+  if (!r.schools.length) box.append(el('p', {}, 'Todavía no hay escuelas.'));
+  r.schools.forEach(s => {
+    const adm = s.admins.map(a => a.name + ' (@' + a.username + ')').join(', ') || 'sin profe';
+    box.append(el('div', {class: 'school'}, el('h2', {}, s.name),
+      el('div', {class: 'stats'}, el('span', {}, el('b', {}, String(s.students)), ' estudiantes'), el('span', {}, '· última actividad: ', el('b', {}, fmt(s.last_activity)))),
+      el('p', {}, 'Profe: ' + adm)));
+  });
+  return true;
+}
+$('tokenForm').addEventListener('submit', async e => {
+  e.preventDefault(); TOKEN = v('token'); $('enter').disabled = true;
+  if (await load()){ $('panel').hidden = false; $('tokenForm').hidden = true; }
+  $('enter').disabled = false;
+});
+$('reload').addEventListener('click', load);
+$('newForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('create').disabled = true;
+  const r = await call({action: 'create_school', school_name: v('school'), name: v('name'), username: v('user').toLowerCase(), password: $('pass').value});
+  $('create').disabled = false;
+  if (r.error) return show(r.error, true);
+  $('newForm').reset(); await load(); show('¡Listo! Escuela creada. El profe ya puede entrar a la app con su usuario.');
+});
+$('resetForm').addEventListener('submit', async e => {
+  e.preventDefault(); $('reset').disabled = true;
+  const r = await call({action: 'owner_reset_admin_password', username: v('rUser').toLowerCase(), password: $('rPass').value});
+  $('reset').disabled = false;
+  if (r.error) return show(r.error, true);
+  $('resetForm').reset(); show('Listo. La clave del profe cambió.');
+});
+</script>
+</body>
+</html>

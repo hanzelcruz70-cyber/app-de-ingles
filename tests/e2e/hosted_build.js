@@ -2,6 +2,7 @@ const { chromium } = require('playwright');
 (async () => {
   const b = await chromium.launch(); const ctx = await b.newContext({viewport:{width:390,height:820}}); const p = await ctx.newPage();
   const errs=[]; p.on('pageerror', e=>errs.push(e.message)); p.on('console', m=>{ if(m.type()==='error' && !/fonts|ERR_/.test(m.text())) errs.push(m.text()); });
+  await p.route('**/config.js', r => r.fulfill({body:'window.PANDI_CONFIG = {};', contentType:'application/javascript'})); // la prueba corre en modo demo aunque config.js tenga datos reales
   await p.goto('http://localhost:8765/'); await p.waitForTimeout(1500);
   const R = {};
   R.demoVisible = await p.isVisible('.demo');
