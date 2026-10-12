@@ -34,6 +34,7 @@ supabase/functions/admin-users/index.ts   Edge Function: crear escuela, crear/bo
 .github/workflows/      pages.yml (publica en GitHub Pages) y supabase-function.yml (publica la Edge Function)
 tests/                  Pruebas: e2e (Playwright), rls (Postgres), edge (función simulada)
 docs/BITACORA.md        Historia, decisiones y pendientes
+docs/GUIA_DE_USUARIO.md Guía para estudiante, profe y dueño (también la usa el beta tester)
 README.md               Guía paso a paso para el dueño (en español, no técnica)
 ```
 
@@ -86,7 +87,7 @@ tests/edge/run.sh                             # Edge Function con cliente simula
 PGURL=postgresql://postgres@127.0.0.1:5432/postgres tests/rls/run.sh   # RLS en Postgres local (solo debe salir PASS)
 ```
 
-Antes de dar por terminado un cambio: corre `python3 build.py` y luego las pruebas que apliquen. Revisa en una pantalla de 390 px de ancho que nada se corte ni se desborde.
+Antes de dar por terminado un cambio: corre `python3 build.py` y luego las pruebas que apliquen. Si cambias algo visible, actualiza `docs/GUIA_DE_USUARIO.md`. Revisa en una pantalla de 390 px de ancho que nada se corte ni se desborde.
 
 ## Publicación
 
@@ -98,6 +99,8 @@ Antes de dar por terminado un cambio: corre `python3 build.py` y luego las prueb
 ## Convenciones de código
 
 - JavaScript sin frameworks. Usa `h()` para crear elementos; no armes HTML con cadenas que incluyan datos del usuario.
+- Fechas: usa siempre `dayKey()`/`ymd()` (fecha local). Nunca `toISOString().slice(0, 10)`, que da la fecha UTC y en Nicaragua cambia de día a las 6 pm.
+- No hay `box-sizing` global: si un bloque tiene `width:100%` y relleno, ponle `box-sizing:border-box`.
 - Colores solo desde tokens CSS (`var(--...)`) y siempre probados en modo claro y oscuro. Botones grandes y texto mínimo de 15 px.
 - Cada cambio de datos termina en `save()`. Los ids nuevos se crean con `newId(prefijo)`.
 - Las hojas emergentes usan `sheet(...)`, las confirmaciones `confirmSheet(...)` y los avisos `toast(...)`. Nunca `alert`, `confirm` ni `prompt`.

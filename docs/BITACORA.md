@@ -28,6 +28,23 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-11 · Guía de usuario y primera prueba beta (subagente)
+- Se escribió `docs/GUIA_DE_USUARIO.md` (estudiante, profe y dueño). Es la referencia para probar la app sin leer código.
+- **Prueba beta:** un subagente sin acceso al código usó solo la guía y la app en modo demo (Playwright, 390 px, claro y oscuro, cuentas `estudiante`/`admin`). No se pudo probar contra el Supabase real porque la red de la nube bloquea `supabase.co` y no tenemos la clave de `pruebaapp`. Para repetir la prueba: servir `index.html` con un `config.js` vacío (`window.PANDI_CONFIG = {};`). No sirve la versión de vista previa sola, porque no declara utf-8 y el navegador lee mal los acentos.
+- **Corregido a partir del reporte:**
+  - **Fechas en hora local.** `dayKey`, `fridayKey` y la racha usaban UTC; después de las 6 pm en Nicaragua las tareas "vencían" un día antes y la racha se rompía. Ahora usan `ymd()`, la fecha local.
+  - **Micrófono que no respondía.** El ejercicio Hablar y la prueba de micrófono se trababan en "Te escucho…". Ahora hay un vigilante de 11 s que muestra "Ya lo dije en voz alta" y se ignora el error `aborted`.
+  - **Pantalla "¡Lección completada!" desbordada a 390 px.** No hay `box-sizing` global; `#result .lwrap` sumaba el relleno al 100 %.
+  - **Texto "null"** en el Resumen.
+  - **Tareas con lecciones de unidades cerradas:** ahora la unidad se abre sola para los grupos de la tarea y se avisa.
+  - **Detalles de presentación:** contraste del botón deshabilitado, selector de grupo ("Nombre (N)"), plurales, texto del ranking demo, aviso al revisar sin nota, "What is it?" en lugar de "What is it." (`endMark`), avisos arriba para que no tapen botones, burbuja "¡Empieza aquí!", reporte para padres (🧒, lecciones de unidades abiertas, tareas de la semana) y que tocar la pestaña activa vuelva a la lista.
+  - **Aviso "No se oyó la voz":** solo sale si el niño tocó algo en los últimos 4 s.
+- La guía se ajustó a los nombres reales de botones e instrucciones. El subagente verificó las correcciones: 16/16, sin regresiones.
+- **Pendiente (sugerencias del beta):**
+  - "Mis tareas" muestra también tareas de semanas siguientes.
+  - La medalla "Voz de oro" se gana con el botón de respaldo.
+  - Al crear una palabra desde un ejercicio, no queda seleccionada.
+
 ## 2026-10-11 · Estadísticas, reportes, recordatorios, audio y panel del dueño
 - **Palabras falladas:** `grade()` llama a `noteMiss(step)`, que suma en `progress.miss[palabra]` (máximo 40 palabras por niño; no cuenta en vista previa). Viaja con el progreso al servidor, sin cambios en el esquema. El resumen del admin muestra "Palabras que más se fallan" (`missedCard`/`topMissed`) y la ficha del estudiante muestra "Le cuesta".
 - **Quién no practicó:** "Necesitan un empujón" ahora tiene un botón **Recordar** que arma un mensaje por WhatsApp (`remindSheet`).
