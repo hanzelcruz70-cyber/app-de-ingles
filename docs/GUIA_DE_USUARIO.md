@@ -119,7 +119,8 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 - **+ Nueva unidad**, editar o **Eliminar unidad**.
 - Dentro de una unidad: lista de lecciones, **+ Nueva lección**, reordenar y eliminar.
 - **Nueva lección:** título y tipo. **Atajo:** si eliges palabras del banco, Pandi arma los ejercicios automáticamente.
-- Dentro de una lección: lista de ejercicios. **+ Agregar ejercicio** (pregunta *"¿Qué tipo de ejercicio?"*), editar, **Duplicar**, eliminar (sin pedir confirmación) y mover. **Mezclar ejercicios** cambia el orden en cada partida.
+- **Editar una lección ya creada:** dentro de la unidad, toca la lección o el lápiz. En **Editar lección** cambias el título, el tipo y la **Unidad** (para moverla a otra unidad). Los cambios se guardan solos.
+- Dentro de una lección: lista de ejercicios. **+ Ejercicios automáticos** agrega ejercicios a partir de palabras del banco. **+ Agregar ejercicio** (pregunta *"¿Qué tipo de ejercicio?"*), editar, **Duplicar**, eliminar (sin pedir confirmación) y mover. **Mezclar ejercicios** cambia el orden en cada partida.
 - **Probar lección:** se juega igual que el niño, pero no guarda XP (*"XP (no se guarda)"*). Al final: **Volver al editor**.
 - **Banco de palabras:** buscar, **+ Nueva** (palabra en inglés, traducción y un emoji o una foto), editar o eliminar. Dentro de un ejercicio también se puede crear una palabra con **+ Agregar una palabra nueva al banco**.
 - Para volver a la lista de unidades, toca **‹ Contenido** o vuelve a tocar la pestaña **Contenido**.

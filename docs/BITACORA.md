@@ -28,6 +28,10 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-11 · Editar lección más visible y mensaje del reporte legible
+- El dueño no encontraba cómo editar una lección ya creada (ya se podía tocando la fila). Se agregó un lápiz en cada lección, una nota en la unidad y el título "Editar lección". También se puede mover la lección a otra unidad (selector **Unidad**) y añadirle **+ Ejercicios automáticos** (`autoSheet`).
+- En el reporte por WhatsApp el cuadro del mensaje se veía de 2 líneas: `.sheet>div` es una columna flexible con scroll y encogía sus hijos. Ahora tiene `.sheet>div>*{flex-shrink:0}` y el cuadro mide al menos 260 px. El arreglo vale para todas las hojas.
+
 ## 2026-10-11 · Guía de usuario y primera prueba beta (subagente)
 - Se escribió `docs/GUIA_DE_USUARIO.md` (estudiante, profe y dueño). Es la referencia para probar la app sin leer código.
 - **Prueba beta:** un subagente sin acceso al código usó solo la guía y la app en modo demo (Playwright, 390 px, claro y oscuro, cuentas `estudiante`/`admin`). No se pudo probar contra el Supabase real porque la red de la nube bloquea `supabase.co` y no tenemos la clave de `pruebaapp`. Para repetir la prueba: servir `index.html` con un `config.js` vacío (`window.PANDI_CONFIG = {};`). No sirve la versión de vista previa sola, porque no declara utf-8 y el navegador lee mal los acentos.

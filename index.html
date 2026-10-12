@@ -308,6 +308,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .new-medal .m{width:48px;height:48px;font-size:24px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--yellow) 30%,transparent);border:3px solid var(--yellow);flex:none}
 
 .sheet{position:fixed;inset:0;z-index:40;background:rgba(10,18,32,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div>*{flex-shrink:0}
 .sheet>div{background:var(--surface);width:100%;max-width:480px;max-height:88%;overflow-y:auto;border-radius:24px 24px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;box-sizing:border-box}
 .toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:60;font-size:15px;max-width:calc(100% - 48px);text-align:center}
 
@@ -1235,7 +1236,7 @@ const PHONES_KEY = 'pandi-phones';
 const phoneGet = id => { try { return (JSON.parse(localStorage.getItem(PHONES_KEY)) || {})[id] || ''; } catch (e) { return ''; } };
 const phoneSet = (id, v) => { try { const m = JSON.parse(localStorage.getItem(PHONES_KEY)) || {}; if (v) m[id] = v; else delete m[id]; localStorage.setItem(PHONES_KEY, JSON.stringify(m)); } catch (e) {} };
 function shareSheet(title, text, userId){
-  const ta = h('textarea', {class:'in', rows:'11', style:'font-size:15px;line-height:1.4;resize:vertical', 'aria-label':'Mensaje'}); ta.value = text;
+  const ta = h('textarea', {class:'in', rows:'11', style:'font-size:16px;line-height:1.45;resize:vertical;min-height:260px', 'aria-label':'Mensaje'}); ta.value = text;
   const ph = h('input', {class:'in', id:'shPhone', type:'tel', inputmode:'tel', placeholder:'Ej. 8888 8888 (opcional)', maxlength:'20'}); ph.value = userId ? phoneGet(userId) : '';
   const sh = sheet(h('h2', {style:'font-size:24px'}, title),
     h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Puedes editar el mensaje antes de enviarlo.'), ta,
@@ -1537,12 +1538,13 @@ function renderUnitEd(root){
     h('div', {class:'c-' + u.c}, h('div', {class:'unit-banner'}, h('div', {}, h('div', {class:'eyebrow'}, 'Unidad ' + idx), h('h2', {}, u.title || 'Sin título'), h('p', {}, u.desc)))),
     h('div', {class:'card stack', style:'margin-top:16px'}, titleF, descF, h('div', {class:'field'}, h('span', {class:'lbl'}, 'Color'), sw)),
     h('div', {style:'display:flex;justify-content:space-between;align-items:center;margin:20px 0 8px'}, h('h3', {style:'font-size:21px'}, 'Lecciones'), h('span', {class:'muted', style:'font-size:14px'}, 'Los estudiantes las ven en este orden')),
+    u.lessons.length ? h('p', {class:'muted', style:'margin:0 0 8px;font-size:14px'}, 'Toca una lección (o el lápiz) para editarla: título, tipo y ejercicios.') : '',
     u.lessons.length ? h('div', {class:'card c-' + u.c, style:'padding:4px 14px'}, ...u.lessons.map((l, i) => {
       const n = l.items.length;
       return h('div', {class:'row', role:'button', tabindex:'0', style:'cursor:pointer', onclick:() => go('lesson', u.id, l.id), onkeydown:e => { if (e.key === 'Enter') go('lesson', u.id, l.id); }},
         h('div', {class:'ico', html:ICON[KIND_ICON[l.kind] || 'book']}),
         h('div', {class:'main'}, `${i + 1}. ${l.title}`, h('small', {}, `${l.kind} · ${n} ejercicio${n === 1 ? '' : 's'}` + (playable(l) ? '' : ' · no visible aún'))),
-        h('div', {class:'tools'}, mini(ICON_UP, 'Subir', () => { move(u.lessons, i, -1); save(); renderContent(); }, {disabled:i === 0}), mini(ICON_DOWN, 'Bajar', () => { move(u.lessons, i, 1); save(); renderContent(); }, {disabled:i === u.lessons.length - 1})));
+        h('div', {class:'tools'}, mini(ICON.pen, 'Editar lección', () => go('lesson', u.id, l.id)), mini(ICON_UP, 'Subir', () => { move(u.lessons, i, -1); save(); renderContent(); }, {disabled:i === 0}), mini(ICON_DOWN, 'Bajar', () => { move(u.lessons, i, 1); save(); renderContent(); }, {disabled:i === u.lessons.length - 1})));
     })) : h('div', {class:'card muted', style:'text-align:center'}, 'Esta unidad todavía no tiene lecciones.'),
     h('button', {class:'btn', type:'button', style:'margin-top:12px', onclick:() => lessonSheet(u)}, '+ Nueva lección'),
     h('button', {class:'btn ghost', type:'button', style:'margin-top:24px;color:var(--red)', onclick:() => confirmSheet(`¿Eliminar la unidad “${u.title}”?`, (u.lessons.length ? `Se borran sus ${plural(u.lessons.length, 'lección', 'lecciones')}. ` : 'La unidad está vacía. ') + 'No se puede deshacer.', 'Eliminar unidad', () => { DB.course.units = units().filter(x => x !== u); DB.groups.forEach(g => delete g.open[u.id]); save(); go('root'); toast('Unidad eliminada'); })}, 'Eliminar unidad'));
@@ -1580,10 +1582,16 @@ function renderLessonEd(root){
   kindSel.value = l.kind; kindSel.addEventListener('change', () => { l.kind = kindSel.value; save(); });
   const shuf = h('input', {type:'checkbox', id:'leShuf', 'aria-label':'Mezclar ejercicios'}); shuf.checked = !!l.shuffle;
   shuf.addEventListener('change', () => { l.shuffle = shuf.checked; save(); });
+  const unitSel = h('select', {class:'in', id:'leUnit'}, ...units().map((x, i) => h('option', {value:x.id}, `Unidad ${i + 1} · ${x.title}`)));
+  unitSel.value = u.id;
+  unitSel.addEventListener('change', () => { const to = units().find(x => x.id === unitSel.value); if (!to || to === u) return; u.lessons = u.lessons.filter(x => x !== l); to.lessons.push(l); save(); go('lesson', to.id, l.id); toast(`Lección movida a ${to.title}`); });
   root.append(backBtn(`Unidad ${unitNo(u)} · ${u.title}`, () => go('unit')),
+    h('h2', {class:'section-title', style:'margin:4px 0 10px'}, 'Editar lección'),
     h('div', {class:'card stack c-' + u.c},
       inField('Título de la lección', l, 'title', {maxlength:'30', oninput2:() => save()}),
       h('div', {class:'field'}, h('label', {for:'leKind'}, 'Tipo de lección'), kindSel),
+      h('div', {class:'field'}, h('label', {for:'leUnit'}, 'Unidad'), unitSel),
+      h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Los cambios se guardan solos.'),
       h('div', {class:'switch-row', style:'border:0;padding:0'}, h('div', {class:'t'}, 'Mezclar el orden', h('small', {}, 'Útil para repasos y quizzes')), h('label', {class:'switch'}, shuf, h('span')))),
     h('button', {class:'btn blue', type:'button', style:'margin-top:14px', html:ICON_PLAY.replace('<svg', '<svg width="22" height="22"') + 'Probar lección', onclick:() => startLesson(u, l, true)}),
     h('div', {style:'display:flex;justify-content:space-between;align-items:center;margin:20px 0 8px'}, h('h3', {style:'font-size:21px'}, `Ejercicios (${l.items.length})`)),
@@ -1596,7 +1604,20 @@ function renderLessonEd(root){
         mini(ICON_COPY, 'Duplicar', () => { l.items.splice(i + 1, 0, JSON.parse(JSON.stringify(it))); save(); renderContent(); toast('Ejercicio duplicado'); }),
         mini(ICON_TRASH, 'Eliminar', () => { l.items.splice(i, 1); save(); renderContent(); toast('Ejercicio eliminado'); }, {danger:true}))))) : h('div', {class:'card muted', style:'text-align:center'}, 'Sin ejercicios. Agrega el primero.'),
     h('button', {class:'btn', type:'button', style:'margin-top:12px', onclick:() => typeSheet(l)}, '+ Agregar ejercicio'),
+    h('button', {class:'btn ghost', type:'button', style:'margin-top:10px', onclick:() => autoSheet(l)}, '+ Ejercicios automáticos'),
     h('button', {class:'btn ghost', type:'button', style:'margin-top:24px;color:var(--red)', onclick:() => confirmSheet(`¿Eliminar la lección “${l.title}”?`, 'Se borran todos sus ejercicios. No se puede deshacer.', 'Eliminar lección', () => { u.lessons = u.lessons.filter(x => x !== l); save(); go('unit'); toast('Lección eliminada'); })}, 'Eliminar lección'));
+}
+function autoSheet(l){
+  const d = {words:[]};
+  const err = h('p', {class:'err', hidden:true});
+  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Ejercicios automáticos'),
+    h('p', {class:'muted', style:'margin:0;font-size:15px'}, 'Elige palabras del banco y Pandi agrega flashcards, elegir, escuchar, unir, escribir y memoria al final de esta lección.'),
+    wordPicker('Palabras', d, 'words', 8), err,
+    h('button', {class:'btn', type:'button', onclick:() => {
+      if (!d.words.length){ err.textContent = 'Elige al menos una palabra.'; err.hidden = false; return; }
+      const add = autoItems(d.words); l.items.push(...add); save(); sh.remove(); renderContent(); toast(`Se agregaron ${add.length} ejercicios`);
+    }}, 'Agregar a la lección'),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
 }
 function typeSheet(l){
   const sh = sheet(h('h2', {style:'font-size:24px'}, '¿Qué tipo de ejercicio?'),
