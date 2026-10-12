@@ -27,6 +27,7 @@ build.py                Genera index.html (versión publicable). Con un argument
 index.html              App lista para publicar (generada)
 config.js               URL y llave anon de Supabase. Vacío = modo demo
 setup.html              Página para crear una escuela + su admin (usa PANDI_SETUP_TOKEN)
+privacidad.html, terminos.html   Aviso de privacidad y términos (Nicaragua, Ley 787). Nombre y contacto salen de config.js (legalName, contactEmail, contactPhone)
 owner.html              Panel del dueño: ver escuelas, crear escuelas, cambiar clave de un profe (usa PANDI_SETUP_TOKEN)
 manifest.webmanifest, sw.js, icons/   PWA instalable y con caché sin conexión
 supabase/schema.sql     Tablas, funciones y reglas RLS (idempotente)
@@ -35,6 +36,7 @@ supabase/functions/admin-users/index.ts   Edge Function: crear escuela, crear/bo
 tests/                  Pruebas: e2e (Playwright), rls (Postgres), edge (función simulada)
 docs/BITACORA.md        Historia, decisiones y pendientes
 docs/GUIA_DE_USUARIO.md Guía para estudiante, profe y dueño (también la usa el beta tester)
+docs/LISTA_DE_PRUEBAS.md  Lista de pruebas manuales con el servidor real
 README.md               Guía paso a paso para el dueño (en español, no técnica)
 ```
 
@@ -46,8 +48,9 @@ Un solo archivo con una sección `<style>` (tokens de color en `:root` con modo 
 2. **vocabulary:** `V_SEED` es el banco de palabras inicial (`palabra: {img, es}`). `img` puede ser un emoji, `sw:#color`, `n:3` (número), `data:` (foto subida), `panda` o `w:palabra` (usa la imagen de otra palabra). `V` apunta a `DB.course.vocab`.
 3. **course:** `courseSeed()` y `extraUnits()` contienen el Nivel 1 (5 unidades: Hello!, Animals, My Family, My School, Food). Cada lección es `{id, title, kind, shuffle?, items:[...]}`. Los ejercicios se guardan como datos, no como código.
 4. **Tipos de ejercicio (`items`):** `flash`, `pickword`, `listen`, `match`, `write`, `speak`, `order`, `fill`, `memory`, `tip`, `read`. `toStep()` convierte cada item en un paso jugable y `buildSteps()` arma la lección (las opciones incorrectas salen de palabras de la misma lección o unidad).
-5. **data:** objeto global `DB` = `{users, progress, groups, assignments, course, courseVer, session, seq}`.
-   - `progress[userId]` = `{xp, xpDays:{fecha:xp}, done:{lessonId:estrellas}, days:[fechas], medals, spoken, miss:{palabra:errores}, hw:{assignmentId:{text, sentAt, note, reviewed}}}`.
+5. **data:** objeto global `DB` = `{users, progress, groups, assignments, friends, course, courseVer, session, seq}`.
+   - `progress[userId]` = `{xp, xpDays:{fecha:xp}, done:{lessonId:estrellas}, days:[fechas], medals, spoken, miss:{palabra:errores}, avatar:{a:emoji, c:índice de color, x:accesorio}, hw:{assignmentId:{text, sentAt, note, grade, reviewed, reviewedAt, history:[{at, from, to, reason}]}}}`.
+   - `friends[]` = `{from, to, status:'pending'|'accepted'}`. En modo servidor se leen de `friendships` y se cambian al momento con `friendOp` (no pasan por `doSync`).
    - `groups[]` = `{id, name, open:{unitId:bool}}`. Cada grupo abre sus propias unidades.
    - `assignments[]` = `{id, title, due, lessons:[ids], writing:{title,prompt}|null, groups:[ids]}`.
    - `save()` guarda: en modo demo en `localStorage` (clave `pandi-english-v2`); en modo servidor programa `scheduleSync()`.
@@ -55,8 +58,8 @@ Un solo archivo con una sección `<style>` (tokens de color en `:root` con modo 
 6. **recordatorios:** `remindCard` y `remCheck`: notificación local diaria, con la hora guardada en `localStorage`.
 7. **audio:** `say(texto, lento)` usa la mejor voz en inglés (`voiceScore`); `sfx(ok)` hace sonidos con WebAudio; `unlockAudio` desbloquea en el primer toque; `speechScore` compara la voz del niño con tolerancia; `audioTestSheet` sirve para probar sonido y micrófono.
 8. **login & routing:** `route()` decide entre login, `#home` (estudiante) o `#admin`. `U` es el usuario actual y `S` su progreso.
-9. **student app:** `renderMap`, `renderWork` (tareas), `renderRank` (ranking por grupo; semana o total), `renderMe` (perfil y medallas).
-10. **admin panel:** `renderSum` (+ `missedCard`: palabras más falladas), `renderStudents` (+ `groupSheet`, `addStudentSheet`, `studentSheet`), `renderHW` (+ `renderAssignment`, `assignmentSheet`). Reportes por WhatsApp: `shareSheet`, `reportSheet`, `remindSheet`. `groupBar()` es el selector de grupo y `curGroup()` el grupo activo.
+9. **student app:** `renderMap`, `renderWork` (tareas), `renderRank` (ranking por grupo; semana o total), `renderMe` (perfil, medallas, `avatarSheet`, `friendsCard`/`addFriendSheet`, racha de amigos `pairStreak`). `avatar(u)` dibuja el avatar elegido o la inicial.
+10. **admin panel:** `renderSum` (+ `missedCard`: palabras más falladas), `renderStudents` (+ `groupSheet`, `addStudentSheet`, `studentSheet`), `renderHW` (+ `renderAssignment`, `assignmentSheet`). Reportes por WhatsApp: `shareSheet`, `reportSheet`, `remindSheet`. Calificación: `gradeForm`, `gradeView`, `editGradeSheet` (editar exige motivo y guarda historial). `groupBar()` es el selector de grupo y `curGroup()` el grupo activo.
 11. **content editor:** `renderContent` → `renderUnitEd` → `renderLessonEd` → `exerciseSheet`; banco de palabras con `renderWordsEd` y `wordSheet`. Se reordena con flechas (`move`). `lessonSheet` puede generar ejercicios automáticos (`autoItems`). Con "Probar lección" se juega en modo vista previa, sin guardar.
 12. **real backend:** solo actúa si `window.PANDI_CONFIG` tiene `supabaseUrl` y `supabaseAnonKey` (`REMOTE = true`).
     - `remoteBoot` → `remoteLogin` → `remoteLoad` traen todo a `DB`.
@@ -72,9 +75,9 @@ Un solo archivo con una sección `<style>` (tokens de color en `:root` con modo 
 
 ## Supabase
 
-- **Tablas:** `schools`, `profiles` (id = auth.users.id; role admin|student; username único global; group_id), `groups`, `courses` (jsonb con vocab + units por escuela), `assignments`, `progress` (jsonb por estudiante, sin `hw`), `submissions` (una fila por tarea y estudiante).
-- **Funciones:** `my_school()`, `is_admin()`, `my_group()` y `class_ranking()` (ranking del grupo sin exponer datos privados). El trigger `guard_submission` impide que un estudiante se ponga nota o se marque revisado.
-- **RLS:** el estudiante ve solo lo suyo y el ranking de su grupo. El admin ve y edita solo su escuela, y no puede cambiar roles ni el progreso de los niños. Hay 26 casos probados en `tests/rls`.
+- **Tablas:** `friendships` (amistades entre compañeros del mismo grupo; `from_id` envía, `to_id` acepta), `schools`, `profiles` (id = auth.users.id; role admin|student; username único global; group_id), `groups`, `courses` (jsonb con vocab + units por escuela), `assignments`, `progress` (jsonb por estudiante, sin `hw`), `submissions` (una fila por tarea y estudiante, con `note`, `grade` 0-100 e `history`).
+- **Funciones:** `my_school()`, `is_admin()`, `my_group()`, `is_classmate(id)` y `class_ranking()` (ranking del grupo con avatar, sin exponer datos privados). El trigger `guard_submission` impide que un estudiante se ponga nota, calificación o historial, o se marque revisado. **Ojo:** el admin solo puede hacer `update` en `submissions` (un `upsert` cuenta como insert y RLS lo rechaza).
+- **RLS:** el estudiante ve solo lo suyo y el ranking de su grupo. El admin ve y edita solo su escuela, y no puede cambiar roles ni el progreso de los niños. Hay 40 casos probados en `tests/rls`. Cuando cambies `schema.sql`, el dueño debe volver a correrlo en el SQL Editor de Supabase.
 - **Edge Function `admin-users`:** acciones `create_school`, `list_schools` y `owner_reset_admin_password` (requieren `PANDI_SETUP_TOKEN`), `create_student`, `reset_password` y `delete_student` (estas tres requieren sesión de admin).
 
 ## Comandos
@@ -103,6 +106,8 @@ Antes de dar por terminado un cambio: corre `python3 build.py` y luego las prueb
 - No hay `box-sizing` global: si un bloque tiene `width:100%` y relleno, ponle `box-sizing:border-box`.
 - Colores solo desde tokens CSS (`var(--...)`) y siempre probados en modo claro y oscuro. Botones grandes y texto mínimo de 15 px.
 - Cada cambio de datos termina en `save()`. Los ids nuevos se crean con `newId(prefijo)`.
+- **La app no habla sola:** `say()` solo se llama desde botones que toca el usuario (bocina, Probar sonido). Nada de saludos ni frases automáticas.
+- `append()` está parcheado para ignorar `null`/`false`, así un `cond ? h(...) : null` nunca pinta "null".
 - Las hojas emergentes usan `sheet(...)`, las confirmaciones `confirmSheet(...)` y los avisos `toast(...)`. Nunca `alert`, `confirm` ni `prompt`.
 - Los textos visibles van en español claro. Los errores dicen qué pasó y cómo arreglarlo.
 - Los commits terminan con las líneas de atribución que indique la sesión.

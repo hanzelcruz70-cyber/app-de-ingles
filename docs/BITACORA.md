@@ -21,12 +21,25 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 6. [x] Crear la escuela en `setup.html` (hecho). [ ] Entrar como admin, crear un grupo y estudiantes, y probar en el celular ("Agregar a pantalla principal").
 
 ### Siguientes ideas (no comprometidas)
+- Ideas propuestas el 12 oct: tienda de accesorios con gemas, ligas semanales, desafío entre amigos, repaso inteligente de palabras falladas, modo clase en vivo (quiz en tiempo real), certificados por unidad, panel para padres con su propio acceso, exportar notas a Excel, vista de un solo estudiante para el profe, sonidos/animaciones de celebración, modo sin conexión completo.
 - Mover las fotos del banco de palabras a Supabase Storage. Hoy van en base64 dentro de `courses.data`.
 - Usar el micrófono de verdad en la app instalada. En la vista previa de claude.ai no hay micrófono y existe el botón "Ya lo dije".
 - Niveles 2 a 6, y que cada grupo tenga su nivel.
 - Recordatorios con Web Push desde el servidor (hoy son locales). Empaquetar para Google Play (TWA o Capacitor).
 
 ---
+
+## 2026-10-12 · Calificación editable, avatar, amigos, avisos legales y app sin voz automática
+- **Bug real (servidor):** al revisar una tarea salía "No se pudo guardar en el servidor". El admin hacía `upsert` en `submissions`; RLS lo trata como INSERT y el admin no tiene permiso de insertar a nombre del niño. Ahora el admin usa `update`. El servidor simulado de las pruebas e2e también rechaza ese upsert, para que no vuelva a pasar desapercibido.
+- **Bug:** salía "null" en el ranking del estudiante (otro `append(..., null)`). Se parcheó `append()` para ignorar `null`/`false` en toda la app.
+- **Calificación:** nota 0-100 (opcional) + comentario. Ya revisada, se ve la calificación con su historial. **Editar nota** exige un motivo (mínimo 5 letras) y guarda `history` [{at, from, to, reason}]. El estudiante ve nota, comentario y cambios. Columnas nuevas: `submissions.grade` y `submissions.history`; el trigger impide que el niño las toque.
+- **Avatar:** 16 animales (emoji), 7 colores y 8 accesorios; algunos se desbloquean con XP. Se guarda en `progress.avatar`. `class_ranking()` ahora devuelve `avatar` (se hizo `drop function` + `create`, porque cambió lo que devuelve; no toca datos).
+- **Amigos y racha de amigos:** tabla `friendships` con RLS. Solo compañeros del mismo grupo (`is_classmate`, security definer, porque el niño no puede leer perfiles ajenos). Solo quien recibe la solicitud la acepta, y cualquiera de los dos puede borrarla. No hay chat. La racha se calcula en el cliente con los días de práctica que ya trae `class_ranking()`. En la demo, las cuentas de ejemplo aceptan solas.
+- **Legal:** `privacidad.html` y `terminos.html`, basados en la Ley 787 (Protección de Datos Personales) y su Reglamento (Decreto 36-2012), y en el Código de la Niñez y la Adolescencia (Ley 287). La escuela es la responsable y el proveedor es el encargado. Datos de contacto desde `config.js`. Enlaces en el login y el perfil. Se agregó la casilla obligatoria de autorización del tutor al crear un estudiante, y la aceptación de los términos en `setup.html`. **Recomendado:** que un abogado nicaragüense revise los textos antes de vender.
+- **Sin voz automática:** a pedido del dueño se quitó el saludo de voz al entrar, el "Great job!" al terminar y la lectura automática de palabras y opciones. Solo suena al tocar un botón de bocina.
+- **Pruebas:** RLS 40/40 (nuevos: G1-G3 calificación, F1-F11 amigos); `tests/e2e/social.js` (avatar, amigos, sin voz, sin "null", autorización); la prueba de dos dispositivos ahora califica, edita con motivo y verifica que el niño vea nota e historial.
+- Nueva `docs/LISTA_DE_PRUEBAS.md` con pruebas manuales para el dueño.
+- **El dueño debe volver a correr `supabase/schema.sql` en el SQL Editor.** Sin eso, la calificación y los amigos fallan en el servidor.
 
 ## 2026-10-11 · Editar lección más visible y mensaje del reporte legible
 - El dueño no encontraba cómo editar una lección ya creada (ya se podía tocando la fila). Se agregó un lápiz en cada lección, una nota en la unidad y el título "Editar lección". También se puede mover la lección a otra unidad (selector **Unidad**) y añadirle **+ Ejercicios automáticos** (`autoSheet`).

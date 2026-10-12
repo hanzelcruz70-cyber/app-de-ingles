@@ -16,6 +16,9 @@ La interfaz está en español y las lecciones en inglés.
 2. Escribe tu **Usuario** y tu **Contraseña** y toca **Iniciar sesión**.
 3. Si los datos están mal, sale un mensaje rojo: *"El usuario o la contraseña no coinciden. Revisa y prueba otra vez."*
 4. Si no se oye la voz, toca **"¿No se oye? Probar audio y micrófono"** debajo del botón.
+5. Debajo están los enlaces a los **Términos y condiciones** y al **Aviso de privacidad**. Al entrar se aceptan.
+
+La app **no habla sola** en ningún momento (no hay saludo de voz ni frases automáticas). La voz en inglés suena solo cuando el niño toca un botón de bocina (**Escuchar** / **Lento**) en un ejercicio.
 
 ### Modo demo
 
@@ -75,7 +78,7 @@ Tipos de ejercicio:
 
 - Muestra **Mis tareas** de la semana: las lecciones asignadas y su fecha (*Vence hoy*, *Para el …*, *Venció el …*).
 - Si la tarea tiene **WORKBOOK · ESCRITURA**, el niño escribe en inglés en el cuadro y toca **Enviar a mi profe**. Sale *"¡Tarea enviada a tu profe!"* (la primera vez sale en su lugar la medalla: *"¡Enviada! Ganaste la medalla “Tarea lista”."*).
-- Cuando el profe la califica, aparece **Nota de tu profe**.
+- Cuando el profe la califica, aparece **Nota de tu profe**: la nota (por ejemplo **95/100**) y su comentario. Si el profe cambia la nota, se ve el cambio y el motivo (✏️).
 
 ### 2.4 Ranking
 
@@ -88,7 +91,10 @@ Tipos de ejercicio:
 - Muestra XP total, racha (días seguidos) y lecciones completadas.
 - **Medallas**: las ganadas a color y las que faltan en gris, con lo que hay que hacer para ganarlas.
 - **⏰ Recordatorio diario:** elige una **Hora** y toca **Activar recordatorio**. El teléfono pide permiso para notificaciones. Si ese día no has practicado, Pandi avisa a esa hora (funciona mejor con la app instalada). Se apaga con **Apagar recordatorio**.
+- **🎨 Personalizar mi avatar:** elige un **personaje** (animal), un **color** y un **accesorio**. Algunos accesorios se desbloquean con XP (🔒 Estrella 100, Lentes 200, Audífonos 300, Sombrero 450, Corona 700). El avatar se ve en el perfil, en el ranking, en la lista de amigos y en el panel del profe.
+- **👫 Mis amigos:** con **+ Agregar** invitas a un compañero **de tu mismo grupo** (no hay chat). Él debe tocar **Aceptar**. Cada amigo muestra la **racha de amigos 🔥**: los días seguidos en que **los dos** practicaron. Al tocar un amigo puedes quitarlo. En el modo demo, las cuentas de ejemplo aceptan solas.
 - **Probar audio y micrófono:** **Probar sonido** (Pandi habla en inglés), **Probar efectos** y **Probar micrófono** (di "Hello").
+- Enlaces a **Aviso de privacidad** y **Términos y condiciones**.
 - **Cerrar sesión** (pide confirmar).
 - En modo demo: **Reiniciar demo** borra todo lo creado en ese navegador.
 
@@ -110,7 +116,7 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 
 - Lista de estudiantes del grupo con su XP y última práctica.
 - **+ Nuevo grupo** crea un grupo (ej. *Lunes 3 pm · Nivel 1*). Al tocar la tarjeta de un grupo se abre **Editar grupo**, para cambiar el nombre o eliminarlo (debe quedar al menos un grupo, y primero hay que mover o eliminar a sus estudiantes).
-- **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 6 con servidor). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
+- **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 6 con servidor), y la casilla obligatoria **"Tengo la autorización del papá, la mamá o el tutor"** (lo pide la ley de protección de datos, porque son menores). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
 - Al tocar un estudiante se abre su **ficha**: XP, racha, avance por unidad, medallas, última práctica, **Le cuesta** (sus palabras más falladas), **Reporte para padres**, cambio de **Grupo**, **Cambiar contraseña** (solo con servidor) y **Eliminar estudiante**.
 
 ### 3.3 Contenido (editor del curso)
@@ -129,7 +135,9 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 
 - **+ Nueva tarea:** título, **Fecha de entrega**, lecciones, opcionalmente **Incluir una escritura (workbook)** con título e instrucciones, y **Asignar a los grupos**. Botón **Asignar tarea**. Si elegiste lecciones de una unidad cerrada, la app la abre para esos grupos y lo avisa (*"También se abrió: …"*).
 - Al abrir una tarea: **Avance de cada estudiante** y las escrituras entregadas (**POR REVISAR**).
-- Para calificar: escribe una nota y toca **Marcar revisada y enviar nota**. El niño la ve en su sección Tareas. Si la dejas vacía, el niño recibe *"¡Buen trabajo!"*.
+- Para calificar: escribe la **Nota (0 a 100, opcional)** y el **Comentario para el estudiante**, y toca **Calificar y enviar**. Si dejas el comentario vacío, el niño recibe *"¡Buen trabajo!"*.
+- Ya calificada, se ve la **Calificación enviada** con la nota, el comentario y el historial de cambios.
+- **Editar nota:** cambia la nota o el comentario. El **Motivo del cambio** es obligatorio (mínimo 5 letras) y queda en el historial, visible para el niño.
 - **Editar tarea** o **Eliminar tarea**.
 
 ### 3.5 Reporte para padres
@@ -162,7 +170,11 @@ Abre `…/setup.html`, escribe el nombre de la escuela, el nombre y usuario del 
 3. **Crear escuela nueva:** igual que `setup.html`.
 4. **Cambiar la clave de un profe:** usuario del profe y contraseña nueva (mínimo 6).
 
-Si el código está mal: *"Código de configuración incorrecto"*. El código no se guarda en el navegador.
+Si el código está mal: *"Código de configuración incorrecto"*. El código no se guarda en el navegador. Para crear una escuela en `setup.html` hay que aceptar los términos.
+
+### 4.3 Aviso de privacidad y términos
+
+`privacidad.html` y `terminos.html`. El nombre y los datos de contacto que aparecen ahí se configuran en `config.js` (`legalName`, `contactEmail`, `contactPhone`).
 
 ---
 

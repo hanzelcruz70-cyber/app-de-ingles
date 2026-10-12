@@ -33,6 +33,7 @@ Si no conectas el servidor, la app funciona igual en **modo demo**: los datos se
 1. En el proyecto nuevo: **SQL Editor → New query**.
 2. Copia todo el contenido de `supabase/schema.sql`, pégalo y presiona **Run**.
 3. Debe decir *Success*. Puedes correrlo otra vez sin problema: no borra nada.
+4. **Cada vez que se actualice `schema.sql`** (por ejemplo, cuando se agregan funciones nuevas como notas o amigos), vuelve a copiarlo y correrlo aquí. No borra datos.
 
 ## Paso 3 · Ajustar el inicio de sesión
 

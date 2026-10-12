@@ -168,7 +168,20 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .pod.p2 .block{height:72px;background:#9DB0C8;box-shadow:0 4px 0 #7D8FA6}
 .pod.p3 .block{height:56px;background:#D9874A;box-shadow:0 4px 0 #AF6630}
 .pod .pts{font-size:13px;color:var(--ink-2)}
-.avatar{border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:600;color:#fff;flex:none}
+.avatar{border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:600;color:#fff;flex:none;position:relative}
+.avatar .emo{font-size:1.45em;line-height:1}
+.avatar .acc{position:absolute;top:-.45em;right:-.45em;font-size:.95em;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.avatar.xl{width:120px;height:120px;font-size:44px}
+.av-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.av-grid button{font-size:30px;padding:8px 0;border-radius:14px;border:2px solid var(--line);background:var(--surface)}
+.av-grid button[aria-pressed=true]{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 14%,var(--surface))}
+.av-grid button:disabled{opacity:.45}
+.av-grid small{display:block;font-size:12px;color:var(--ink-2);font-weight:700}
+.friend-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:2px solid var(--line)}
+.friend-row:first-of-type{border-top:0}
+.friend-row .nm{flex:1;min-width:0;font-weight:800}
+.friend-row .nm small{display:block;color:var(--ink-2);font-weight:600;font-size:14px}
+.friend-row .avatar{width:44px;height:44px;font-size:18px}
 .rank-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px}
 .rank-row+.rank-row{margin-top:4px}
 .rank-row .pos{width:24px;text-align:center;font-family:var(--display);font-size:18px;color:var(--ink-2);font-variant-numeric:tabular-nums}
@@ -211,6 +224,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .hw .head .avatar{width:40px;height:40px;font-size:17px}
 .profile .avatar{width:64px;height:64px;font-size:26px}
 .pill{white-space:nowrap}
+.grade-badge{background:var(--ok-ink);color:var(--surface);border-radius:12px;padding:4px 10px;font-size:17px;font-family:var(--display)}
 .hw blockquote{margin:0;background:var(--surface-2);border-radius:12px;padding:12px;font-size:16px;line-height:1.5}
 .form-grid{display:grid;gap:10px}
 
@@ -310,6 +324,8 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .sheet{position:fixed;inset:0;z-index:40;background:rgba(10,18,32,.55);display:flex;align-items:flex-end;justify-content:center}
 .sheet>div>*{flex-shrink:0}
 .sheet>div{background:var(--surface);width:100%;max-width:480px;max-height:88%;overflow-y:auto;border-radius:24px 24px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;box-sizing:border-box}
+.legal{font-size:14px;color:var(--ink-2);text-align:center;margin:12px 0 0;line-height:1.5}
+.legal a{color:var(--blue);font-weight:700}
 .toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:60;font-size:15px;max-width:calc(100% - 48px);text-align:center}
 
 
@@ -361,7 +377,7 @@ input[type=date].in{min-height:50px}
 .wprev.big .pic .sw{width:70px;height:70px}
 .wprev.big .pic img.up{width:120px;height:120px}
 select.in{appearance:auto;min-width:0}
-.swatches{display:flex;gap:10px}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
 .swatches button{width:38px;height:38px;border-radius:50%;background:var(--uc);border:3px solid var(--surface);box-shadow:0 0 0 2px var(--line)}
 .swatches button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink)}
 .pic img.up{width:70px;height:70px;object-fit:cover;border-radius:16px}
@@ -392,6 +408,7 @@ select.in{appearance:auto;min-width:0}
       <p class="err" id="lgErr" hidden></p>
       <button class="btn" type="submit">Iniciar sesión</button>
     </form>
+    <p class="legal">Al entrar aceptas los <a href="terminos.html">Términos y condiciones</a> y el <a href="privacidad.html">Aviso de privacidad</a>.</p>
     <button class="linkbtn" id="lgAudio" type="button" style="align-self:center;margin:10px auto 0">¿No se oye? Probar audio y micrófono</button>
     <div class="demo">
       <div class="lbl">Cuentas de prueba · toca una para llenar los datos</div>
@@ -464,6 +481,8 @@ const PANDA_FULL="data:image/webp;base64,UklGRvhbAABXRUJQVlA4WAoAAAAQAAAAKwEAhwE
 const PANDA_HEAD="data:image/webp;base64,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";
 
 /* ---------- helpers ---------- */
+// append() ignora null/undefined/false: así un `cond ? h(...) : null` nunca pinta la palabra "null" en pantalla
+[Element.prototype, DocumentFragment.prototype].forEach(P => { const ap = P.append; P.append = function(...k){ return ap.apply(this, k.filter(x => x != null && x !== false)); }; });
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 function h(tag, attrs, ...kids){
@@ -489,7 +508,17 @@ const today = () => dayKey(0);
 const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + 's')}`;
 const endMark = t => /[.?!]$/.test(t) ? t : t + (/^(what|where|who|how|is|are|do|does|can|have|has)\b/i.test(t) ? '?' : '.');
 const AV_COLORS = ['#1E6FD9','#2FA84F','#E8352E','#8E44C9','#FF8A1F','#0FA3A3','#D63384'];
-function avatar(u, cls){ const i = [...u.id].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length; return h('div', {class:'avatar ' + (cls || ''), style:'background:' + AV_COLORS[i], 'aria-hidden':'true'}, (u.name || '?').trim()[0].toUpperCase()); }
+const AV_ANIMALS = ['🐼','🐱','🐶','🦊','🐰','🐯','🦁','🐸','🐵','🐨','🐧','🦄','🐻','🐷','🐮','🐙'];
+const AV_ACC = [{g:'', name:'Nada', xp:0}, {g:'🧢', name:'Gorra', xp:0}, {g:'🎀', name:'Moño', xp:0}, {g:'⭐', name:'Estrella', xp:100}, {g:'🕶️', name:'Lentes', xp:200}, {g:'🎧', name:'Audífonos', xp:300}, {g:'🎩', name:'Sombrero', xp:450}, {g:'👑', name:'Corona', xp:700}];
+const avatarOf = id => (DB.progress && DB.progress[id] && DB.progress[id].avatar) || null;
+function avatar(u, cls, override){
+  const av = override || avatarOf(u.id);
+  if (av && av.a){
+    return h('div', {class:'avatar has-emo ' + (cls || ''), style:'background:' + AV_COLORS[av.c % AV_COLORS.length], 'aria-hidden':'true'}, h('span', {class:'emo'}, av.a), av.x ? h('span', {class:'acc'}, av.x) : null);
+  }
+  const i = [...u.id].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length;
+  return h('div', {class:'avatar ' + (cls || ''), style:'background:' + AV_COLORS[i], 'aria-hidden':'true'}, (u.name || '?').trim()[0].toUpperCase());
+}
 
 const ICON = {
   star: '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>',
@@ -737,6 +766,7 @@ function migrate(){
     }
     DB.courseVer = 2;
   }
+  if (!DB.friends) DB.friends = REMOTE ? [] : [{from:'s1', to:'s2', status:'accepted'}, {from:'s3', to:'s1', status:'pending'}];
   if (DB.seq < 10) DB.seq = 10;
   save();
 }
@@ -948,7 +978,6 @@ $('#loginForm').addEventListener('submit', async e => {
   if (!found || found.pass !== pass){ err.textContent = 'El usuario o la contraseña no coinciden. Revisa y prueba otra vez.'; err.hidden = false; return; }
   err.hidden = true; $('#lgPass').value = '';
   DB.session = found.id; save(); route();
-  if (found.role === 'student') say('Hello, ' + found.name + '!');
 });
 async function logout(){ if (REMOTE){ try { await syncNow(); await SB.auth.signOut(); } catch (e) {} } DB.session = null; save(); U = S = null; $('#lgUser').value = ''; route(); }
 $('#admLogout').addEventListener('click', () => confirmSheet('¿Cerrar sesión?', 'Volverás a la pantalla de inicio de sesión.', 'Cerrar sesión', logout));
@@ -1048,7 +1077,7 @@ function renderWork(){
           S.hw[a.id] = {text:ta.value.trim(), sentAt:today(), note:'', reviewed:false};
           const got = checkMedals(); save(); renderWork(); toast(got.length ? '¡Enviada! Ganaste la medalla “Tarea lista”.' : '¡Tarea enviada a tu profe!');
         }}, hw.sentAt ? 'Enviada a tu profe' : 'Enviar a mi profe'),
-        hw.reviewed ? h('div', {class:'note'}, h('div', {class:'lbl', style:'color:var(--ok-ink)'}, 'Nota de tu profe'), h('div', {style:'margin-top:4px'}, hw.note || '¡Buen trabajo!'))
+        hw.reviewed ? gradeView(hw, false)
           : hw.sentAt ? h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Tu profe la revisará y te dejará una nota aquí.') : null));
     }
     return h('div', {class:'card'}, ...parts);
@@ -1076,19 +1105,99 @@ function renderRank(){
       h('div', {class:'pos'}, i + 1), avatar(r.u), h('div', {class:'nm'}, r.u.id === U.id ? `${r.u.name} (tú)` : r.u.name, h('small', {}, streakOf(r.p) === 1 ? '1 día seguido' : `${streakOf(r.p)} días seguidos`)), h('div', {class:'xpv'}, r.pts + ' XP')))),
     list.some(r => r.u.example) ? h('p', {class:'muted', style:'font-size:13px;margin:12px 0 0'}, 'En esta demo, Sofía, Diego, Valeria y los demás compañeros son cuentas de muestra.') : null);
 }
+/* ---------- avatar y amigos ---------- */
+function avatarSheet(){
+  const cur = Object.assign({a:'🐼', c:0, x:''}, S.avatar || {});
+  const prev = h('div', {style:'display:flex;justify-content:center;padding:8px 0'});
+  const animals = h('div', {class:'av-grid'}), colors = h('div', {class:'swatches'}), accs = h('div', {class:'av-grid'});
+  const draw = () => {
+    prev.innerHTML = ''; prev.append(avatar(U, 'xl', cur));
+    animals.innerHTML = ''; AV_ANIMALS.forEach(a => animals.append(h('button', {type:'button', 'aria-pressed':String(cur.a === a), 'aria-label':'Personaje ' + a, onclick:() => { cur.a = a; draw(); }}, a)));
+    colors.innerHTML = ''; AV_COLORS.forEach((c, i) => colors.append(h('button', {type:'button', style:'background:' + c, 'aria-label':'Color ' + (i + 1), 'aria-pressed':String(cur.c === i), onclick:() => { cur.c = i; draw(); }})));
+    accs.innerHTML = ''; AV_ACC.forEach(x => { const locked = S.xp < x.xp; accs.append(h('button', {type:'button', disabled:locked, 'aria-pressed':String(cur.x === x.g), 'aria-label':x.name + (locked ? `, se desbloquea con ${x.xp} XP` : ''), onclick:() => { cur.x = x.g; draw(); }}, x.g || '🚫', h('small', {}, locked ? `🔒 ${x.xp} XP` : x.name))); });
+  };
+  draw();
+  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Mi avatar'), prev,
+    h('div', {class:'lbl'}, 'Personaje'), animals, h('div', {class:'lbl'}, 'Color'), colors,
+    h('div', {class:'lbl'}, 'Accesorio'), h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Gana XP practicando para desbloquear más accesorios.'), accs,
+    h('button', {class:'btn', type:'button', onclick:() => { S.avatar = {a:cur.a, c:cur.c, x:cur.x}; save(); sh.remove(); renderMe(); renderStats(); toast('¡Avatar guardado!'); }}, 'Guardar avatar'),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
+}
+const friendIds = uid => (DB.friends || []).filter(f => f.status === 'accepted' && (f.from === uid || f.to === uid)).map(f => f.from === uid ? f.to : f.from);
+const friendReqsIn = uid => (DB.friends || []).filter(f => f.status === 'pending' && f.to === uid);
+const friendReqOut = (uid, other) => (DB.friends || []).some(f => f.status === 'pending' && f.from === uid && f.to === other);
+function pairStreak(a, b){
+  const A = new Set(prog(a).days || []), B = new Set(prog(b).days || []), both = d => A.has(d) && B.has(d);
+  const d = new Date(); if (!both(ymd(d))) d.setDate(d.getDate() - 1);
+  let n = 0; while (both(ymd(d))){ n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+async function friendOp(kind, other){
+  const me = U.id;
+  try {
+    if (kind === 'send'){
+      const autoAccept = !REMOTE && (DB.users.find(u => u.id === other) || {}).example; // en la demo, las cuentas de ejemplo aceptan solas
+      if (REMOTE) must(await SB.from('friendships').insert({school_id:SCHOOL, from_id:me, to_id:other}));
+      DB.friends.push({from:me, to:other, status:autoAccept ? 'accepted' : 'pending'});
+      toast(autoAccept ? '¡Ahora son amigos! (en la demo aceptan solos)' : 'Solicitud enviada');
+    } else if (kind === 'accept'){
+      if (REMOTE) must(await SB.from('friendships').update({status:'accepted'}).eq('from_id', other).eq('to_id', me));
+      const f = DB.friends.find(x => x.from === other && x.to === me); if (f) f.status = 'accepted';
+      toast('¡Ahora son amigos!');
+    } else {
+      if (REMOTE){ must(await SB.from('friendships').delete().eq('from_id', other).eq('to_id', me)); must(await SB.from('friendships').delete().eq('from_id', me).eq('to_id', other)); }
+      DB.friends = DB.friends.filter(x => !((x.from === me && x.to === other) || (x.from === other && x.to === me)));
+      toast(kind === 'reject' ? 'Solicitud rechazada' : 'Amigo quitado');
+    }
+    if (!REMOTE) save(); else SNAP.friends = clone(DB.friends);
+  } catch (e) { console.error(e); toast('No se pudo guardar. Revisa tu internet y prueba otra vez.'); }
+  renderMe();
+}
+function friendsCard(){
+  const uid = U.id, nameOf = id => (DB.users.find(u => u.id === id) || {name:'Compañero'}).name;
+  const userOf = id => DB.users.find(u => u.id === id) || {id, name:'?'};
+  const reqs = friendReqsIn(uid), fr = friendIds(uid).filter(id => DB.users.some(u => u.id === id));
+  const today_ = today();
+  return h('div', {class:'card', style:'margin-top:18px'},
+    h('div', {style:'display:flex;justify-content:space-between;align-items:center;gap:8px'}, h('h3', {style:'font-size:19px'}, '👫 Mis amigos'), h('button', {class:'btn small', type:'button', style:'width:auto', onclick:addFriendSheet}, '+ Agregar')),
+    h('p', {class:'muted', style:'margin:4px 0 6px;font-size:14px'}, 'Practiquen los dos el mismo día para mantener su racha de amigos 🔥'),
+    ...reqs.map(f => h('div', {class:'friend-row'}, avatar(userOf(f.from)), h('div', {class:'nm'}, nameOf(f.from), h('small', {}, 'Quiere ser tu amigo')),
+      h('button', {class:'btn small', type:'button', style:'width:auto', onclick:() => friendOp('accept', f.from)}, 'Aceptar'),
+      h('button', {class:'btn ghost small', type:'button', style:'width:auto', 'aria-label':'Rechazar a ' + nameOf(f.from), onclick:() => friendOp('reject', f.from)}, '✕'))),
+    ...fr.map(id => { const n = pairStreak(uid, id), meToday = (S.days || []).includes(today_), themToday = (prog(id).days || []).includes(today_);
+      const hint = meToday && themToday ? '¡Los dos practicaron hoy!' : meToday ? `Falta que ${nameOf(id).split(' ')[0]} practique hoy` : themToday ? 'Te toca practicar hoy' : 'Practiquen hoy para seguir';
+      return h('div', {class:'friend-row', role:'button', tabindex:'0', style:'cursor:pointer', onclick:() => confirmSheet(`¿Quitar a ${nameOf(id)}?`, 'Dejarán de ser amigos y se pierde su racha juntos.', 'Quitar amigo', () => friendOp('remove', id))},
+        avatar(userOf(id)), h('div', {class:'nm'}, nameOf(id), h('small', {}, hint)), h('b', {style:'color:var(--orange);font-size:18px', 'aria-label':`Racha de ${n} días juntos`}, `🔥 ${n}`)); }),
+    !reqs.length && !fr.length ? h('p', {style:'margin:6px 0 0'}, 'Todavía no tienes amigos. Toca “+ Agregar” para invitar a un compañero de tu grupo.') : null);
+}
+function addFriendSheet(){
+  const uid = U.id, mine = new Set(friendIds(uid));
+  const mates = groupStudents().filter(u => u.id !== uid && !mine.has(u.id));
+  const incoming = new Set(friendReqsIn(uid).map(f => f.from));
+  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Agregar amigo'),
+    h('p', {class:'muted', style:'margin:0;font-size:15px'}, 'Solo puedes agregar compañeros de tu grupo. Ellos tienen que aceptar.'),
+    ...(mates.length ? mates.map(u => h('div', {class:'friend-row'}, avatar(u), h('div', {class:'nm'}, u.name),
+      incoming.has(u.id) ? h('button', {class:'btn small', type:'button', style:'width:auto', onclick:() => { sh.remove(); friendOp('accept', u.id); }}, 'Aceptar')
+      : friendReqOut(uid, u.id) ? h('span', {class:'pill'}, 'Enviada')
+      : h('button', {class:'btn blue small', type:'button', style:'width:auto', onclick:() => { sh.remove(); friendOp('send', u.id); }}, 'Invitar'))) : [h('p', {style:'margin:0'}, 'Ya eres amigo de todos tus compañeros de grupo. 🎉')]),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
+}
 function renderMe(){
   const root = $('#tab-me'); root.innerHTML = '';
   root.append(
-    h('div', {class:'profile'}, h('div', {class:'av'}, panda('head')), h('div', {style:'flex:1;min-width:0'}, h('h2', {style:'font-size:26px'}, U.name), h('div', {class:'muted'}, '@' + U.user + ' · ' + curGroup().name))),
+    h('div', {class:'profile'}, avatar(U), h('div', {style:'flex:1;min-width:0'}, h('h2', {style:'font-size:26px'}, U.name), h('div', {class:'muted'}, '@' + U.user + ' · ' + curGroup().name))),
+    h('button', {class:'btn ghost', type:'button', style:'margin-top:12px', onclick:avatarSheet}, '🎨 Personalizar mi avatar'),
     h('div', {class:'stats', style:'margin:18px 0'},
       h('div', {class:'stat'}, h('b', {}, S.xp), h('span', {}, 'XP total')),
       h('div', {class:'stat'}, h('b', {}, streak()), h('span', {}, 'Días seguidos')),
       h('div', {class:'stat'}, h('b', {}, doneCount()), h('span', {}, 'Lecciones'))),
     h('h2', {class:'section-title'}, 'Medallas'),
     h('div', {class:'medals'}, ...MEDALS.map(m => h('div', {class:'medal' + (S.medals.includes(m.id) ? '' : ' off')}, h('div', {class:'m'}, m.g), h('b', {}, m.name), h('small', {}, m.desc)))),
+    friendsCard(),
     remindCard(),
     h('div', {class:'stack', style:'margin-top:24px'},
       h('button', {class:'btn ghost', type:'button', onclick:audioTestSheet}, 'Probar audio y micrófono'),
+      h('p', {class:'legal'}, h('a', {href:'privacidad.html'}, 'Aviso de privacidad'), ' · ', h('a', {href:'terminos.html'}, 'Términos y condiciones')),
       h('button', {class:'btn ghost', type:'button', onclick:() => confirmSheet('¿Cerrar sesión?', 'Volverás a la pantalla de inicio de sesión.', 'Cerrar sesión', logout)}, 'Cerrar sesión'),
       REMOTE ? null : h('button', {class:'btn ghost', type:'button', style:'color:var(--ink-2)', onclick:() => confirmSheet('¿Reiniciar la demo?', 'Se borran todas las cuentas creadas y el progreso guardado en este dispositivo.', 'Reiniciar demo', () => { DB = seed(); migrate(); route(); })}, 'Reiniciar demo')));
 }
@@ -1197,6 +1306,7 @@ function addStudentSheet(){
   const pass = h('input', {class:'in', id:'nsPass', placeholder:REMOTE ? 'Mínimo 6 caracteres' : 'Mínimo 4 caracteres', maxlength:'30'});
   const err = h('p', {class:'err', hidden:true});
   const gsel = groupSelect('nsGroup');
+  const consent = h('input', {type:'checkbox', id:'nsConsent'});
   name.addEventListener('input', () => { if (!user.dataset.touched) user.value = name.value.trim().split(/\s+/)[0].toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g, ''); });
   user.addEventListener('input', () => user.dataset.touched = '1');
   const sh = sheet(h('h2', {style:'font-size:24px'}, 'Agregar estudiante'),
@@ -1205,6 +1315,7 @@ function addStudentSheet(){
       h('div', {class:'field'}, h('label', {for:'nsUser'}, 'Usuario'), user),
       h('div', {class:'field'}, h('label', {for:'nsPass'}, 'Contraseña'), pass),
       h('div', {class:'field'}, h('label', {for:'nsGroup'}, 'Grupo'), gsel)),
+    h('label', {class:'cbrow', for:'nsConsent', style:'font-size:15px;align-items:flex-start'}, consent, h('span', {}, 'Tengo la autorización del papá, la mamá o el tutor para crear esta cuenta (', h('a', {href:'privacidad.html', target:'_blank', rel:'noopener'}, 'Aviso de privacidad'), ').')),
     err,
     h('button', {class:'btn', type:'button', onclick:async ev => {
       const n = name.value.trim(), us = user.value.trim().toLowerCase(), pw = pass.value;
@@ -1214,6 +1325,7 @@ function addStudentSheet(){
       if (DB.users.some(u => u.user === us)) return fail('Ese usuario ya existe. Prueba con otro.');
       const minPw = REMOTE ? 6 : 4;
       if (pw.length < minPw) return fail(`La contraseña debe tener al menos ${minPw} caracteres.`);
+      if (!consent.checked) return fail('Marca la casilla de autorización del papá, la mamá o el tutor.');
       if (REMOTE){
         ev.target.disabled = true; ev.target.textContent = 'Creando cuenta…';
         const r = await adminCall({action:'create_student', name:n, username:us, password:pw, group_id:gsel.value});
@@ -1294,7 +1406,7 @@ function studentSheet(u){
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'),
     h('button', {class:'btn ghost', type:'button', style:'color:var(--red)', onclick:() => { sh.remove(); confirmSheet(`¿Eliminar a ${u.name}?`, 'Se borra la cuenta y todo su progreso. No se puede deshacer.', 'Eliminar estudiante', async () => {
       if (REMOTE){ const r = await adminCall({action:'delete_student', user_id:u.id}); if (r.error) return toast(r.error); SNAP.users = SNAP.users.filter(x => x.id !== u.id); delete SNAP.progress[u.id]; }
-      DB.users = DB.users.filter(x => x.id !== u.id); delete DB.progress[u.id]; save(); renderStudents(); toast('Estudiante eliminado'); }); }}, 'Eliminar estudiante'));
+      DB.users = DB.users.filter(x => x.id !== u.id); delete DB.progress[u.id]; DB.friends = (DB.friends || []).filter(f => f.from !== u.id && f.to !== u.id); save(); renderStudents(); toast('Estudiante eliminado'); }); }}, 'Eliminar estudiante'));
 }
 let AT = {view:'list', id:null};
 function renderHW(){
@@ -1338,15 +1450,54 @@ function renderAssignment(root, a){
       h('h3', {style:'font-size:19px;margin-bottom:8px'}, `Escrituras entregadas (${sent.length})`),
       ...sent.map(u => {
         const x = hwOf(prog(u.id), a.id);
-        const note = h('textarea', {rows:'2', id:'note-' + u.id, placeholder:'Escribe una nota para el estudiante', 'aria-label':'Nota para ' + u.name}, x.note || '');
         return h('div', {class:'hw'},
           h('div', {class:'head'}, avatar(u), h('div', {class:'nm'}, u.name, h('small', {}, x.sentAt === today() ? 'Entregada hoy' : 'Entregada el ' + fmtDay(x.sentAt))), h('span', {class:'pill ' + (x.reviewed ? 'okp' : 'warn')}, x.reviewed ? 'REVISADA' : 'POR REVISAR')),
-          h('blockquote', {}, x.text), note,
-          h('button', {class:'btn small' + (x.reviewed ? ' ghost' : ''), type:'button', onclick:() => { const typed = note.value.trim(); x.note = typed || '¡Buen trabajo!'; x.reviewed = true; save(); renderHW(); toast(typed ? `Nota enviada a ${u.name}` : `Revisada. ${u.name} verá “¡Buen trabajo!”`); }}, x.reviewed ? 'Actualizar nota' : 'Marcar revisada y enviar nota'));
+          h('blockquote', {}, x.text),
+          x.reviewed ? gradeView(x, true) : gradeForm(x, u));
       }),
       sent.length ? null : h('p', {class:'muted', style:'margin:0'}, 'Todavía nadie ha entregado.')));
   }
   root.append(h('button', {class:'btn ghost', type:'button', style:'margin-top:22px;color:var(--red)', onclick:() => confirmSheet(`¿Eliminar “${a.title}”?`, 'Los estudiantes dejarán de verla. Sus lecciones completadas no se borran.', 'Eliminar tarea', () => { DB.assignments = DB.assignments.filter(x => x !== a); save(); AT = {view:'list', id:null}; renderHW(); toast('Tarea eliminada'); })}, 'Eliminar tarea'));
+}
+/* calificación: nota 0-100 + comentario; al editar se pide el motivo y queda historial */
+const gradeTxt = g => (g === null || g === undefined || g === '') ? '' : `${g}/100`;
+function readGrade(inp){ const t = inp.value.trim(); if (!t) return {ok:true, g:null}; const n = Number(t); return Number.isInteger(n) && n >= 0 && n <= 100 ? {ok:true, g:n} : {ok:false}; }
+function gradeInputs(x, prefix){
+  const g = h('input', {class:'in', id:prefix + 'g', type:'number', inputmode:'numeric', min:'0', max:'100', step:'1', placeholder:'Ej. 95', style:'max-width:140px'}); if (x.grade != null) g.value = x.grade;
+  const c = h('textarea', {class:'in', id:prefix + 'c', rows:'2', placeholder:'Ej. ¡Muy bien! Revisa la mayúscula en “Nicaragua”.'}, x.note || '');
+  return {g, c, view:h('div', {class:'stack', style:'gap:10px'}, h('div', {class:'field'}, h('label', {for:prefix + 'g'}, 'Nota (0 a 100, opcional)'), g), h('div', {class:'field'}, h('label', {for:prefix + 'c'}, 'Comentario para el estudiante'), c))};
+}
+function gradeForm(x, u){
+  const f = gradeInputs(x, 'gr-' + u.id + '-'), err = h('p', {class:'err', hidden:true});
+  return h('div', {class:'stack', style:'gap:10px'}, f.view, err, h('button', {class:'btn small', type:'button', onclick:() => {
+    const r = readGrade(f.g); if (!r.ok){ err.textContent = 'La nota debe ser un número entero de 0 a 100.'; err.hidden = false; return; }
+    x.grade = r.g; x.note = f.c.value.trim() || '¡Buen trabajo!'; x.reviewed = true; x.reviewedAt = today(); x.history = x.history || [];
+    save(); renderHW(); toast(`Calificación enviada a ${u.name}`);
+  }}, 'Calificar y enviar'));
+}
+function gradeView(x, editable){
+  const hist = (x.history || []);
+  return h('div', {class:'note'},
+    h('div', {style:'display:flex;justify-content:space-between;align-items:center;gap:8px'}, h('div', {class:'lbl', style:'color:var(--ok-ink)'}, editable ? 'Calificación enviada' : 'Nota de tu profe'), x.grade != null ? h('b', {class:'grade-badge'}, gradeTxt(x.grade)) : null),
+    h('div', {style:'margin-top:4px'}, x.note || '¡Buen trabajo!'),
+    hist.length ? h('div', {class:'muted', style:'margin-top:8px;font-size:14px'}, ...hist.map(c => h('div', {}, `✏️ ${fmtDay(c.at)}: ${gradeTxt(c.from.grade) || 'sin nota'} → ${gradeTxt(c.to.grade) || 'sin nota'}. Motivo: ${c.reason}`))) : null,
+    editable ? h('button', {class:'btn ghost small', type:'button', style:'margin-top:10px', onclick:() => editGradeSheet(x)}, 'Editar nota') : null);
+}
+function editGradeSheet(x){
+  const f = gradeInputs(x, 'eg-'), err = h('p', {class:'err', hidden:true});
+  const why = h('textarea', {class:'in', id:'egWhy', rows:'2', placeholder:'Ej. Volví a revisar y estaba mejor de lo que pensé.'});
+  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Editar nota'),
+    h('p', {class:'muted', style:'margin:0;font-size:15px'}, `Nota actual: ${gradeTxt(x.grade) || 'sin nota'}. El estudiante verá el cambio y el motivo.`),
+    f.view, h('div', {class:'field'}, h('label', {for:'egWhy'}, 'Motivo del cambio (obligatorio)'), why), err,
+    h('button', {class:'btn', type:'button', onclick:() => {
+      const r = readGrade(f.g); if (!r.ok){ err.textContent = 'La nota debe ser un número entero de 0 a 100.'; err.hidden = false; return; }
+      const reason = why.value.trim(); if (reason.length < 5){ err.textContent = 'Escribe el motivo del cambio (al menos 5 letras).'; err.hidden = false; return; }
+      const to = {grade:r.g, note:f.c.value.trim() || '¡Buen trabajo!'};
+      if (to.grade === (x.grade ?? null) && to.note === x.note){ err.textContent = 'No cambiaste la nota ni el comentario.'; err.hidden = false; return; }
+      x.history = [...(x.history || []), {at:today(), from:{grade:x.grade ?? null, note:x.note}, to, reason}];
+      x.grade = to.grade; x.note = to.note; save(); sh.remove(); renderHW(); toast('Nota actualizada');
+    }}, 'Guardar cambio'),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
 }
 function assignmentSheet(a){
   const isNew = !a;
@@ -1800,7 +1951,6 @@ async function remoteLogin(user, pass){
     if (error){ err.textContent = /invalid/i.test(error.message) ? 'El usuario o la contraseña no coinciden. Revisa y prueba otra vez.' : 'No se pudo iniciar sesión: ' + error.message; err.hidden = false; return; }
     await remoteLoad(data.user.id);
     $('#lgPass').value = ''; route();
-    if (U && U.role === 'student') say('Hello, ' + U.name + '!');
   } catch (e) { err.textContent = 'Entraste, pero no se pudo cargar tu cuenta. Pide a tu profe que revise que exista tu perfil.'; err.hidden = false; console.error(e); try { await SB.auth.signOut(); } catch (x) {} }
   finally { setLoginBusy(false); }
 }
@@ -1816,6 +1966,7 @@ async function remoteLoad(uid){
   if (isAdmin && !groups.length){ groups = [{id:'g1', name:'Mi primer grupo', open:{u1:true}, sort:0}]; must(await SB.from('groups').insert(groups.map(g => ({...g, school_id:SCHOOL})))); }
   const db = {users:[], progress:{}, groups:groups.map(g => ({id:g.id, name:g.name, open:g.open || {}})), assignments:assignments.map(a => ({id:a.id, title:a.title, due:a.due, lessons:a.lessons || [], writing:a.writing || null, groups:a.groups || []})), course:course ? course.data : courseSeed(), courseVer:2, session:uid, seq:10};
   if (!db.groups.length) db.groups = [{id:'g0', name:'Sin grupo', open:{}}];
+  db.friends = [];
   let subs;
   if (isAdmin){
     must(await SB.from('profiles').select('*').eq('school_id', SCHOOL)).forEach(r => db.users.push(userFromRow(r)));
@@ -1825,11 +1976,12 @@ async function remoteLoad(uid){
     db.users.push(userFromRow(me));
     const own = must(await SB.from('progress').select('*').eq('user_id', uid).maybeSingle());
     db.progress[uid] = P(own ? own.data : {});
-    must(await SB.rpc('class_ranking')).forEach(r => { if (r.user_id === uid) return; db.users.push({id:r.user_id, name:r.name, role:'student', groupId:me.group_id, user:''}); db.progress[r.user_id] = P({xp:r.xp, xpDays:r.xp_days || {}, days:r.days || []}); });
+    must(await SB.rpc('class_ranking')).forEach(r => { if (r.user_id === uid) return; db.users.push({id:r.user_id, name:r.name, role:'student', groupId:me.group_id, user:''}); db.progress[r.user_id] = P({xp:r.xp, xpDays:r.xp_days || {}, days:r.days || [], avatar:r.avatar || null}); });
+    db.friends = must(await SB.from('friendships').select('from_id,to_id,status')).map(f => ({from:f.from_id, to:f.to_id, status:f.status}));
     subs = must(await SB.from('submissions').select('*').eq('user_id', uid));
   }
   Object.values(db.progress).forEach(p => { p.hw = {}; });
-  subs.forEach(x => { const p = db.progress[x.user_id] || (db.progress[x.user_id] = P({hw:{}})); p.hw[x.assignment_id] = {text:x.text, sentAt:x.sent_at, note:x.note, reviewed:x.reviewed}; });
+  subs.forEach(x => { const p = db.progress[x.user_id] || (db.progress[x.user_id] = P({hw:{}})); p.hw[x.assignment_id] = {text:x.text, sentAt:x.sent_at, note:x.note, reviewed:x.reviewed, grade:x.grade ?? null, history:x.history || []}; });
   db.users.filter(u => u.role === 'student' && !db.progress[u.id]).forEach(u => db.progress[u.id] = P({hw:{}}));
   DB = db; SNAP = clone(db); V = DB.course.vocab; lastLoad = Date.now();
 }
@@ -1861,7 +2013,10 @@ async function doSync(){
   }
   (isAdmin ? Object.keys(cur.progress) : [cur.session]).forEach(uid => {
     const a = (cur.progress[uid] || {}).hw || {}, b = ((prev.progress[uid] || {}).hw) || {};
-    Object.entries(a).forEach(([aid, x]) => { if (x && JSON.stringify(x) !== JSON.stringify(b[aid]) && (x.text || x.sentAt)) ops.push(SB.from('submissions').upsert({school_id:SCHOOL, assignment_id:aid, user_id:uid, text:x.text || '', sent_at:x.sentAt || null, note:x.note || '', reviewed:!!x.reviewed})); });
+    Object.entries(a).forEach(([aid, x]) => { if (x && JSON.stringify(x) !== JSON.stringify(b[aid]) && (x.text || x.sentAt)) ops.push(isAdmin
+      // El profe solo actualiza la entrega que ya existe (un upsert cuenta como insertar y RLS no le deja insertar a nombre del niño)
+      ? SB.from('submissions').update({note:x.note || '', reviewed:!!x.reviewed, grade:x.grade ?? null, history:x.history || []}).eq('assignment_id', aid).eq('user_id', uid)
+      : SB.from('submissions').upsert({school_id:SCHOOL, assignment_id:aid, user_id:uid, text:x.text || '', sent_at:x.sentAt || null, note:x.note || '', reviewed:!!x.reviewed})); });
   });
   if (!ops.length){ SNAP = cur; return; }
   const results = await Promise.all(ops);
@@ -1967,7 +2122,7 @@ function finishLesson(){
       h('div', {class:'stat'}, h('b', {style:'color:var(--orange)'}, streak()), h('span', {}, 'Días seguidos'))),
     ...medals.map(m => h('div', {class:'card new-medal pop'}, h('div', {class:'m'}, m.g), h('div', {}, h('div', {class:'lbl'}, 'Nueva medalla'), h('b', {style:'font-size:18px'}, m.name)))),
     h('button', {class:'btn', type:'button', onclick:() => { show('home'); setTab('learn'); }}, 'Continuar'));
-  show('result'); sfx(true); say('Great job!');
+  show('result'); sfx(true);
 }
 $('#lclose').addEventListener('click', () => L && L.preview ? leaveLesson() : confirmSheet('¿Salir de la lección?', 'Si sales ahora, perderás el avance de esta lección.', 'Salir', leaveLesson));
 function finishPreview(acc, stars, gained){
@@ -1987,7 +2142,7 @@ const R = {
   flash(s, ctx){
     const v = V[s.w];
     ctx.body.append(h('div', {class:'flash pop'}, pic(v.img, 'xl'), h('div', {class:'word'}, s.w), h('div', {class:'es'}, v.es), h('div', {class:'audio-row'}, audioBtn(s.w), audioBtn(s.w, true))));
-    say(s.w); ctx.cont();
+    ctx.cont();
   },
   tip(s, ctx){
     ctx.body.append(h('h3', {style:'font-size:22px;color:var(--uc)'}, s.title),
@@ -1997,7 +2152,7 @@ const R = {
   pickword(s, ctx){
     ctx.body.append(h('div', {class:'flash'}, pic(V[s.w].img, 'xl'), h('div', {class:'es'}, '“' + V[s.w].es + '”')));
     const box = h('div', {class:'opts'}); let sel = null;
-    s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; say(o); ctx.ready(() => ({ok: sel === s.w, correct: s.w})); })(b); box.append(b); });
+    s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; ctx.ready(() => ({ok: sel === s.w, correct: s.w})); })(b); box.append(b); });
     ctx.body.append(box);
   },
   listen(s, ctx){
@@ -2005,7 +2160,6 @@ const R = {
     const box = h('div', {class:'opts grid2'}); let sel = null;
     s.options.forEach(o => { const b = h('button', {class:'opt tile', type:'button', 'aria-label':'Opción'}, pic(V[o].img)); selectable(box, () => { sel = o; ctx.ready(() => ({ok: sel === s.w, correct: s.w + ' (' + V[s.w].es + ')'})); })(b); box.append(b); });
     ctx.body.append(box);
-    setTimeout(() => say(s.w), 250);
   },
   match(s, ctx){
     ctx.hideBtn();
@@ -2016,11 +2170,11 @@ const R = {
       const A = a, B = b; a = b = null;
       if (A.dataset.w === B.dataset.w){
         [A, B].forEach(x => { x.classList.remove('sel'); x.classList.add('good'); setTimeout(() => x.classList.add('done'), 350); });
-        say(A.dataset.w); matched++;
+        matched++;
         if (matched === s.words.length) setTimeout(() => ctx.finish(true), 500);
       } else { [A, B].forEach(x => { x.classList.remove('sel'); x.classList.add('wrong'); setTimeout(() => x.classList.remove('wrong'), 400); }); sfx(false); }
     };
-    shuffle(s.words).forEach(w => { const el = h('button', {class:'opt', type:'button', 'data-w':w}, w); el.onclick = () => { $$('.opt', left).forEach(o => o.classList.remove('sel')); el.classList.add('sel'); a = el; say(w); tryPair(); }; left.append(el); });
+    shuffle(s.words).forEach(w => { const el = h('button', {class:'opt', type:'button', 'data-w':w}, w); el.onclick = () => { $$('.opt', left).forEach(o => o.classList.remove('sel')); el.classList.add('sel'); a = el; tryPair(); }; left.append(el); });
     shuffle(s.words).forEach(w => { const el = h('button', {class:'opt', type:'button', 'data-w':w, 'aria-label':'Imagen'}, pic(V[w].img, 'sm')); el.onclick = () => { $$('.opt', right).forEach(o => o.classList.remove('sel')); el.classList.add('sel'); b = el; tryPair(); }; right.append(el); });
     ctx.body.append(h('div', {class:'match'}, left, right));
   },
@@ -2068,7 +2222,6 @@ const R = {
       } catch (e) { mic.classList.remove('on'); fallback('No pude usar el micrófono aquí. Repite la frase en voz alta y toca el botón.'); }
     }});
     ctx.body.append(mic, status);
-    setTimeout(() => say(s.text), 250);
   },
   order(s, ctx){
     const words = s.sentence.split(' ');
@@ -2080,7 +2233,7 @@ const R = {
       const chip = h('button', {class:'wchip', type:'button'}, w);
       chip.onclick = () => {
         if (chip.classList.contains('used')) return;
-        chip.classList.add('used'); say(w);
+        chip.classList.add('used');
         const item = {w, chip}; const placed = h('button', {class:'wchip pop', type:'button'}, w);
         placed.onclick = () => { placed.remove(); chip.classList.remove('used'); picked.splice(picked.indexOf(item), 1); update(); };
         picked.push(item); line.append(placed); update();
@@ -2093,7 +2246,7 @@ const R = {
     const blank = h('span', {class:'blank'}, ' ');
     ctx.body.append(h('div', {class:'flash'}, pic(s.img, 'xl'), h('div', {class:'sentence'}, s.before + ' ', blank, s.after)));
     const box = h('div', {class:'opts grid2'}); let sel = null;
-    s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; blank.textContent = o; say(`${s.before} ${o}${s.after}`); ctx.ready(() => ({ok: sel === s.answer, correct: `${s.before} ${s.answer}${s.after}`})); })(b); box.append(b); });
+    s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; blank.textContent = o; ctx.ready(() => ({ok: sel === s.answer, correct: `${s.before} ${s.answer}${s.after}`})); })(b); box.append(b); });
     ctx.body.append(box);
   },
   memory(s, ctx){
@@ -2107,7 +2260,7 @@ const R = {
       const hide = () => { el.innerHTML = ''; el.append(h('span', {class:'back'}, '?')); el.classList.remove('up'); };
       el.onclick = () => {
         if (busy || el.classList.contains('up') || el.classList.contains('ok')) return;
-        face(); if (c.kind === 'word') say(c.w);
+        face();
         open.push({c, el, hide});
         if (open.length === 2){
           const [x, y] = open; open = [];

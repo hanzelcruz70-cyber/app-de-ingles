@@ -53,6 +53,39 @@ select pg_temp.check('16b ve la nota del profe', (select note from submissions w
 select pg_temp.check('17 ranking tras mover a Sofía (solo Ana)', (select count(*) from class_ranking()) = 1);
 commit;
 
+-- ===== calificación (nota 0-100 e historial) =====
+begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000001';
+update submissions set grade=100, history='[{"x":1}]' where user_id=auth.uid();
+select pg_temp.check('G1 el estudiante no se pone nota ni historial', (select grade is null and history = '[]'::jsonb from submissions where user_id=auth.uid()));
+commit;
+begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-00000000000a';
+with u as (update submissions set grade=95, history='[{"reason":"revisé otra vez"}]' where assignment_id='a1' and user_id='a0000000-0000-0000-0000-000000000001' returning 1) select pg_temp.check('G2 el admin guarda nota e historial con update', (select count(*) from u) = 1);
+select pg_temp.check('G3 el admin NO puede hacer upsert (insertar) entregas a nombre del niño', pg_temp.fails($q$insert into submissions(school_id,assignment_id,user_id,note,reviewed) values ('aaaaaaaa-0000-0000-0000-000000000000','a1','a0000000-0000-0000-0000-000000000001','x',true) on conflict (assignment_id,user_id) do update set note=excluded.note$q$));
+commit;
+
+-- ===== amigos =====
+insert into auth.users values ('a0000000-0000-0000-0000-000000000004');
+insert into profiles(id,school_id,role,username,name,group_id) values ('a0000000-0000-0000-0000-000000000004','aaaaaaaa-0000-0000-0000-000000000000','student','luis','Luis','g1');
+begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000001';
+select pg_temp.check('F1 Ana envía solicitud a Luis (mismo grupo)', not pg_temp.fails($q$insert into friendships(school_id,from_id,to_id) values ('aaaaaaaa-0000-0000-0000-000000000000','a0000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000004')$q$));
+select pg_temp.check('F2 no puede enviar a otro grupo (Mateo)', pg_temp.fails($q$insert into friendships(school_id,from_id,to_id) values ('aaaaaaaa-0000-0000-0000-000000000000','a0000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000003')$q$));
+select pg_temp.check('F3 no puede enviar a otra escuela (Tom)', pg_temp.fails($q$insert into friendships(school_id,from_id,to_id) values ('aaaaaaaa-0000-0000-0000-000000000000','a0000000-0000-0000-0000-000000000001','b0000000-0000-0000-0000-000000000001')$q$));
+select pg_temp.check('F4 no puede crear una amistad ya aceptada', pg_temp.fails($q$insert into friendships(school_id,from_id,to_id,status) values ('aaaaaaaa-0000-0000-0000-000000000000','a0000000-0000-0000-0000-000000000001','a0000000-0000-0000-0000-000000000002','accepted')$q$));
+with u as (update friendships set status='accepted' returning 1) select pg_temp.check('F5 no puede aceptar su propia solicitud', (select count(*) from u) = 0);
+select pg_temp.check('F6 no puede enviar a nombre de otro', pg_temp.fails($q$insert into friendships(school_id,from_id,to_id) values ('aaaaaaaa-0000-0000-0000-000000000000','a0000000-0000-0000-0000-000000000004','a0000000-0000-0000-0000-000000000001')$q$));
+commit;
+begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000004';
+select pg_temp.check('F7 Luis ve la solicitud', (select count(*) from friendships) = 1);
+with u as (update friendships set status='accepted' where to_id=auth.uid() returning 1) select pg_temp.check('F8 Luis acepta', (select count(*) from u) = 1);
+select pg_temp.check('F9 ranking incluye avatar (columna)', (select count(*) from class_ranking() where avatar is null) >= 0);
+commit;
+begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000003';
+select pg_temp.check('F10 Mateo no ve amistades ajenas', (select count(*) from friendships) = 0);
+commit;
+begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000001';
+with d as (delete from friendships returning 1) select pg_temp.check('F11 Ana puede quitar la amistad', (select count(*) from d) = 1);
+commit;
+
 -- ===== anonymous =====
 begin; set local role anon;
 select pg_temp.check('18 sin sesión no ve nada', pg_temp.fails('select * from profiles') and pg_temp.fails('select * from progress'));

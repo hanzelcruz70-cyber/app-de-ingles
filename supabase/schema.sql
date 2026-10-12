@@ -70,6 +70,21 @@ create table if not exists public.submissions (
   updated_at timestamptz not null default now(),
   primary key (assignment_id, user_id)
 );
+-- Calificación (0 a 100) e historial de cambios de nota (versión 2026-10-12)
+alter table public.submissions add column if not exists grade int check (grade between 0 and 100);
+alter table public.submissions add column if not exists history jsonb not null default '[]'::jsonb;
+
+-- Amigos: solo entre compañeros del mismo grupo. from_id envía la solicitud y to_id la acepta.
+create table if not exists public.friendships (
+  school_id uuid not null references public.schools(id) on delete cascade,
+  from_id uuid not null references public.profiles(id) on delete cascade,
+  to_id uuid not null references public.profiles(id) on delete cascade,
+  status text not null default 'pending' check (status in ('pending','accepted')),
+  created_at timestamptz not null default now(),
+  primary key (from_id, to_id),
+  check (from_id <> to_id)
+);
+create index if not exists friendships_to_idx on public.friendships(to_id);
 
 create index if not exists profiles_school_idx on public.profiles(school_id);
 create index if not exists progress_school_idx on public.progress(school_id);
@@ -92,13 +107,16 @@ language sql stable security definer set search_path = public as $$
 $$;
 
 -- Ranking del grupo del estudiante (solo nombre y puntos de sus compañeros)
+-- (se borra y se vuelve a crear porque ahora también devuelve el avatar; no toca datos)
+drop function if exists public.class_ranking();
 create or replace function public.class_ranking()
-returns table (user_id uuid, name text, xp int, xp_days jsonb, days jsonb)
+returns table (user_id uuid, name text, xp int, xp_days jsonb, days jsonb, avatar jsonb)
 language sql stable security definer set search_path = public as $$
   select p.id, p.name,
          coalesce((pr.data->>'xp')::int, 0),
          coalesce(pr.data->'xpDays', '{}'::jsonb),
-         coalesce(pr.data->'days', '[]'::jsonb)
+         coalesce(pr.data->'days', '[]'::jsonb),
+         pr.data->'avatar'
   from public.profiles p
   left join public.progress pr on pr.user_id = p.id
   where p.role = 'student'
@@ -112,9 +130,9 @@ language plpgsql security definer set search_path = public as $$
 begin
   if not public.is_admin() then
     if tg_op = 'INSERT' then
-      new.note := ''; new.reviewed := false;
+      new.note := ''; new.reviewed := false; new.grade := null; new.history := '[]'::jsonb;
     else
-      new.note := old.note; new.reviewed := old.reviewed;
+      new.note := old.note; new.reviewed := old.reviewed; new.grade := old.grade; new.history := old.history;
     end if;
   end if;
   new.updated_at := now();
@@ -127,7 +145,7 @@ create trigger submissions_guard before insert or update on public.submissions
 
 -- ---------- Permisos ----------
 grant usage on schema public to anon, authenticated;
-grant select, insert, update, delete on public.schools, public.groups, public.courses, public.assignments, public.progress, public.submissions to authenticated;
+grant select, insert, update, delete on public.schools, public.groups, public.courses, public.assignments, public.progress, public.submissions, public.friendships to authenticated;
 grant select on public.profiles to authenticated;
 revoke update on public.profiles from authenticated;
 grant update (name, group_id) on public.profiles to authenticated;
@@ -141,6 +159,7 @@ alter table public.courses enable row level security;
 alter table public.assignments enable row level security;
 alter table public.progress enable row level security;
 alter table public.submissions enable row level security;
+alter table public.friendships enable row level security;
 
 -- schools
 drop policy if exists schools_read on public.schools;
@@ -191,3 +210,26 @@ create policy submissions_own_update on public.submissions for update to authent
 drop policy if exists submissions_admin_update on public.submissions;
 create policy submissions_admin_update on public.submissions for update to authenticated
   using (public.is_admin() and school_id = public.my_school()) with check (school_id = public.my_school());
+
+-- ¿Ese estudiante está en mi escuela y en mi grupo? (security definer: el niño no puede leer perfiles ajenos)
+create or replace function public.is_classmate(target uuid) returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.profiles p where p.id = target and p.role = 'student'
+                 and p.school_id = public.my_school() and p.group_id is not distinct from public.my_group())
+$$;
+grant execute on function public.is_classmate(uuid) to authenticated;
+
+-- friendships: cada quien ve las suyas; solo se envía a un compañero del mismo grupo; solo quien recibe acepta; cualquiera de los dos (o el admin) la borra
+drop policy if exists friendships_read on public.friendships;
+create policy friendships_read on public.friendships for select to authenticated
+  using (from_id = auth.uid() or to_id = auth.uid() or (public.is_admin() and school_id = public.my_school()));
+drop policy if exists friendships_send on public.friendships;
+create policy friendships_send on public.friendships for insert to authenticated
+  with check (from_id = auth.uid() and status = 'pending' and school_id = public.my_school()
+    and public.is_classmate(to_id));
+drop policy if exists friendships_accept on public.friendships;
+create policy friendships_accept on public.friendships for update to authenticated
+  using (to_id = auth.uid()) with check (to_id = auth.uid() and status = 'accepted');
+drop policy if exists friendships_remove on public.friendships;
+create policy friendships_remove on public.friendships for delete to authenticated
+  using (from_id = auth.uid() or to_id = auth.uid() or (public.is_admin() and school_id = public.my_school()));
