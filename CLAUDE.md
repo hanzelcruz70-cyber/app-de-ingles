@@ -17,7 +17,7 @@ Guía para cualquier modelo o persona que trabaje en este repositorio. Léela co
 3. **No copiar contenido de Pearson** (imágenes, audios, historias, textos del libro). La app usa la misma estructura y vocabulario por tema, con ejercicios, emojis y textos propios.
 4. **Idioma:** la interfaz está en español (Nicaragua); el contenido de las lecciones, en inglés. Los textos de la UI son cortos y para niños.
 5. `index.html` **se genera**. Edita `src/app.html` y corre `python3 build.py`.
-6. **Copia del dueño en su computadora:** `C:\Users\Hanzel\Documents\Pandi Ingles`. Después de cada cambio subido a GitHub, actualiza también esa carpeta (con el puente a su computadora: `git pull` o copiando los archivos). El dueño corre `supabase/schema.sql` desde ahí, así que una copia vieja rompe cosas: el 12 de octubre corrió un schema viejo y los estudiantes no podían entrar.
+6. **Copia del dueño en su computadora:** `C:\Users\Hanzel\Documents\Pandi Ingles`. Después de cada cambio subido a GitHub, actualiza también esa carpeta (con el puente a su computadora). Su computadora **no llega a GitHub** (proxy 403), así que se hace con un paquete: `git bundle create /mnt/user-data/outputs/pandi-update.bundle main` → `device_commit_files` a la carpeta → en `device_bash`: `git fetch pandi-update.bundle main:refs/remotes/origin/main && git merge --ff-only origin/main` y borrar el bundle (hace falta permiso de borrado en la carpeta). El dueño corre `supabase/schema.sql` desde ahí, así que una copia vieja rompe cosas: el 12 de octubre corrió un schema viejo y los estudiantes no podían entrar.
 
 ## Estructura
 
