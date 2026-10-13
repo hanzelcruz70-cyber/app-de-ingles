@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
   R.demoVisible = await p.isVisible('.demo');
   R.manifest = await p.evaluate(async () => { const r = await fetch('manifest.webmanifest'); const j = await r.json(); return j.name + ' / ' + j.icons.length + ' icons'; });
   R.sw = await p.evaluate(async () => { const reg = await navigator.serviceWorker.getRegistration(); return !!reg; });
-  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(400);
+  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
   R.studentIn = await p.isVisible('#home');
   await p.goto('http://localhost:8765/setup.html'); await p.fill('#school','X'); await p.fill('#name','Y'); await p.fill('#user','profe'); await p.fill('#pass','123456'); await p.fill('#token','t'); await p.click('#go'); await p.waitForTimeout(300);
   R.setupMsg = await p.textContent('#out');

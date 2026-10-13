@@ -6,7 +6,8 @@ const path = require('path'), fs = require('fs'), { execFileSync } = require('ch
   const errs = []; p.on('pageerror', e => errs.push(e.message));
   await p.goto('file://' + path.join(__dirname, 'demo_build.html')); await p.waitForTimeout(400);
   const R = {};
-  await p.fill('#lgUser','estudiante'); await p.fill('#lgPass','1234'); await p.click('#loginForm button'); await p.waitForTimeout(300);
+  await p.fill('#lgUser','estudiante'); await p.fill('#lgPass','1234'); await p.click('#loginForm button'); await p.waitForTimeout(700);
+  if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
   R.gemChip = await p.isVisible('#gemN');
   // Repaso inteligente
   await p.evaluate(() => { S.miss = {cat:3, dog:2, bird:1}; save(); setTab('learn'); });
@@ -34,13 +35,15 @@ const path = require('path'), fs = require('fs'), { execFileSync } = require('ch
   // Tienda
   await p.evaluate(() => { S.gems = 200; S.owned = []; save(); setTab('me'); });
   await p.click('#tab-me button:has-text("Tienda")');
-  await p.click('.sheet .shop-item:has-text("Birrete") button'); await p.waitForTimeout(100);
+  R.shopSets = await p.locator('.sheet .shop-item:has-text("Traje de")').count();
+  await p.click('.sheet .shop-item:has-text("Birrete") button'); await p.click('.sheet button:has-text("Comprar por")'); await p.waitForTimeout(100);
   R.bought = await p.evaluate(() => ({owned:S.owned, gems:S.gems}));
-  await p.click('.sheet .shop-item:has-text("Protector") button'); await p.click('.sheet .shop-item:has-text("Protector") button');
+  for (let k = 0; k < 2; k++){ await p.click('.sheet .shop-item:has-text("Protector") button'); await p.click('.sheet button:has-text("Comprar por")'); await p.waitForTimeout(100); }
   R.freezeMax = await p.textContent('.sheet .shop-item:has-text("Protector") button');
   R.shopNoOverflow = await p.evaluate(() => document.querySelector('.sheet > div').scrollWidth <= document.querySelector('.sheet > div').clientWidth + 1);
   await p.click('.sheet button:has-text("Cerrar")');
   await p.click('#tab-me button:has-text("Mi avatar")');
+  await p.click('.sheet .av-tabs button:has-text("Cabeza")');
   R.birreteInAvatar = await p.isVisible('.sheet .av-grid button[aria-label="Birrete"]');
   await p.click('.sheet button:has-text("Cancelar")');
   R.duelLine = await p.innerText('#tab-me .card:has-text("Mis amigos")');
@@ -58,7 +61,7 @@ const path = require('path'), fs = require('fs'), { execFileSync } = require('ch
   console.log(JSON.stringify(R, null, 1));
   const ok = R.gemChip && R.reviewCard && R.reviewSteps >= 7 && R.confetti > 0 && R.missAfter === '{}' && R.reviewNotDone && R.gemsAfterLesson >= 5 && /gemas/.test(R.resultText)
     && R.gemsFromWeek === 30 && R.noDoubleClaim === 30 && /Liga Plata/.test(R.rankLeague) && R.freeze.freezes === 0 && R.freeze.frozen.length === 1 && R.freeze.streak === 2
-    && R.bought.owned.includes('birrete') && R.bought.gems === 170 && /Ya tienes 2/.test(R.freezeMax) && R.shopNoOverflow && R.birreteInAvatar && /Desafío de la semana/.test(R.duelLine) && R.headerNoOverflow
+    && R.shopSets === 3 && R.bought.owned.includes('head:grad') && R.bought.gems === 160 && /Ya tienes 2/.test(R.freezeMax) && R.shopNoOverflow && R.birreteInAvatar && /Desafío de la semana/.test(R.duelLine) && R.headerNoOverflow
     && /Resumen \d+ 10/.test(R.xlsx) && /Tareas \d+ 9/.test(R.xlsx);
   console.log('errors:', errs.join('\n') || 'none'); console.log(ok && !errs.length ? 'PASS' : 'FAIL');
   await b.close();

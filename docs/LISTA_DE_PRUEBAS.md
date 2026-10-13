@@ -44,7 +44,8 @@ Para revisar la app publicada (con el servidor real) antes de enseñarla o despu
 - [ ] Salir de una lección a la mitad → pide confirmar y no guarda.
 - [ ] **Tareas**: ve la tarea, juega sus lecciones y envía la escritura.
 - [ ] **Ranking**: aparece él y sus compañeros de grupo. No sale la palabra "null".
-- [ ] **Perfil → Personalizar mi avatar**: elegir animal, color y accesorio. Los accesorios con candado no se pueden elegir. Guardar.
+- [ ] La primera vez que entra, sale **¡Crea tu personaje!** → elegir uno y **Usar este personaje**.
+- [ ] Perfil → **🎨 Mi avatar** → cambiar pelo, ropa y colores. Ponerle una gorra: se ve **puesta** sobre la cabeza, no encima. Lo que tiene 🔒 pide comprarlo.
 - [ ] El avatar nuevo se ve en el perfil y en el ranking.
 - [ ] Recordatorio: activarlo (pide permiso), cambiar la hora y apagarlo.
 - [ ] Cerrar sesión y volver a entrar → el progreso sigue ahí.
@@ -52,7 +53,7 @@ Para revisar la app publicada (con el servidor real) antes de enseñarla o despu
 ## 5b. Gemas, ligas y repaso
 - [ ] Al terminar una lección sale confeti, suena una fanfarria (sin voz) y dice cuántas gemas ganaste.
 - [ ] Las gemas 💎 se ven arriba y suben.
-- [ ] Perfil → **💎 Tienda** → comprar un accesorio → aparece en **Mi avatar**.
+- [ ] Perfil → **💎 Tienda** → comprar el **Traje de panda** → **Ponérmelo** → el personaje lleva la capucha y la sudadera de panda.
 - [ ] Comprar un **Protector de racha** (máximo 2).
 - [ ] Fallar varias palabras en lecciones → en Aprender aparece **🧠 Repaso inteligente** → al acertarlas en el repaso, la lista baja.
 - [ ] Ranking → tarjeta **Tu liga** con la barra de XP de la semana.
@@ -74,7 +75,7 @@ Para revisar la app publicada (con el servidor real) antes de enseñarla o despu
 - [ ] **Editar nota** sin escribir el motivo → lo pide. Con motivo → guarda y aparece en el historial.
 - [ ] En el dispositivo del estudiante → Tareas → ve la nota, el comentario y el motivo del cambio.
 - [ ] Ficha del estudiante → **Reporte para padres** → el mensaje se lee completo → **Enviar por WhatsApp** abre WhatsApp con el texto.
-- [ ] Resumen → **Palabras que más se fallan** muestra las palabras que falló el estudiante.
+- [ ] Resumen → **Palabras que más se fallan** muestra las palabras que falló el estudiante. Al tocar una palabra sale quién la falló.
 - [ ] Tareas → **⬇️ Descargar notas del grupo (Excel)** → el archivo abre en Excel o Google Sheets con las hojas Resumen y Tareas.
 - [ ] Resumen → **Recordar** (en "Necesitan un empujón") arma el mensaje.
 

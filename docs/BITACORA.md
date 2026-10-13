@@ -29,6 +29,16 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-12 (noche, 2) · Personaje dibujado, bienvenida, trajes y quién falla cada palabra
+- Al dueño no le gustaron los avatares de emoji. Mandó de referencia ilustraciones planas de niños (pelo, ropa, lentes, audífonos, capucha de panda). Pidió que las prendas queden **puestas de verdad**, no encima.
+- **Nuevo avatar SVG por capas** (`avatarSVG`), dibujado a mano en código, sin imágenes externas. Con gorra, gorro, pañoleta o birrete, el pelo queda metido; las capuchas de animal envuelven la cabeza y tapan el pelo. Tiene 6 tonos de piel, 8 peinados, 8 colores de pelo, 4 ojos, 4 bocas, 8 prendas de ropa, 12 de cabeza y 5 lentes.
+- **Bienvenida:** la primera vez que entra un estudiante (o si tenía el avatar viejo de emoji), sale "¡Crea tu personaje!" con 8 personajes listos, más "Personalizarlo" y "Ahora no" (`avatarAsked`).
+- **Tienda nueva:** trajes de panda, oso y conejo (60 💎, dan capucha y sudadera), gorros, lentes y ropa, cada uno con vista previa en el propio personaje y botón "Ponérmelo". También se compra desde el editor tocando algo con 🔒. Se quitaron los accesorios de emoji anteriores.
+- En la demo, los compañeros de ejemplo tienen personaje, para que el ranking se vea completo.
+- **Palabras más falladas:** al tocarlas, `whoMissedSheet` lista qué estudiantes las fallan y cuántas veces, con acceso a su ficha.
+- **Bug encontrado al probar:** `migrate()` usaba `prog()` antes de que existiera (pantalla en blanco en un navegador nuevo). Ahora usa `DB.progress`.
+- Pruebas actualizadas: `social.js` (bienvenida, compra de gorra en el editor, personaje en el ranking y en el panel del profe), `extras.js` (trajes en la tienda y compra con confirmación) y la prueba de dos dispositivos (el personaje se guarda en el servidor). Las demás pruebas cierran la bienvenida con "Ahora no". Todo PASS.
+
 ## 2026-10-12 (noche) · Error al entrar, repaso, ligas, gemas, tienda, desafíos, Excel y celebraciones
 - **Bug:** "Entraste, pero no se pudo cargar tu cuenta" al entrar como estudiante. El dueño corrió el `schema.sql` de su carpeta de Documentos, que era una copia vieja (commit 755e60c) sin la tabla `friendships`, y `remoteLoad` fallaba al leerla. Arreglos: la carga de amigos es tolerante (si falta la tabla, sigue sin amigos), se actualizó la carpeta de Documentos y se agregó la **regla 6 en CLAUDE.md: mantener esa carpeta al día con cada cambio**. El servidor simulado ahora da error si falta una tabla, y la prueba verifica que el estudiante igual entre.
 - **Legal:** `config.js` ya tiene `legalName: 'Hanzel Gabriel Cruz Escorcia'` y `contactEmail: 'redinformaticatotal@gmail.com'` (datos que dio el dueño).

@@ -173,11 +173,20 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .pod.p3 .block{height:56px;background:#D9874A;box-shadow:0 4px 0 #AF6630}
 .pod .pts{font-size:13px;color:var(--ink-2)}
 .avatar{border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:600;color:#fff;flex:none;position:relative}
+.avatar.svg-av{background:none;overflow:hidden}
+.avatar svg,.avmini svg,.av-preview svg{width:100%;height:100%;display:block}
+.av-preview{width:150px;height:150px;margin:0 auto}
+.av-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.av-tabs button{flex:none;font:inherit;font-size:15px;font-weight:700;padding:8px 12px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.av-tabs button[aria-selected=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.av-grid .avmini{display:block;width:62px;height:62px;margin:0 auto 4px}
+.av-sw button{width:44px;height:44px}
+.shop-item .avmini.big{display:block;width:84px;height:84px;margin:0 auto}
 .avatar .emo{font-size:1.45em;line-height:1}
 .avatar .acc{position:absolute;top:-.45em;right:-.45em;font-size:.95em;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
 .avatar.xl{width:120px;height:120px;font-size:44px}
 .av-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.av-grid button{font-size:30px;padding:8px 0;border-radius:14px;border:2px solid var(--line);background:var(--surface)}
+.av-grid button{font-size:30px;padding:8px 2px;border-radius:14px;border:2px solid var(--line);background:var(--surface)}
 .av-grid button[aria-pressed=true]{border-color:var(--blue);background:color-mix(in srgb,var(--blue) 14%,var(--surface))}
 .av-grid button:disabled{opacity:.45}
 .av-grid small{display:block;font-size:12px;color:var(--ink-2);font-weight:700}
@@ -531,14 +540,152 @@ const today = () => dayKey(0);
 const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + 's')}`;
 const endMark = t => /[.?!]$/.test(t) ? t : t + (/^(what|where|who|how|is|are|do|does|can|have|has)\b/i.test(t) ? '?' : '.');
 const AV_COLORS = ['#1E6FD9','#2FA84F','#E8352E','#8E44C9','#FF8A1F','#0FA3A3','#D63384'];
-const AV_ANIMALS = ['🐼','🐱','🐶','🦊','🐰','🐯','🦁','🐸','🐵','🐨','🐧','🦄','🐻','🐷','🐮','🐙'];
-const AV_ACC = [{g:'', name:'Nada', xp:0}, {g:'🧢', name:'Gorra', xp:0}, {g:'🎀', name:'Moño', xp:0}, {g:'⭐', name:'Estrella', xp:100}, {g:'🕶️', name:'Lentes', xp:200}, {g:'🎧', name:'Audífonos', xp:300}, {g:'🎩', name:'Sombrero', xp:450}, {g:'👑', name:'Corona', xp:700}];
+/* ---------- avatar: personaje dibujado en SVG por capas ---------- */
+// Todo sale de listas fijas (nunca de texto del usuario), así el SVG se puede armar como texto sin riesgo.
+const AV = {
+  skin: [['#FCD9C4', '#EDB99C'], ['#F5C99C', '#DFA877'], ['#E2AA76', '#C78E5A'], ['#C68642', '#A96C30'], ['#9C6439', '#7E4C29'], ['#6B4329', '#51311D']],
+  hairColor: ['#2B2523', '#4B2E22', '#7C4A2C', '#B9562A', '#E9B44C', '#F06BAA', '#4F7FF0', '#8E5BD8'],
+  topColor: ['#FFC83D', '#8E5BD8', '#3CB45A', '#E8463C', '#3D86F0', '#FF8A1F', '#F7837A', '#17A7A7', '#8C96A8', '#C2B282'],
+  bg: ['#BFE3FA', '#C9F0D6', '#FFE0C7', '#E6D9FF', '#FFF1B8', '#FFD4E2'],
+  hair: [{id:'short', n:'Corto'}, {id:'spiky', n:'Parado'}, {id:'curly', n:'Rizado'}, {id:'buns', n:'Chongos'}, {id:'long', n:'Largo'}, {id:'braids', n:'Trenzas'}, {id:'bob', n:'Melena'}, {id:'buzz', n:'Rapado'}],
+  eyes: [{id:'normal', n:'Normales'}, {id:'happy', n:'Felices'}, {id:'big', n:'Brillantes'}, {id:'wink', n:'Guiño'}],
+  mouth: [{id:'smile', n:'Sonrisa'}, {id:'laugh', n:'Risa'}, {id:'grin', n:'Dientes'}, {id:'soft', n:'Tranquila'}],
+  top: [{id:'tee', n:'Camiseta'}, {id:'hoodie', n:'Sudadera'}, {id:'collar', n:'Camisa'}, {id:'jersey', n:'Camiseta de fútbol', cost:30}, {id:'explorer', n:'Camisa de explorador', cost:25},
+        {id:'panda', n:'Sudadera de panda', set:'panda'}, {id:'bear', n:'Sudadera de oso', set:'bear'}, {id:'bunny', n:'Sudadera de conejo', set:'bunny'}],
+  head: [{id:'none', n:'Nada'}, {id:'flower', n:'Diadema con flor'}, {id:'cap', n:'Gorra', cost:20}, {id:'capback', n:'Gorra al revés', cost:20}, {id:'beanie', n:'Gorro de lana', cost:25},
+         {id:'bandana', n:'Pañoleta', cost:20}, {id:'headphones', n:'Audífonos', cost:30}, {id:'grad', n:'Birrete', cost:40}, {id:'crown', n:'Corona', cost:80},
+         {id:'panda', n:'Capucha de panda', set:'panda'}, {id:'bear', n:'Capucha de oso', set:'bear'}, {id:'bunny', n:'Capucha de conejo', set:'bunny'}],
+  face: [{id:'none', n:'Nada'}, {id:'round', n:'Lentes redondos'}, {id:'square', n:'Lentes cuadrados'}, {id:'sun', n:'Lentes de sol', cost:25}, {id:'star', n:'Lentes de estrella', cost:35}]
+};
+const AV_SETS = {panda:{n:'Traje de panda', cost:60}, bear:{n:'Traje de oso', cost:60}, bunny:{n:'Traje de conejo', cost:60}};
+const AV_DEFAULT = {v:2, skin:1, hair:'short', hc:1, eyes:'normal', mouth:'smile', top:'tee', tc:4, head:'none', face:'none', bg:0};
+const AV_PRESETS = [
+  {skin:2, hair:'curly', hc:1, eyes:'happy', mouth:'laugh', top:'tee', tc:0, head:'none', face:'round', bg:0},
+  {skin:0, hair:'buns', hc:5, eyes:'normal', mouth:'laugh', top:'tee', tc:1, head:'none', face:'none', bg:0},
+  {skin:1, hair:'spiky', hc:0, eyes:'happy', mouth:'grin', top:'hoodie', tc:2, head:'none', face:'none', bg:0},
+  {skin:3, hair:'braids', hc:0, eyes:'normal', mouth:'soft', top:'tee', tc:6, head:'flower', face:'none', bg:0},
+  {skin:0, hair:'short', hc:3, eyes:'normal', mouth:'laugh', top:'collar', tc:9, head:'none', face:'none', bg:0},
+  {skin:4, hair:'bob', hc:0, eyes:'big', mouth:'smile', top:'hoodie', tc:4, head:'none', face:'none', bg:0},
+  {skin:5, hair:'buzz', hc:0, eyes:'normal', mouth:'grin', top:'tee', tc:3, head:'none', face:'square', bg:0},
+  {skin:1, hair:'long', hc:4, eyes:'big', mouth:'smile', top:'tee', tc:7, head:'none', face:'none', bg:0}
+].map(p => ({v:2, ...p}));
+const avPick = (list, id, fb) => (list.find(x => x.id === id) || list.find(x => x.id === fb)).id;
+const avIdx = (list, i) => (Number.isInteger(i) && i >= 0 && i < list.length) ? i : 0;
+function avNorm(a){
+  if (!a || a.v !== 2) return null;
+  return {v:2, skin:avIdx(AV.skin, a.skin), hair:avPick(AV.hair, a.hair, 'short'), hc:avIdx(AV.hairColor, a.hc), eyes:avPick(AV.eyes, a.eyes, 'normal'), mouth:avPick(AV.mouth, a.mouth, 'smile'),
+    top:avPick(AV.top, a.top, 'tee'), tc:avIdx(AV.topColor, a.tc), head:avPick(AV.head, a.head, 'none'), face:avPick(AV.face, a.face, 'none'), bg:avIdx(AV.bg, a.bg)};
+}
+let avSeq = 0;
+function avatarSVG(raw){
+  const a = avNorm(raw) || AV_DEFAULT, O = '#2A2230', W = 'stroke="' + O + '" stroke-width="2.2" stroke-linejoin="round"';
+  const [sk, skd] = AV.skin[a.skin], hc = AV.hairColor[a.hc], tc = AV.topColor[a.tc];
+  const hood = ['panda', 'bear', 'bunny'].includes(a.head) ? a.head : null;
+  const HOOD = {panda:{c:'#FFFFFF', e:'#2A2230', i:'#2A2230'}, bear:{c:'#9A6440', e:'#9A6440', i:'#D9A77A'}, bunny:{c:'#FFFFFF', e:'#FFFFFF', i:'#F7A8C4'}};
+  const id = 'avc' + (++avSeq);
+  const s = [];
+  s.push(`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})">`);
+  s.push(`<rect width="120" height="120" fill="${AV.bg[a.bg]}"/>`);
+  // capucha (parte de atrás y orejas)
+  if (hood){
+    const H = HOOD[hood];
+    if (hood === 'bunny') s.push(`<ellipse cx="45" cy="14" rx="8" ry="20" fill="${H.e}" ${W}/><ellipse cx="75" cy="14" rx="8" ry="20" fill="${H.e}" ${W}/><ellipse cx="45" cy="16" rx="4" ry="14" fill="${H.i}"/><ellipse cx="75" cy="16" rx="4" ry="14" fill="${H.i}"/>`);
+    else s.push(`<circle cx="33" cy="25" r="11" fill="${H.e}" ${W}/><circle cx="87" cy="25" r="11" fill="${H.e}" ${W}/>` + (hood === 'bear' ? `<circle cx="33" cy="25" r="5.5" fill="${H.i}"/><circle cx="87" cy="25" r="5.5" fill="${H.i}"/>` : ''));
+    s.push(`<ellipse cx="60" cy="55" rx="34" ry="35" fill="${H.c}" ${W}/>`);
+  }
+  // pelo de atrás
+  if (!hood){
+    if (a.hair === 'long') s.push(`<path d="M34 50 C29 76 31 96 39 106 L81 106 C89 96 91 76 86 50 Z" fill="${hc}" ${W}/>`);
+    if (a.hair === 'bob') s.push(`<path d="M33 48 C30 64 32 78 39 82 L81 82 C88 78 90 64 87 48 Z" fill="${hc}" ${W}/>`);
+    if (a.hair === 'buns' && !['cap', 'capback', 'beanie', 'bandana', 'grad'].includes(a.head)) s.push(`<circle cx="39" cy="28" r="11" fill="${hc}" ${W}/><circle cx="81" cy="28" r="11" fill="${hc}" ${W}/>`);
+    if (a.hair === 'braids') [36, 84].forEach(x => { for (let y = 70; y <= 98; y += 9) s.push(`<ellipse cx="${x}" cy="${y}" rx="5.5" ry="6" fill="${hc}" ${W}/>`); s.push(`<circle cx="${x}" cy="106" r="3" fill="#F06BAA" ${W}/>`); });
+  }
+  // ropa (cuello, cuerpo)
+  const shade = (c) => c; // los detalles usan contorno; se deja el color plano como en las ilustraciones
+  const body = 'M10 124 C11 104 29 93 49 89 Q60 96 71 89 C91 93 109 104 110 124 Z';
+  if (a.top === 'hoodie') s.push(`<path d="M38 94 Q60 78 82 94 Q60 103 38 94 Z" fill="${tc}" ${W}/>`);
+  s.push(`<path d="M50 70 L50 90 Q60 97 70 90 L70 70 Z" fill="${skd}" ${W}/>`);
+  if (a.top === 'panda') s.push(`<path d="${body}" fill="#2A2230" ${W}/><path d="M42 124 C43 106 50 97 60 97 C70 97 77 106 78 124 Z" fill="#FFFFFF" ${W}/>`);
+  else if (a.top === 'bear') s.push(`<path d="${body}" fill="#9A6440" ${W}/><path d="M42 124 C43 106 50 97 60 97 C70 97 77 106 78 124 Z" fill="#D9A77A" ${W}/>`);
+  else if (a.top === 'bunny') s.push(`<path d="${body}" fill="#FFFFFF" ${W}/><path d="M44 124 C45 108 51 99 60 99 C69 99 75 108 76 124 Z" fill="#FBD3E2" ${W}/>`);
+  else {
+    const col = a.top === 'explorer' ? '#B8A777' : tc;
+    s.push(`<path d="${body}" fill="${col}" ${W}/>`);
+    if (a.top === 'tee' || a.top === 'jersey') s.push(`<path d="M49 89 Q60 101 71 89" fill="none" stroke="${O}" stroke-width="2.2"/><path d="M50 90.5 Q60 99 70 90.5" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="3"/>`);
+    if (a.top === 'jersey') s.push(`<path d="M30 124 L33 100 M90 124 L87 100" stroke="#FFFFFF" stroke-width="4"/><text x="60" y="117" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="15" fill="#FFFFFF" stroke="${O}" stroke-width=".8">10</text>`);
+    if (a.top === 'hoodie') s.push(`<path d="M55 96 L54 112 M65 96 L66 112" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/><circle cx="54" cy="113" r="2" fill="#FFFFFF" ${W}/><circle cx="66" cy="113" r="2" fill="#FFFFFF" ${W}/>`);
+    if (a.top === 'collar' || a.top === 'explorer') s.push(`<path d="M49 89 L57 101 L50 104 L43 93 Z" fill="${col}" ${W}/><path d="M71 89 L63 101 L70 104 L77 93 Z" fill="${col}" ${W}/><path d="M60 100 L60 124" stroke="${O}" stroke-width="1.6"/><circle cx="60" cy="108" r="1.4" fill="${O}"/><circle cx="60" cy="116" r="1.4" fill="${O}"/>`);
+    if (a.top === 'explorer') s.push(`<rect x="34" y="104" width="13" height="11" rx="2" fill="${col}" ${W}/><rect x="73" y="104" width="13" height="11" rx="2" fill="${col}" ${W}/>`);
+  }
+  // orejas y cabeza
+  if (!hood) s.push(`<circle cx="35" cy="58" r="6.5" fill="${sk}" ${W}/><circle cx="85" cy="58" r="6.5" fill="${sk}" ${W}/>`);
+  s.push(`<ellipse cx="60" cy="55" rx="25" ry="27" fill="${sk}" ${W}/>`);
+  // cara
+  s.push(`<ellipse cx="44" cy="66" rx="4.6" ry="2.7" fill="#F2847C" opacity=".45"/><ellipse cx="76" cy="66" rx="4.6" ry="2.7" fill="#F2847C" opacity=".45"/>`);
+  const brow = a.hair === 'buzz' || a.hc === 0 ? hc : hc;
+  s.push(`<path d="M45 48 Q50 45.5 55 48 M65 48 Q70 45.5 75 48" fill="none" stroke="${brow}" stroke-width="2.4" stroke-linecap="round"/>`);
+  const eye = (x) => `<ellipse cx="${x}" cy="57" rx="3.3" ry="4.1" fill="${O}"/><circle cx="${x + 1.1}" cy="55.6" r="1.2" fill="#FFFFFF"/>`;
+  const happy = (x) => `<path d="M${x - 4.5} 58.5 Q${x} 53 ${x + 4.5} 58.5" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/>`;
+  if (a.eyes === 'normal') s.push(eye(50) + eye(70));
+  if (a.eyes === 'happy') s.push(happy(50) + happy(70));
+  if (a.eyes === 'wink') s.push(eye(50) + happy(70));
+  if (a.eyes === 'big') s.push([50, 70].map(x => `<ellipse cx="${x}" cy="57" rx="4.4" ry="5.2" fill="${O}"/><circle cx="${x + 1.4}" cy="55" r="1.8" fill="#FFFFFF"/><circle cx="${x - 1.3}" cy="59.2" r=".9" fill="#FFFFFF"/>`).join(''));
+  if (a.mouth === 'smile') s.push(`<path d="M52 67 Q60 74 68 67" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`);
+  if (a.mouth === 'soft') s.push(`<path d="M54.5 68 Q60 71.5 65.5 68" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`);
+  if (a.mouth === 'laugh') s.push(`<path d="M51 66 Q60 67.5 69 66 Q67 77 60 77 Q53 77 51 66 Z" fill="#8E2A2A" ${W}/><path d="M55 74.5 Q60 71 65 74.5 Q63 77 60 77 Q57 77 55 74.5 Z" fill="#F07A7A"/>`);
+  if (a.mouth === 'grin') s.push(`<path d="M50 65.5 Q60 67.5 70 65.5 Q68 76 60 76 Q52 76 50 65.5 Z" fill="#FFFFFF" ${W}/><path d="M51.5 69.5 Q60 71 68.5 69.5" fill="none" stroke="${O}" stroke-width="1.3"/>`);
+  // pelo de adelante (con gorra, gorro, pañoleta o birrete el pelo queda metido debajo)
+  const tucked = ['cap', 'capback', 'beanie', 'bandana', 'grad'].includes(a.head);
+  if (!hood && tucked){
+    s.push(`<path d="M34 57 C32 49 33 44 36 41 L84 41 C87 44 88 49 86 57 C82 50 74 47 60 47 C46 47 38 50 34 57 Z" fill="${hc}" ${W}/>`);
+  } else if (!hood){
+    const P = {
+      short:'M34 55 C30 34 45 24 61 24 C78 24 90 36 86 55 C82 45 74 40 65 39 C57 44 45 46 34 55 Z',
+      spiky:'M34 53 C33 41 36 33 41 29 L39 19 L48 25 L51 14 L58 23 L65 13 L69 24 L78 18 L78 28 C84 33 87 42 86 53 C80 44 70 39 60 39 C50 39 40 44 34 53 Z',
+      buns:'M35 53 C34 36 46 28 60 28 C74 28 86 36 85 53 C79 45 70 42 60 42 C50 42 41 45 35 53 Z',
+      long:'M35 55 C33 34 46 25 60 25 C74 25 87 34 85 55 C81 43 73 37 64 37 C60 42 52 44 45 45 C40 47 37 51 35 55 Z',
+      braids:'M35 55 C34 35 46 26 60 26 C74 26 86 35 85 55 C80 43 70 37 60 38 C50 37 40 43 35 55 Z',
+      bob:'M33 58 C31 34 46 25 60 25 C74 25 89 34 87 58 L84 46 C76 42 68 41 60 41 C52 41 44 42 36 46 Z',
+      buzz:'M36 47 C38 33 48 28 60 28 C72 28 82 33 84 47 C76 41 68 39 60 39 C52 39 44 41 36 47 Z'
+    };
+    if (a.hair === 'curly'){
+      const C = [[37, 47, 9], [41, 35, 9.5], [50, 27, 9.5], [61, 24, 9.5], [72, 27, 9.5], [80, 35, 9.5], [84, 47, 9], [47, 38, 8], [61, 33, 8], [74, 38, 8]];
+      s.push(C.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${hc}" ${W}/>`).join('') + C.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r - 1.6}" fill="${hc}"/>`).join(''));
+    } else s.push(`<path d="${P[a.hair]}" fill="${hc}" ${W}/>`);
+    if (a.hair === 'braids') s.push(`<path d="M60 27 L60 38" stroke="${O}" stroke-width="1.6"/>`);
+  }
+  // capucha (borde de adelante y cara del animal)
+  if (hood){
+    const H = HOOD[hood];
+    s.push(`<path d="M44 40 C50 35 70 35 76 40 C70 39 50 39 44 40 Z" fill="${hc}" ${W}/>`);
+    s.push(`<path d="M27 80 C20 46 37 20 60 20 C83 20 100 46 93 80 L85 78 C88 52 77 34 60 34 C43 34 32 52 35 78 Z" fill="${H.c}" ${W}/>`);
+    if (hood === 'panda') s.push(`<ellipse cx="49" cy="27.5" rx="5.2" ry="4" transform="rotate(-18 49 27.5)" fill="#2A2230"/><ellipse cx="71" cy="27.5" rx="5.2" ry="4" transform="rotate(18 71 27.5)" fill="#2A2230"/><circle cx="50" cy="27" r="1.4" fill="#FFFFFF"/><circle cx="72" cy="27" r="1.4" fill="#FFFFFF"/><ellipse cx="60" cy="30.5" rx="2.4" ry="1.6" fill="#2A2230"/>`);
+    if (hood === 'bear') s.push(`<circle cx="50" cy="27" r="1.8" fill="#2A2230"/><circle cx="70" cy="27" r="1.8" fill="#2A2230"/><ellipse cx="60" cy="30" rx="3" ry="2" fill="#2A2230"/>`);
+    if (hood === 'bunny') s.push(`<circle cx="50" cy="27" r="1.8" fill="#2A2230"/><circle cx="70" cy="27" r="1.8" fill="#2A2230"/><path d="M58 29.5 L62 29.5 L60 31.5 Z" fill="#F7A8C4"/>`);
+  }
+  // gorros y diademas (encima del pelo, pegados a la cabeza)
+  const hd = a.head;
+  if (hd === 'flower') s.push(`<path d="M35.5 44 C42 30 78 30 84.5 44" fill="none" stroke="#FFC83D" stroke-width="5.5" stroke-linecap="round"/><path d="M35.5 44 C42 30 78 30 84.5 44" fill="none" stroke="${O}" stroke-width="1.2" opacity=".5"/>` + [0, 72, 144, 216, 288].map(d => { const r = d * Math.PI / 180; return `<circle cx="${(77 + Math.cos(r) * 4.5).toFixed(1)}" cy="${(34 + Math.sin(r) * 4.5).toFixed(1)}" r="3.6" fill="#FF9F2E" ${W}/>`; }).join('') + `<circle cx="77" cy="34" r="2.8" fill="#FFE36B" ${W}/>`);
+  if (hd === 'cap') s.push(`<path d="M34 47 C33 27 46 19 60 19 C75 19 87 27 86 47 Z" fill="#E8463C" ${W}/><path d="M60 19 L60 46" stroke="${O}" stroke-width="1.2" opacity=".5"/><path d="M33 46 C50 40 76 40 101 48 C97 54 80 52 62 50 C50 49 40 49 33 50 Z" fill="#3D86F0" ${W}/><circle cx="60" cy="19.5" r="2.6" fill="#E8463C" ${W}/>`);
+  if (hd === 'capback') s.push(`<path d="M34 47 C33 27 46 19 60 19 C75 19 87 27 86 47 Z" fill="#E8463C" ${W}/><path d="M36 45 C30 42 20 42 13 46 C20 50 28 50 37 48 Z" fill="#3D86F0" ${W}/><path d="M52 47 Q60 41 68 47" fill="${sk}" ${W}/><circle cx="60" cy="19.5" r="2.6" fill="#E8463C" ${W}/>`);
+  if (hd === 'beanie') s.push(`<path d="M33 49 C32 26 46 17 60 17 C74 17 88 26 87 49 Z" fill="#3CB45A" ${W}/><path d="M31 43 Q60 38 89 43 L89 52 Q60 47 31 52 Z" fill="#2A8F45" ${W}/><circle cx="60" cy="15" r="5.5" fill="#FFFFFF" ${W}/>`);
+  if (hd === 'bandana') s.push(`<path d="M34 48 C33 27 46 20 60 20 C75 20 87 27 86 48 C76 43 44 43 34 48 Z" fill="#E8463C" ${W}/>` + [[46, 30], [58, 26], [70, 29], [52, 38], [66, 37], [78, 38], [41, 41]].map(([x, y]) => `<path d="M${x - 2} ${y} q2 -2.5 4 0" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>`).join('') + `<path d="M85 41 L99 34 L96 45 Z" fill="#E8463C" ${W}/><path d="M85 43 L97 51 L88 51 Z" fill="#E8463C" ${W}/><circle cx="86" cy="42" r="3.2" fill="#E8463C" ${W}/>`);
+  if (hd === 'headphones') s.push(`<path d="M33 54 C31 22 89 22 87 54" fill="none" stroke="${O}" stroke-width="7" stroke-linecap="round"/><path d="M33 54 C31 22 89 22 87 54" fill="none" stroke="#17A7A7" stroke-width="4" stroke-linecap="round"/><rect x="26" y="47" width="12" height="20" rx="5" fill="#17A7A7" ${W}/><rect x="82" y="47" width="12" height="20" rx="5" fill="#17A7A7" ${W}/>`);
+  if (hd === 'grad') s.push(`<path d="M41 30 L41 39 Q60 46 79 39 L79 30 Z" fill="#2A2230" ${W}/><path d="M60 14 L95 25 L60 36 L25 25 Z" fill="#3A3346" ${W}/><circle cx="60" cy="25" r="2" fill="#FFC83D"/><path d="M60 25 L88 31 L88 43" fill="none" stroke="#FFC83D" stroke-width="2"/><rect x="85.5" y="42" width="5" height="7" rx="1.5" fill="#FFC83D"/>`);
+  if (hd === 'crown') s.push(`<path d="M38 34 L41 14 L51 26 L60 9 L69 26 L79 14 L82 34 Z" fill="#FFC83D" ${W}/><circle cx="60" cy="27" r="3" fill="#E8463C" ${W}/><circle cx="47" cy="30" r="2.2" fill="#3D86F0" ${W}/><circle cx="73" cy="30" r="2.2" fill="#3CB45A" ${W}/>`);
+  // lentes
+  const fc = a.face;
+  if (fc === 'round') s.push(`<circle cx="50" cy="57" r="7.5" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><circle cx="70" cy="57" r="7.5" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><path d="M57.5 56 Q60 54 62.5 56 M42.5 56 L36 54 M77.5 56 L84 54" fill="none" stroke="${O}" stroke-width="2.4"/>`);
+  if (fc === 'square') s.push(`<rect x="41" y="51" width="17" height="12" rx="3" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><rect x="62" y="51" width="17" height="12" rx="3" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><path d="M58 56 L62 56 M41 55 L35 53 M79 55 L85 53" stroke="${O}" stroke-width="2.4"/>`);
+  if (fc === 'sun') s.push(`<path d="M40 52 L58 52 L57 60 Q49 66 42 60 Z" fill="#2A2230" ${W}/><path d="M62 52 L80 52 L78 60 Q71 66 63 60 Z" fill="#2A2230" ${W}/><path d="M58 53 L62 53 M40 53 L35 52 M80 53 L85 52" stroke="${O}" stroke-width="2.4"/><path d="M44 55 L48 55 M66 55 L70 55" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`);
+  if (fc === 'star'){ const st = (cx, cy) => { let d = ''; for (let i = 0; i < 10; i++){ const r = i % 2 ? 4.2 : 9, t = -Math.PI / 2 + i * Math.PI / 5; d += (i ? 'L' : 'M') + (cx + Math.cos(t) * r).toFixed(1) + ' ' + (cy + Math.sin(t) * r).toFixed(1); } return `<path d="${d}Z" fill="#F06BAA" ${W}/>`; }; s.push(st(50, 57) + st(70, 57) + `<path d="M58 56 L62 56" stroke="${O}" stroke-width="2.4"/>`); }
+  s.push('</g></svg>');
+  return s.join('');
+}
 const avatarOf = id => (DB.progress && DB.progress[id] && DB.progress[id].avatar) || null;
 function avatar(u, cls, override){
-  const av = override || avatarOf(u.id);
-  if (av && av.a){
-    return h('div', {class:'avatar has-emo ' + (cls || ''), style:'background:' + AV_COLORS[av.c % AV_COLORS.length], 'aria-hidden':'true'}, h('span', {class:'emo'}, av.a), av.x ? h('span', {class:'acc'}, av.x) : null);
-  }
+  const av = avNorm(override || avatarOf(u.id));
+  if (av) return h('div', {class:'avatar svg-av ' + (cls || ''), 'aria-hidden':'true', html:avatarSVG(av)});
   const i = [...u.id].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length;
   return h('div', {class:'avatar ' + (cls || ''), style:'background:' + AV_COLORS[i], 'aria-hidden':'true'}, (u.name || '?').trim()[0].toUpperCase());
 }
@@ -790,6 +937,7 @@ function migrate(){
     DB.courseVer = 2;
   }
   if (!DB.friends) DB.friends = REMOTE ? [] : [{from:'s1', to:'s2', status:'accepted'}, {from:'s3', to:'s1', status:'pending'}];
+  if (!REMOTE) DB.users.filter(u => u.example).forEach((u, i) => { const p = DB.progress[u.id] || (DB.progress[u.id] = P()); if (!p.avatar || p.avatar.v !== 2) p.avatar = {...AV_PRESETS[(i + 1) % AV_PRESETS.length]}; }); // compañeros de ejemplo con personaje
   if (DB.seq < 10) DB.seq = 10;
   save();
 }
@@ -1035,6 +1183,7 @@ function starRow(n){ const r = h('div', {class:'stars', 'aria-label': n + ' estr
 function renderMap(){
   const root = $('#tab-learn'); root.innerHTML = '';
   applyFreezes(); claimWeekly(); renderStats();
+  if (!avNorm(S.avatar) && !S.avatarAsked) setTimeout(() => { if (!document.querySelector('.sheet') && !$('#home').hidden) avatarWelcome(); }, 350);
   const cur = currentLesson();
   root.append(h('div', {class:'panda-say'}, panda('full'), h('div', {class:'bubble'}, `¡Hello, ${U.name}! `, cur ? 'Toca la lección que brilla para seguir practicando.' : '¡Terminaste todo lo disponible! Tu profe abrirá más unidades pronto.')));
   if (cur && !S.days.includes(today())) root.append(h('div', {class:'card', style:'margin-bottom:14px;border-color:var(--orange)'}, h('b', {}, streak() > 0 ? `🔥 ¡Tu racha de ${streak()} día${streak() > 1 ? 's' : ''} está en peligro!` : '🐼 ¡Hoy todavía no has practicado!'), h('div', {class:'muted', style:'font-size:15px'}, 'Con una lección es suficiente.')));
@@ -1154,31 +1303,87 @@ function leagueOf(p){
 const leagueBadge = p => { const l = LEAGUES[leagueOf(p).lvl]; return h('span', {class:'league-badge', title:'Liga ' + l.n}, l.g); };
 // Gemas
 function addGems(n, why){ S.gems = (S.gems || 0) + n; save(); renderStats(); if (why) toast(`+${n} 💎 ${why}`); }
-// Tienda
-const SHOP = [
-  {id:'freeze', g:'🧊', name:'Protector de racha', cost:40, desc:'Si un día no practicas, salva tu racha. Puedes tener hasta 2.'},
-  {id:'pizza', g:'🍕', name:'Pizza', cost:15}, {id:'flor', g:'🌸', name:'Flor', cost:20}, {id:'balon', g:'⚽', name:'Balón', cost:20},
-  {id:'mariposa', g:'🦋', name:'Mariposa', cost:25}, {id:'birrete', g:'🎓', name:'Birrete', cost:30}, {id:'guitarra', g:'🎸', name:'Guitarra', cost:35},
-  {id:'arcoiris', g:'🌈', name:'Arcoíris', cost:40}, {id:'cohete', g:'🚀', name:'Cohete', cost:50}
-];
-const ownedAcc = () => SHOP.filter(x => x.id !== 'freeze' && (S.owned || []).includes(x.id));
+const refreshAv = () => { if (!$('#tab-me').hidden) renderMe(); if (!$('#tab-rank').hidden) renderRank(); };
+// Dueño de cada prenda: lo gratis no tiene costo; lo de la tienda se compra suelto (cat:id) o como traje (set:panda)
+const avKey = (cat, it) => it.set ? 'set:' + it.set : cat + ':' + it.id;
+const avPrice = it => it.set ? AV_SETS[it.set].cost : (it.cost || 0);
+const avItemName = it => it.set ? AV_SETS[it.set].n : it.n;
+const avOwned = (cat, it) => (!it.cost && !it.set) || (S && (S.owned || []).includes(avKey(cat, it)));
+const myAvatar = () => avNorm(S.avatar) || {...AV_DEFAULT};
+function buySheet(name, cost, previewAv, onBought){
+  if ((S.gems || 0) < cost) return toast(`Te faltan ${cost - (S.gems || 0)} 💎. Gana gemas practicando.`);
+  const sh = sheet(h('h2', {style:'font-size:24px;text-align:center'}, `¿Comprar ${name}?`),
+    previewAv ? h('div', {class:'av-preview', html:avatarSVG(previewAv)}) : null,
+    h('p', {class:'muted', style:'margin:0;text-align:center'}, `Cuesta ${cost} 💎. Tienes ${S.gems || 0} 💎.`),
+    h('button', {class:'btn', type:'button', onclick:() => { sh.remove(); S.gems -= cost; onBought(); save(); renderStats(); celebrate('small'); }}, `Comprar por ${cost} 💎`),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
+}
+function buyAvItem(cat, it, after, from){
+  const base = from ? {...from} : myAvatar(), pv = it.set ? {...base, head:it.set, top:it.set} : {...base, [cat]:it.id};
+  buySheet(avItemName(it), avPrice(it), pv, () => { S.owned = [...(S.owned || []), avKey(cat, it)]; toast(`¡${avItemName(it)} es tuyo!`); after && after(); });
+}
+const AV_TABS = [['skin', 'Piel'], ['hair', 'Pelo'], ['hc', 'Color de pelo'], ['eyes', 'Ojos'], ['mouth', 'Boca'], ['top', 'Ropa'], ['tc', 'Color de ropa'], ['head', 'Cabeza'], ['face', 'Lentes'], ['bg', 'Fondo']];
+function avatarEditor(start){
+  const cur = avNorm(start) || myAvatar();
+  let tab = 'hair';
+  const prev = h('div', {class:'av-preview'}), tabs = h('div', {class:'av-tabs', role:'tablist'}), opts = h('div', {});
+  const draw = () => {
+    prev.innerHTML = avatarSVG(cur);
+    tabs.innerHTML = ''; AV_TABS.forEach(([k, n]) => tabs.append(h('button', {type:'button', role:'tab', 'aria-selected':String(tab === k), onclick:() => { tab = k; draw(); }}, n)));
+    opts.innerHTML = '';
+    const colors = {skin:AV.skin.map(c => c[0]), hc:AV.hairColor, tc:AV.topColor, bg:AV.bg}[tab];
+    if (colors){
+      if (tab === 'tc' && ['panda', 'bear', 'bunny'].includes(cur.top)) opts.append(h('p', {class:'muted', style:'margin:0 0 8px;font-size:14px'}, 'Esta sudadera tiene su propio color. Elige otra ropa para cambiar el color.'));
+      opts.append(h('div', {class:'swatches av-sw'}, ...colors.map((c, i) => h('button', {type:'button', style:'background:' + c, 'aria-label':`Color ${i + 1}`, 'aria-pressed':String(cur[tab] === i), onclick:() => { cur[tab] = i; draw(); }}))));
+      return;
+    }
+    opts.append(h('div', {class:'av-grid'}, ...AV[tab].map(it => {
+      const owned = avOwned(tab, it), test = it.set && tab === 'head' ? {...cur, head:it.id} : {...cur, [tab]:it.id};
+      return h('button', {type:'button', 'aria-pressed':String(cur[tab] === it.id), 'aria-label':it.n + (owned ? '' : `, cuesta ${avPrice(it)} gemas`), onclick:() => {
+        if (!owned) return buyAvItem(tab, it, () => { if (it.set){ cur.head = it.set; cur.top = it.set; } else cur[tab] = it.id; draw(); }, cur);
+        cur[tab] = it.id; draw();
+      }}, h('span', {class:'avmini', html:avatarSVG(test)}), h('small', {}, owned ? it.n : `🔒 ${avPrice(it)} 💎`));
+    })));
+  };
+  draw();
+  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Mi personaje'), prev, tabs, opts,
+    h('button', {class:'btn', type:'button', onclick:() => { S.avatar = {...cur}; S.avatarAsked = true; save(); sh.remove(); refreshAv(); toast('¡Personaje guardado!'); }}, 'Guardar personaje'),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
+}
+const avatarSheet = () => avatarEditor(S.avatar);
+// Primera vez: elegir un personaje listo o personalizarlo
+function avatarWelcome(){
+  S.avatarAsked = true; save();
+  let pick = 0;
+  const grid = h('div', {class:'av-grid'});
+  const draw = () => { grid.innerHTML = ''; AV_PRESETS.forEach((p, i) => grid.append(h('button', {type:'button', 'aria-pressed':String(pick === i), 'aria-label':'Personaje ' + (i + 1), onclick:() => { pick = i; draw(); }}, h('span', {class:'avmini', html:avatarSVG(p)})))); };
+  draw();
+  const sh = sheet(h('h2', {style:'font-size:24px;text-align:center'}, '¡Crea tu personaje! 🐼'),
+    h('p', {class:'muted', style:'margin:0;text-align:center'}, 'Elige uno listo o personalízalo a tu gusto. En la 💎 Tienda puedes comprarle trajes, gorras y más.'), grid,
+    h('button', {class:'btn', type:'button', onclick:() => { S.avatar = {...AV_PRESETS[pick]}; save(); sh.remove(); refreshAv(); toast('¡Listo! Ese es tu personaje.'); }}, 'Usar este personaje'),
+    h('button', {class:'btn blue', type:'button', onclick:() => { sh.remove(); avatarEditor(AV_PRESETS[pick]); }}, '🎨 Personalizarlo'),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Ahora no'));
+}
+// Tienda: trajes, prendas y protector de racha
 function shopSheet(){
-  const body = h('div', {class:'stack', style:'gap:10px'});
+  const body = h('div', {class:'stack', style:'gap:12px'});
+  const wear = (cat, it) => { const a = myAvatar(); if (it.set){ a.head = it.set; a.top = it.set; } else a[cat] = it.id; S.avatar = a; save(); toast('¡Te lo pusiste!'); draw(); };
+  const card = (title, pv, owned, price, onBuy, onWear, worn) => h('div', {class:'shop-item' + (owned ? ' owned' : '')},
+    h('span', {class:'avmini big', html:avatarSVG(pv)}), h('b', {}, title),
+    owned ? (worn ? h('span', {class:'pill okp'}, 'Lo llevas puesto') : h('button', {class:'btn small blue', type:'button', onclick:onWear}, 'Ponérmelo'))
+      : h('button', {class:'btn small' + ((S.gems || 0) >= price ? '' : ' ghost'), type:'button', onclick:onBuy}, `💎 ${price}`));
   const draw = () => {
     body.innerHTML = '';
+    const a = myAvatar();
     body.append(h('div', {class:'gem-balance'}, '💎 ', h('b', {}, S.gems || 0), ' gemas'),
-      h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Ganas gemas al terminar lecciones (más si sacas 3 estrellas), al enviar tareas, al subir de liga y al ganar desafíos a tus amigos.'),
-      h('div', {class:'shop-grid'}, ...SHOP.map(it => {
-        const isFreeze = it.id === 'freeze', owned = !isFreeze && (S.owned || []).includes(it.id), full = isFreeze && (S.freezes || 0) >= 2;
-        const can = !owned && !full && (S.gems || 0) >= it.cost;
-        return h('div', {class:'shop-item' + (owned ? ' owned' : '')}, h('div', {class:'g'}, it.g), h('b', {}, it.name),
-          it.desc ? h('small', {}, it.desc + (isFreeze ? ` Tienes ${S.freezes || 0}.` : '')) : h('small', {}, 'Accesorio para tu avatar'),
-          owned ? h('span', {class:'pill okp'}, 'Es tuyo') :
-          h('button', {class:'btn small' + (can ? '' : ' ghost'), type:'button', disabled:!can, onclick:() => {
-            S.gems -= it.cost; if (isFreeze) S.freezes = (S.freezes || 0) + 1; else S.owned = [...(S.owned || []), it.id];
-            save(); renderStats(); celebrate('small'); toast(isFreeze ? '🧊 Protector de racha listo' : `¡${it.name} es tuyo! Póntelo en “Personalizar mi avatar”.`); draw();
-          }}, full ? 'Ya tienes 2' : `💎 ${it.cost}`));
-      })));
+      h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Ganas gemas al terminar lecciones (más con 3 estrellas), al enviar tareas, al subir de liga y al ganar desafíos a tus amigos.'),
+      h('h3', {style:'font-size:19px'}, '🧸 Trajes'),
+      h('div', {class:'shop-grid'}, ...Object.keys(AV_SETS).map(k => { const it = AV.head.find(x => x.id === k); return card(AV_SETS[k].n, {...a, head:k, top:k}, avOwned('head', it), AV_SETS[k].cost, () => buyAvItem('head', it, draw), () => wear('head', it), a.head === k && a.top === k); })),
+      h('h3', {style:'font-size:19px'}, '🧢 Ropa y accesorios'),
+      h('div', {class:'shop-grid'}, ...['head', 'face', 'top'].flatMap(cat => AV[cat].filter(it => it.cost).map(it => card(it.n, {...a, [cat]:it.id}, avOwned(cat, it), it.cost, () => buyAvItem(cat, it, draw), () => wear(cat, it), a[cat] === it.id)))),
+      h('h3', {style:'font-size:19px'}, '🧊 Protector de racha'),
+      (() => { const full = (S.freezes || 0) >= 2; return h('div', {class:'shop-item'}, h('div', {class:'g'}, '🧊'), h('b', {}, 'Protector de racha'), h('small', {}, `Si un día no practicas, salva tu racha. Puedes tener hasta 2. Tienes ${S.freezes || 0}.`),
+        h('button', {class:'btn small' + (!full && (S.gems || 0) >= 40 ? '' : ' ghost'), type:'button', disabled:full, onclick:() => buySheet('un protector de racha', 40, null, () => { S.freezes = (S.freezes || 0) + 1; toast('🧊 Protector de racha listo'); draw(); })}, full ? 'Ya tienes 2' : '💎 40')); })());
   };
   draw();
   const sh = sheet(h('h2', {style:'font-size:24px'}, '💎 Tienda'), body, h('button', {class:'btn ghost', type:'button', onclick:() => { sh.remove(); if (U && U.role === 'student') renderMe(); }}, 'Cerrar'));
@@ -1295,23 +1500,6 @@ function downloadGrades(){
   } catch (e) { console.error(e); toast('No se pudo crear el archivo de Excel. Prueba otra vez.'); }
 }
 /* ---------- avatar y amigos ---------- */
-function avatarSheet(){
-  const cur = Object.assign({a:'🐼', c:0, x:''}, S.avatar || {});
-  const prev = h('div', {style:'display:flex;justify-content:center;padding:8px 0'});
-  const animals = h('div', {class:'av-grid'}), colors = h('div', {class:'swatches'}), accs = h('div', {class:'av-grid'});
-  const draw = () => {
-    prev.innerHTML = ''; prev.append(avatar(U, 'xl', cur));
-    animals.innerHTML = ''; AV_ANIMALS.forEach(a => animals.append(h('button', {type:'button', 'aria-pressed':String(cur.a === a), 'aria-label':'Personaje ' + a, onclick:() => { cur.a = a; draw(); }}, a)));
-    colors.innerHTML = ''; AV_COLORS.forEach((c, i) => colors.append(h('button', {type:'button', style:'background:' + c, 'aria-label':'Color ' + (i + 1), 'aria-pressed':String(cur.c === i), onclick:() => { cur.c = i; draw(); }})));
-    accs.innerHTML = ''; [...AV_ACC, ...ownedAcc().map(x => ({g:x.g, name:x.name, xp:0}))].forEach(x => { const locked = S.xp < x.xp; accs.append(h('button', {type:'button', disabled:locked, 'aria-pressed':String(cur.x === x.g), 'aria-label':x.name + (locked ? `, se desbloquea con ${x.xp} XP` : ''), onclick:() => { cur.x = x.g; draw(); }}, x.g || '🚫', h('small', {}, locked ? `🔒 ${x.xp} XP` : x.name))); });
-  };
-  draw();
-  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Mi avatar'), prev,
-    h('div', {class:'lbl'}, 'Personaje'), animals, h('div', {class:'lbl'}, 'Color'), colors,
-    h('div', {class:'lbl'}, 'Accesorio'), h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Gana XP para desbloquear accesorios, o cómpralos con gemas en la 💎 Tienda.'), accs,
-    h('button', {class:'btn', type:'button', onclick:() => { S.avatar = {a:cur.a, c:cur.c, x:cur.x}; save(); sh.remove(); renderMe(); renderStats(); toast('¡Avatar guardado!'); }}, 'Guardar avatar'),
-    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
-}
 const friendIds = uid => (DB.friends || []).filter(f => f.status === 'accepted' && (f.from === uid || f.to === uid)).map(f => f.from === uid ? f.to : f.from);
 const friendReqsIn = uid => (DB.friends || []).filter(f => f.status === 'pending' && f.to === uid);
 const friendReqOut = (uid, other) => (DB.friends || []).some(f => f.status === 'pending' && f.from === uid && f.to === other);
@@ -1446,9 +1634,17 @@ function missedCard(st){
   return h('div', {class:'card', style:'margin-top:16px'},
     h('h3', {style:'font-size:19px;margin-bottom:4px'}, 'Palabras que más se fallan'),
     h('p', {class:'muted', style:'margin:0 0 6px;font-size:14px'}, 'Para repasar en clase. Cuenta los errores de todos los estudiantes del grupo.'),
-    ...(top.length ? top.map(t => h('div', {class:'stu', style:'cursor:default'}, V[t.w] ? pic(V[t.w].img) : null,
-      h('div', {class:'nm'}, t.w, h('small', {}, (V[t.w] ? V[t.w].es + ' · ' : '') + `${t.n} error${t.n > 1 ? 'es' : ''} · ${t.who} estudiante${t.who > 1 ? 's' : ''}`)),
-      h('button', {class:'btn blue small', type:'button', style:'width:48px;padding:8px;flex:none', 'aria-label':'Escuchar ' + t.w, html:'<span style="display:inline-block;width:22px;height:22px">' + ICON.speaker + '</span>', onclick:() => say(t.w)}))) : [h('p', {style:'margin:0'}, 'Todavía no hay errores registrados. Aparecerán cuando los estudiantes practiquen.')]));
+    ...(top.length ? top.map(t => h('div', {class:'stu', role:'button', tabindex:'0', style:'cursor:pointer', 'aria-label':`Ver quién falla ${t.w}`, onclick:() => whoMissedSheet(t.w, st), onkeydown:e => { if (e.key === 'Enter') whoMissedSheet(t.w, st); }}, V[t.w] ? pic(V[t.w].img) : null,
+      h('div', {class:'nm'}, t.w, h('small', {}, (V[t.w] ? V[t.w].es + ' · ' : '') + `${t.n} error${t.n > 1 ? 'es' : ''} · ${t.who} estudiante${t.who > 1 ? 's' : ''} · toca para ver quién`)),
+      h('button', {class:'btn blue small', type:'button', style:'width:48px;padding:8px;flex:none', 'aria-label':'Escuchar ' + t.w, html:'<span style="display:inline-block;width:22px;height:22px">' + ICON.speaker + '</span>', onclick:e => { e.stopPropagation(); say(t.w); }}))) : [h('p', {style:'margin:0'}, 'Todavía no hay errores registrados. Aparecerán cuando los estudiantes practiquen.')]));
+}
+// Quién falla una palabra: para saber a quién ayudar
+function whoMissedSheet(w, st){
+  const rows = st.map(u => ({u, n:(prog(u.id).miss || {})[w] || 0})).filter(r => r.n > 0).sort((a, b) => b.n - a.n || a.u.name.localeCompare(b.u.name));
+  const sh = sheet(h('div', {style:'display:flex;align-items:center;gap:12px'}, V[w] ? pic(V[w].img, 'sm') : null, h('div', {}, h('h2', {style:'font-size:24px'}, w), V[w] ? h('div', {class:'muted'}, V[w].es) : null)),
+    h('p', {class:'muted', style:'margin:0;font-size:15px'}, rows.length ? 'Estos estudiantes fallan esta palabra. El número baja cuando la aciertan en su Repaso inteligente.' : 'Ya nadie tiene errores pendientes con esta palabra.'),
+    ...rows.map(r => h('button', {class:'stu', type:'button', onclick:() => { sh.remove(); studentSheet(r.u); }}, avatar(r.u), h('div', {class:'nm'}, r.u.name, h('small', {}, `Última práctica: ${lastSeen(prog(r.u.id))}`)), h('b', {style:'color:var(--red);font-size:18px;flex:none'}, `${r.n} ${r.n === 1 ? 'error' : 'errores'}`))),
+    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
 }
 function renderStudents(){
   const root = $('#atab-stu'); root.innerHTML = '';

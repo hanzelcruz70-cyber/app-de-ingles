@@ -6,7 +6,7 @@ const { chromium } = require('playwright');
   await p.route('**/*', r => r.request().url().startsWith('http://x/') ? r.fulfill({body:'<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>'+html+'</body></html>', contentType:'text/html'}) : r.abort());
   await p.goto('http://x/'); await p.waitForTimeout(400);
   // student first: old lessons still play
-  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(300);
+  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
   await p.click('.node.current',{force:true}); await p.waitForTimeout(200);
   const ok1 = await p.isVisible('#lesson');
   await p.click('#lclose'); await p.click('.sheet button:has-text("Salir")');
@@ -40,7 +40,7 @@ const { chromium } = require('playwright');
   await p.click('.ed-back'); await p.click('.ed-back'); await p.waitForTimeout(100);
   await p.click('.row:has-text("My Family") .switch'); await p.waitForTimeout(100);
   await p.click('#admLogout'); await p.click('.sheet button:has-text("Cerrar sesión")');
-  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(300);
+  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
   await p.evaluate(()=>{ const b=[...document.querySelectorAll('.unit-banner')].find(x=>x.textContent.includes('My Family')); b.scrollIntoView(); });
   await p.waitForTimeout(200);
     console.log('studentLessonOk',ok1, errs.join('\n')||'no errors');

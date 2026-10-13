@@ -96,8 +96,9 @@ Tipos de ejercicio:
 - Muestra XP total, racha (días seguidos) y lecciones completadas.
 - **Medallas**: las ganadas a color y las que faltan en gris, con lo que hay que hacer para ganarlas.
 - **⏰ Recordatorio diario:** elige una **Hora** y toca **Activar recordatorio**. El teléfono pide permiso para notificaciones. Si ese día no has practicado, Pandi avisa a esa hora (funciona mejor con la app instalada). Se apaga con **Apagar recordatorio**.
-- **💎 Tienda:** se gastan las gemas en accesorios para el avatar (🍕 15, 🌸 20, ⚽ 20, 🦋 25, 🎓 30, 🎸 35, 🌈 40, 🚀 50) y en el **🧊 Protector de racha** (40, máximo 2). Las gemas se ganan así: 5 por lección (+3 si saca 3 estrellas), 10 por enviar una tarea escrita, 20 al subir de liga y 10 por cada desafío ganado a un amigo.
-- **🎨 Mi avatar:** elige un **personaje** (animal), un **color** y un **accesorio**. Algunos accesorios se desbloquean con XP (🔒 Estrella 100, Lentes 200, Audífonos 300, Sombrero 450, Corona 700). El avatar se ve en el perfil, en el ranking, en la lista de amigos y en el panel del profe.
+- **💎 Tienda:** se gastan las gemas en **trajes** (🐼 panda, 🐻 oso y 🐰 conejo: capucha y sudadera, 60 cada uno), **gorros** (gorra 20, gorra al revés 20, pañoleta 20, gorro de lana 25, audífonos 30, birrete 40, corona 80), **lentes** (de sol 25, de estrella 35), **ropa** (camisa de explorador 25, camiseta de fútbol 30) y el **🧊 Protector de racha** (40, máximo 2). Cada artículo se ve puesto en tu propio personaje. Al comprarlo aparece **Ponérmelo**. Las gemas se ganan así: 5 por lección (+3 con 3 estrellas), 10 por tarea escrita, 20 al subir de liga y 10 por desafío ganado.
+- **🎨 Mi avatar (personaje):** es un niño o niña dibujado. Se eligen por pestañas **Piel, Pelo, Color de pelo, Ojos, Boca, Ropa, Color de ropa, Cabeza, Lentes y Fondo**, con vista previa. Lo que se pone **queda puesto de verdad**: la gorra o el gorro tapan el pelo, la capucha envuelve la cabeza y los lentes van en la cara. Lo que tiene 🔒 se compra con gemas ahí mismo o en la tienda. El personaje se ve en el perfil, en el ranking, con los amigos y en el panel del profe.
+- **Primera vez:** al entrar, aparece **¡Crea tu personaje!** con 8 personajes listos. Se puede **Usar este personaje**, **Personalizarlo** o tocar **Ahora no**, y después cambiarlo en **Mi avatar**.
 - **👫 Mis amigos:** con **+ Agregar** invitas a un compañero **de tu mismo grupo** (no hay chat). Él debe tocar **Aceptar**. Cada amigo muestra la **racha de amigos 🔥** (los días seguidos en que **los dos** practicaron) y el **⚔️ Desafío de la semana**: quién lleva más XP. El lunes, quien ganó la semana anterior recibe **10 💎**. Al tocar un amigo puedes quitarlo. En el modo demo, las cuentas de ejemplo aceptan solas.
 - **Probar audio y micrófono:** **Probar sonido** (Pandi habla en inglés), **Probar efectos** y **Probar micrófono** (di "Hello").
 - Enlaces a **Aviso de privacidad** y **Términos y condiciones**.
@@ -115,7 +116,7 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 - *"¡Hola, Profe Admin! Así va tu grupo esta semana."*
 - Números: estudiantes, cuántos **practicaron esta semana**, lecciones completadas y **tareas por revisar** (con botón **Revisar N tareas**).
 - **Ranking de la semana** del grupo, con la última práctica de cada uno.
-- **Palabras que más se fallan:** las palabras con más errores en el grupo, cuántos errores y cuántos estudiantes. Cada una tiene un botón para escucharla.
+- **Palabras que más se fallan:** las palabras con más errores en el grupo, cuántos errores y cuántos estudiantes. **Al tocar una palabra** sale qué estudiantes la fallan y cuántas veces cada uno, para saber a quién ayudar. Al tocar un estudiante se abre su ficha. El botón azul reproduce la palabra.
 - **Necesitan un empujón:** estudiantes que no practicaron en los últimos 7 días. El botón **Recordar** arma un mensaje para el papá o la mamá (ver 3.6).
 
 ### 3.2 Estudiantes y grupos

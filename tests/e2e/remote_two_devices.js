@@ -63,7 +63,9 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   // student device
   const B = await device(b);
   const savedFr = T.friendships; delete T.friendships; // schema.sql viejo, sin la tabla de amigos
-  await B.fill('#lgUser','ana'); await B.fill('#lgPass','ana123'); await B.click('#loginForm button'); await wait(500);
+  await B.fill('#lgUser','ana'); await B.fill('#lgPass','ana123'); await B.click('#loginForm button'); await wait(700);
+  R.welcomeShown = await B.isVisible('.sheet h2:has-text("Crea tu personaje")'); if (R.welcomeShown){ await B.click('.sheet .av-grid button >> nth=5'); await B.click('.sheet button:has-text("Usar este personaje")'); await wait(1200); }
+  R.avatarSynced = !!((T.progress.find(x => x.user_id === 'st1') || {data:{}}).data.avatar || {}).v;
   R.studentIn = await B.isVisible('#home'); R.loginWithoutFriendsTable = R.studentIn; T.friendships = savedFr;
   R.openUnits = await B.$$eval('.unit-banner', els => els.filter(e => !e.classList.contains('locked')).length);
   await B.evaluate(() => { S.xp += 60; S.done.u1l1 = 3; S.xpDays[new Date().toISOString().slice(0,10)] = 60; save(); });

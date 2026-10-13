@@ -13,7 +13,7 @@ const fs = require('fs'), path = require('path');
   // login: prueba de audio
   await p.click('#lgAudio'); R.audioSheetLogin = await p.isVisible('.sheet h2:has-text("Probar audio")'); await p.click('.sheet button:has-text("Cerrar")');
   // estudiante juega, falla una respuesta
-  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(300);
+  await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
   R.nudgeBanner = /Hoy todavía no has practicado|racha/.test(await p.textContent('#tab-learn'));
   await p.click('.node.current', {force:true}); await p.waitForTimeout(300);
   await p.evaluate(() => grade(false, 'x')); await p.waitForTimeout(100);
