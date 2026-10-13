@@ -66,7 +66,11 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 /* top bar + tabs */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--bg);border-bottom:2px solid var(--line)}
 .topbar .logo{width:42px;flex:none}
-.topbar .name{font-family:var(--display);font-size:20px;font-weight:700;flex:1;min-width:0}
+.topbar .name{font-family:var(--display);font-size:20px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#home .topbar{gap:8px;padding:8px 12px}
+#home .topbar .chip{font-size:16px;gap:2px}
+#home .topbar .chip svg{width:19px;height:19px}
+@media (max-width:400px){#home .topbar .name{font-size:17px}#home .topbar .logo{width:36px}}
 .topbar .name span{color:var(--green)}
 .chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--display);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
 .chip svg{width:22px;height:22px}
@@ -310,6 +314,24 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .sheet>div{background:var(--surface);width:100%;max-width:480px;max-height:88%;overflow-y:auto;border-radius:24px 24px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;box-sizing:border-box}
 .legal{font-size:14px;color:var(--ink-2);text-align:center;margin:12px 0 0;line-height:1.5}
 .legal a{color:var(--blue);font-weight:700}
+.chip.gem{color:var(--blue)}
+.league-badge{font-size:16px}
+.league-card{margin:4px 0 14px}
+.league-big{font-size:46px;line-height:1}
+.review-card{margin-bottom:14px;border-color:var(--purple)}
+.gem-earned{font-family:var(--display);font-size:18px;color:var(--blue);font-weight:600}
+.streak-up{display:flex;align-items:center;gap:12px;text-align:left;border-color:var(--orange)}
+.streak-up .flame{font-size:40px;animation:bob 1.2s ease-in-out infinite}
+.friend-row .nm small.duel{color:var(--blue);font-weight:700}
+.gem-balance{font-family:var(--display);font-size:22px;color:var(--blue)}
+.shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.shop-item{border:2px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;text-align:center;background:var(--surface)}
+.shop-item .g{font-size:36px}
+.shop-item small{color:var(--ink-2);font-size:13px;line-height:1.35}
+.shop-item.owned{border-color:var(--green)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.confetti i{position:absolute;top:-20px;border-radius:2px;animation:confetti-fall 2s cubic-bezier(.25,.6,.4,1) forwards}
+@keyframes confetti-fall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 .toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:60;font-size:15px;max-width:calc(100% - 48px);text-align:center}
 
 
@@ -408,6 +430,7 @@ select.in{appearance:auto;min-width:0}
       <div class="name"><span>Pandi</span> English</div>
       <span class="chip fire" title="Días seguidos"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-2.5 1.2-4 2.5-5 .2 1.8 1 3 2.2 3.4C11 8.5 11.3 5 12 2z"/></svg><span id="streakN">0</span></span>
       <span class="chip xp" title="Puntos XP"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg><span id="xpN">0</span></span>
+      <span class="chip gem" title="Gemas"><span aria-hidden="true">💎</span><span id="gemN">0</span></span>
     </header>
     <div id="tab-learn" class="tab"></div>
     <div id="tab-work" class="tab" hidden></div>
@@ -678,7 +701,7 @@ const MEDALS = [
 
 /* ---------- data (demo: saved in this browser) ---------- */
 const KEY = 'pandi-english-v2';
-const P = (extra) => Object.assign({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, hw:null}, extra || {});
+const P = (extra) => Object.assign({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, gems:0, owned:[], freezes:0, frozen:[], claimed:{}, hw:null}, extra || {});
 const doneMap = (ids, stars) => Object.fromEntries(ids.map((id, i) => [id, stars[i % stars.length]]));
 function seed(){
   return {
@@ -764,7 +787,7 @@ const groupAssignments = () => DB.assignments.filter(a => a.groups.includes(curG
 const hwOf = (p, aid) => (p.hw || (p.hw = {}))[aid] || null;
 const prog = id => DB.progress[id] || (DB.progress[id] = P());
 function streakOf(p){
-  const set = new Set(p.days); let n = 0; const d = new Date();
+  const set = new Set([...(p.days || []), ...(p.frozen || [])]); let n = 0; const d = new Date();
   if (!set.has(today())) d.setDate(d.getDate() - 1);
   while (set.has(ymd(d))){ n++; d.setDate(d.getDate() - 1); }
   return n;
@@ -983,7 +1006,7 @@ function setTab(t){
   if (t === 'learn') setTimeout(() => { const c = $('.node.current'); if (c) c.scrollIntoView({block:'center', behavior:'smooth'}); }, 60);
 }
 $$('#stuNav button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
-function renderStats(){ $('#streakN').textContent = streak(); $('#xpN').textContent = S.xp; }
+function renderStats(){ $('#streakN').textContent = streak(); $('#xpN').textContent = S.xp; $('#gemN').textContent = S.gems || 0; }
 
 const OFF = [0, 46, 70, 46, 0, -46, -70, -46];
 function currentLesson(){
@@ -993,9 +1016,11 @@ function currentLesson(){
 function starRow(n){ const r = h('div', {class:'stars', 'aria-label': n + ' estrellas'}); for (let i = 0; i < 3; i++){ const s = h('span', {html:ICON.star}); s.style.color = i < n ? 'var(--yellow)' : 'var(--locked)'; r.append(s); } return r; }
 function renderMap(){
   const root = $('#tab-learn'); root.innerHTML = '';
+  applyFreezes(); claimWeekly(); renderStats();
   const cur = currentLesson();
   root.append(h('div', {class:'panda-say'}, panda('full'), h('div', {class:'bubble'}, `¡Hello, ${U.name}! `, cur ? 'Toca la lección que brilla para seguir practicando.' : '¡Terminaste todo lo disponible! Tu profe abrirá más unidades pronto.')));
   if (cur && !S.days.includes(today())) root.append(h('div', {class:'card', style:'margin-bottom:14px;border-color:var(--orange)'}, h('b', {}, streak() > 0 ? `🔥 ¡Tu racha de ${streak()} día${streak() > 1 ? 's' : ''} está en peligro!` : '🐼 ¡Hoy todavía no has practicado!'), h('div', {class:'muted', style:'font-size:15px'}, 'Con una lección es suficiente.')));
+  root.append(reviewCard());
   for (const u of units()){
     const open = openMap()[u.id];
     const ls = playLessons(u);
@@ -1057,7 +1082,7 @@ function renderWork(){
         h('button', {class:'btn blue', type:'button', disabled:!!hw.sentAt, onclick:() => {
           if (ta.value.trim().split(/\s+/).length < 5) return toast('Escribe al menos una oración completa en inglés.');
           S.hw[a.id] = {text:ta.value.trim(), sentAt:today(), note:'', reviewed:false};
-          const got = checkMedals(); save(); renderWork(); toast(got.length ? '¡Enviada! Ganaste la medalla “Tarea lista”.' : '¡Tarea enviada a tu profe!');
+          S.gems = (S.gems || 0) + 10; const got = checkMedals(); save(); renderWork(); renderStats(); celebrate(got.length ? 'big' : 'small'); toast(got.length ? '¡Enviada! Ganaste la medalla “Tarea lista” y 10 💎.' : '¡Tarea enviada a tu profe! +10 💎');
         }}, hw.sentAt ? 'Enviada a tu profe' : 'Enviar a mi profe'),
         hw.reviewed ? gradeView(hw, false)
           : hw.sentAt ? h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Tu profe la revisará y te dejará una nota aquí.') : null));
@@ -1080,12 +1105,176 @@ function renderRank(){
     h('button', {type:'button', 'aria-pressed': String(rankMode === 'all'), onclick:() => { rankMode = 'all'; renderRank(); }}, 'Desde el inicio'));
   const top = list.slice(0, 3);
   const podOrder = [top[1], top[0], top[2]].map((r, i) => r ? h('div', {class:'pod p' + [2, 1, 3][i]}, avatar(r.u), h('div', {class:'name'}, r.u.id === U.id ? 'Tú' : r.u.name), h('div', {class:'pts'}, r.pts + ' XP'), h('div', {class:'block'}, [2, 1, 3][i])) : h('div'));
-  root.append(h('h2', {class:'section-title'}, 'Ranking de la clase'), seg,
+  root.append(h('h2', {class:'section-title'}, 'Ranking de la clase'), leagueCard(), seg,
     h('div', {class:'panda-say', style:'margin-bottom:6px'}, panda('head'), h('div', {class:'bubble'}, myPos === 1 ? '¡Vas en primer lugar! Sigue así.' : `Vas en el lugar ${myPos}. Termina lecciones para ganar XP y subir.`)),
     h('div', {class:'podium'}, ...podOrder),
     h('div', {class:'card', style:'padding:8px'}, ...list.map((r, i) => h('div', {class:'rank-row' + (r.u.id === U.id ? ' me' : '')},
-      h('div', {class:'pos'}, i + 1), avatar(r.u), h('div', {class:'nm'}, r.u.id === U.id ? `${r.u.name} (tú)` : r.u.name, h('small', {}, streakOf(r.p) === 1 ? '1 día seguido' : `${streakOf(r.p)} días seguidos`)), h('div', {class:'xpv'}, r.pts + ' XP')))),
+      h('div', {class:'pos'}, i + 1), avatar(r.u), h('div', {class:'nm'}, r.u.id === U.id ? `${r.u.name} (tú)` : r.u.name, ' ', leagueBadge(r.p), h('small', {}, (streakOf(r.p) === 1 ? '1 día seguido' : `${streakOf(r.p)} días seguidos`) + ' · Liga ' + LEAGUES[leagueOf(r.p).lvl].n)), h('div', {class:'xpv'}, r.pts + ' XP')))),
     list.some(r => r.u.example) ? h('p', {class:'muted', style:'font-size:13px;margin:12px 0 0'}, 'En esta demo, Sofía, Diego, Valeria y los demás compañeros son cuentas de muestra.') : null);
+}
+/* ---------- ligas, gemas, tienda, desafíos, repaso y celebraciones ---------- */
+// Semanas de lunes a domingo (fecha local)
+const mondayOf = k => { const d = new Date(k + 'T12:00'); d.setDate(d.getDate() - (d.getDay() + 6) % 7); return ymd(d); };
+const addDays = (k, n) => { const d = new Date(k + 'T12:00'); d.setDate(d.getDate() + n); return ymd(d); };
+const xpInWeek = (p, mon) => { const sun = addDays(mon, 6); return Object.entries(p.xpDays || {}).filter(([d]) => d >= mon && d <= sun).reduce((a, [, v]) => a + v, 0); };
+const thisMonday = () => mondayOf(today());
+const lastMonday = () => addDays(thisMonday(), -7);
+// Ligas: se sube con LEAGUE_UP XP en una semana, se baja con menos de LEAGUE_DOWN
+const LEAGUES = [{n:'Bronce', g:'🥉'}, {n:'Plata', g:'🥈'}, {n:'Oro', g:'🥇'}, {n:'Zafiro', g:'🔷'}, {n:'Diamante', g:'💠'}];
+const LEAGUE_UP = 150, LEAGUE_DOWN = 30;
+function leagueOf(p){
+  const days = Object.keys(p.xpDays || {}).sort();
+  let lvl = 0, change = null; if (!days.length) return {lvl, change};
+  const cur = thisMonday();
+  for (let m = mondayOf(days[0]); m < cur; m = addDays(m, 7)){
+    const w = xpInWeek(p, m), before = lvl;
+    if (w >= LEAGUE_UP) lvl = Math.min(lvl + 1, LEAGUES.length - 1); else if (w < LEAGUE_DOWN) lvl = Math.max(lvl - 1, 0);
+    change = lvl > before ? 'up' : lvl < before ? 'down' : null; // al terminar el ciclo queda el cambio de la última semana cerrada
+  }
+  return {lvl, change};
+}
+const leagueBadge = p => { const l = LEAGUES[leagueOf(p).lvl]; return h('span', {class:'league-badge', title:'Liga ' + l.n}, l.g); };
+// Gemas
+function addGems(n, why){ S.gems = (S.gems || 0) + n; save(); renderStats(); if (why) toast(`+${n} 💎 ${why}`); }
+// Tienda
+const SHOP = [
+  {id:'freeze', g:'🧊', name:'Protector de racha', cost:40, desc:'Si un día no practicas, salva tu racha. Puedes tener hasta 2.'},
+  {id:'pizza', g:'🍕', name:'Pizza', cost:15}, {id:'flor', g:'🌸', name:'Flor', cost:20}, {id:'balon', g:'⚽', name:'Balón', cost:20},
+  {id:'mariposa', g:'🦋', name:'Mariposa', cost:25}, {id:'birrete', g:'🎓', name:'Birrete', cost:30}, {id:'guitarra', g:'🎸', name:'Guitarra', cost:35},
+  {id:'arcoiris', g:'🌈', name:'Arcoíris', cost:40}, {id:'cohete', g:'🚀', name:'Cohete', cost:50}
+];
+const ownedAcc = () => SHOP.filter(x => x.id !== 'freeze' && (S.owned || []).includes(x.id));
+function shopSheet(){
+  const body = h('div', {class:'stack', style:'gap:10px'});
+  const draw = () => {
+    body.innerHTML = '';
+    body.append(h('div', {class:'gem-balance'}, '💎 ', h('b', {}, S.gems || 0), ' gemas'),
+      h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Ganas gemas al terminar lecciones (más si sacas 3 estrellas), al enviar tareas, al subir de liga y al ganar desafíos a tus amigos.'),
+      h('div', {class:'shop-grid'}, ...SHOP.map(it => {
+        const isFreeze = it.id === 'freeze', owned = !isFreeze && (S.owned || []).includes(it.id), full = isFreeze && (S.freezes || 0) >= 2;
+        const can = !owned && !full && (S.gems || 0) >= it.cost;
+        return h('div', {class:'shop-item' + (owned ? ' owned' : '')}, h('div', {class:'g'}, it.g), h('b', {}, it.name),
+          it.desc ? h('small', {}, it.desc + (isFreeze ? ` Tienes ${S.freezes || 0}.` : '')) : h('small', {}, 'Accesorio para tu avatar'),
+          owned ? h('span', {class:'pill okp'}, 'Es tuyo') :
+          h('button', {class:'btn small' + (can ? '' : ' ghost'), type:'button', disabled:!can, onclick:() => {
+            S.gems -= it.cost; if (isFreeze) S.freezes = (S.freezes || 0) + 1; else S.owned = [...(S.owned || []), it.id];
+            save(); renderStats(); celebrate('small'); toast(isFreeze ? '🧊 Protector de racha listo' : `¡${it.name} es tuyo! Póntelo en “Personalizar mi avatar”.`); draw();
+          }}, full ? 'Ya tienes 2' : `💎 ${it.cost}`));
+      })));
+  };
+  draw();
+  const sh = sheet(h('h2', {style:'font-size:24px'}, '💎 Tienda'), body, h('button', {class:'btn ghost', type:'button', onclick:() => { sh.remove(); if (U && U.role === 'student') renderMe(); }}, 'Cerrar'));
+}
+// Protector de racha: si faltaron días y hay protectores, se usan solos
+function applyFreezes(){
+  if (!S || !(S.freezes > 0)) return;
+  const set = new Set([...(S.days || []), ...(S.frozen || [])]); if (!set.size) return;
+  const gap = []; for (let i = 1; i <= 7; i++){ const k = dayKey(i); if (set.has(k)) break; gap.push(k); }
+  if (!gap.length || gap.length === 7 || gap.length > S.freezes) return;
+  S.frozen = [...(S.frozen || []), ...gap].slice(-30); S.freezes -= gap.length; save();
+  toast(`🧊 Tu protector salvó tu racha (${gap.length} día${gap.length > 1 ? 's' : ''})`);
+}
+// Premios de la semana que terminó: subir de liga y desafíos ganados
+function claimWeekly(){
+  if (!S) return;
+  const lm = lastMonday(), c = S.claimed || (S.claimed = {});
+  const lg = leagueOf(S);
+  if (lg.change === 'up' && !c['lg-' + lm]){ c['lg-' + lm] = 1; addGems(20); celebrate('big'); toast(`🏆 ¡Subiste a la liga ${LEAGUES[lg.lvl].n}! +20 💎`); }
+  const mine = xpInWeek(S, lm);
+  friendIds(U.id).forEach(fid => { const k = 'ch-' + fid + '-' + lm; if (c[k]) return; const theirs = xpInWeek(prog(fid), lm); if (mine > theirs && mine > 0){ c[k] = 1; addGems(10); toast(`⚔️ Ganaste el desafío contra ${(DB.users.find(u => u.id === fid) || {name:'tu amigo'}).name.split(' ')[0]}! +10 💎`); } else c[k] = 1; });
+  save();
+}
+function leagueCard(){
+  const lg = leagueOf(S), L_ = LEAGUES[lg.lvl], next = LEAGUES[lg.lvl + 1], w = xpInWeek(S, thisMonday());
+  const pct = Math.min(100, Math.round(w / LEAGUE_UP * 100));
+  return h('div', {class:'card league-card'},
+    h('div', {style:'display:flex;align-items:center;gap:12px'}, h('div', {class:'league-big'}, L_.g), h('div', {style:'flex:1;min-width:0'}, h('div', {class:'lbl'}, 'Tu liga'), h('b', {style:'font-size:22px'}, 'Liga ' + L_.n))),
+    h('div', {class:'bar', style:'margin-top:12px'}, h('i', {style:`width:${pct}%;background:var(--green)`})),
+    h('p', {class:'muted', style:'margin:6px 0 0;font-size:14px'}, next ? (w >= LEAGUE_UP ? `¡Listo! El lunes subes a la liga ${next.n} ${next.g}` : `Esta semana: ${w} de ${LEAGUE_UP} XP para subir a ${next.n} ${next.g}`) : `¡Estás en la liga más alta! Gana ${LEAGUE_UP} XP por semana para quedarte.`),
+    h('p', {class:'muted', style:'margin:2px 0 0;font-size:13px'}, `Si haces menos de ${LEAGUE_DOWN} XP en la semana, bajas una liga. Se decide cada domingo a medianoche.`));
+}
+// Repaso inteligente con las palabras que más falla
+const reviewWords = () => Object.entries(S.miss || {}).filter(([w, n]) => V[w] && n > 0).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
+function reviewCard(){
+  const ws = reviewWords(); if (ws.length < 2) return null;
+  return h('div', {class:'card review-card'},
+    h('div', {style:'display:flex;align-items:center;gap:12px'}, h('div', {style:'font-size:38px'}, '🧠'), h('div', {style:'flex:1;min-width:0'}, h('b', {style:'font-size:19px'}, 'Repaso inteligente'), h('div', {class:'muted', style:'font-size:15px'}, 'Practica las palabras que más te cuestan: ' + ws.join(', ')))),
+    h('button', {class:'btn', type:'button', style:'margin-top:12px;background:var(--purple);box-shadow:0 4px 0 var(--purple-d)', onclick:startReview}, 'Repasar ahora'));
+}
+function startReview(){
+  const ws = reviewWords(); if (ws.length < 2) return;
+  const items = [{t:'match', words:ws.slice(0, 4)}];
+  ws.forEach(w => items.push({t:'pickword', w}, {t:'write', w}));
+  ws.slice(0, 2).forEach(w => items.push({t:'listen', w}));
+  const lesson = {id:'review', title:'Repaso inteligente', kind:'Repaso', items};
+  const unit = {id:'review', title:'Tus palabras difíciles', c:'purple', lessons:[lesson]};
+  startLesson(unit, lesson); L.review = true;
+}
+// Celebraciones: confeti y sonido (nunca voz)
+function fanfare(){
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume();
+    [523, 659, 784, 1047].forEach((f, i) => { const o = actx.createOscillator(), g = actx.createGain(); o.type = 'triangle'; o.frequency.value = f; const t = actx.currentTime + i * 0.11; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.18, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.4); });
+  } catch (e) {}
+}
+function celebrate(size){
+  if (size !== 'small') fanfare();
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const n = size === 'big' ? 90 : size === 'small' ? 24 : 55, colors = ['var(--green)', 'var(--blue)', 'var(--yellow)', 'var(--red)', 'var(--purple)', 'var(--orange)'];
+  const box = h('div', {class:'confetti', 'aria-hidden':'true'});
+  for (let i = 0; i < n; i++) box.append(h('i', {style:`left:${Math.random() * 100}%;background:${colors[i % colors.length]};animation-delay:${Math.random() * 0.5}s;animation-duration:${1.6 + Math.random() * 1.2}s;transform:rotate(${Math.random() * 360}deg);width:${6 + Math.random() * 6}px;height:${8 + Math.random() * 8}px`}));
+  document.body.append(box); setTimeout(() => box.remove(), 3200);
+}
+/* Excel (.xlsx real, sin librerías): ZIP sin compresión con hojas en XML */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC_T[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+function zipStore(files){
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  const u16 = n => [n & 255, (n >> 8) & 255], u32 = n => [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >>> 24) & 255];
+  for (const [name, text] of files){
+    const nm = enc.encode(name), data = enc.encode(text), crc = crc32(data);
+    const head = [...u32(0x04034b50), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0)];
+    parts.push(new Uint8Array(head), nm, data);
+    central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(nm.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), nm);
+    off += head.length + nm.length + data.length;
+  }
+  const cdSize = central.reduce((a, x) => a + x.length, 0);
+  const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(off), ...u16(0)]);
+  return new Blob([...parts, ...central, end], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+const xesc = v => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+function sheetXml(rows, widths){
+  const col = i => { let s = ''; i++; while (i > 0){ const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; };
+  const cell = (v, r, c, head) => { const ref = col(c) + (r + 1), st = head ? ' s="1"' : ''; if (typeof v === 'number' && isFinite(v)) return `<c r="${ref}"${st}><v>${v}</v></c>`; if (v === null || v === undefined || v === '') return ''; return `<c r="${ref}" t="inlineStr"${st}><is><t xml:space="preserve">${xesc(v)}</t></is></c>`; };
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${rows.map((r, i) => `<row r="${i + 1}">${r.map((v, c) => cell(v, i, c, i === 0)).join('')}</row>`).join('')}</sheetData></worksheet>`;
+}
+function buildXlsx(sheets){
+  const files = [
+    ['[Content_Types].xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('')}</Types>`],
+    ['_rels/.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+    ['xl/workbook.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s, i) => `<sheet name="${xesc(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets></workbook>`],
+    ['xl/_rels/workbook.xml.rels', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('')}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+    ['xl/styles.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE2F0D9"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`]
+  ];
+  sheets.forEach((s, i) => files.push([`xl/worksheets/sheet${i + 1}.xml`, sheetXml(s.rows, s.widths)]));
+  return zipStore(files);
+}
+function gradesWorkbook(){
+  const g = curGroup(), st = groupStudents(), asg = groupAssignments();
+  const resumen = [['Estudiante', 'Usuario', 'Grupo', 'Liga', 'XP total', 'XP esta semana', 'Racha (días)', 'Lecciones completadas', 'Última práctica', 'Promedio de notas']];
+  st.forEach(u => { const p = prog(u.id), notas = asg.map(a => (hwOf(p, a.id) || {}).grade).filter(x => typeof x === 'number');
+    resumen.push([u.name, u.user || '', g.name, LEAGUES[leagueOf(p).lvl].n, p.xp || 0, xpInWeek(p, thisMonday()), streakOf(p), doneOf(p), lastSeen(p), notas.length ? Math.round(notas.reduce((a, b) => a + b, 0) / notas.length) : '']); });
+  const tareas = [['Estudiante', 'Tarea', 'Fecha de entrega', 'Lecciones hechas', 'Lecciones de la tarea', 'Escritura', 'Nota (0-100)', 'Comentario del profe', 'Cambios de nota']];
+  asg.forEach(a => st.forEach(u => { const p = prog(u.id), x = hwOf(p, a.id) || {}, ls = a.lessons.filter(lessonTitle);
+    tareas.push([u.name, a.title, a.due, ls.filter(id => p.done[id]).length, ls.length, !a.writing ? 'No aplica' : x.reviewed ? 'Revisada' : x.sentAt ? 'Entregada, por revisar' : 'Sin entregar', typeof x.grade === 'number' ? x.grade : '', x.reviewed ? (x.note || '') : '', (x.history || []).map(c => `${c.at}: ${c.from.grade ?? '-'}→${c.to.grade ?? '-'} (${c.reason})`).join(' | ')]); }));
+  return buildXlsx([{name:'Resumen', rows:resumen, widths:[24, 14, 18, 10, 9, 14, 12, 20, 16, 18]}, {name:'Tareas', rows:tareas, widths:[24, 26, 15, 15, 18, 22, 12, 36, 40]}]);
+}
+function downloadGrades(){
+  try {
+    const blob = gradesWorkbook(), name = `Pandi-notas-${curGroup().name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w -]/g, '').trim().replace(/\s+/g, '-') || 'grupo'}-${today()}.xlsx`; // sin tildes: Chrome ignora nombres con acentos
+    const a = h('a', {href:URL.createObjectURL(blob), download:name}); document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast('Descargando ' + name);
+  } catch (e) { console.error(e); toast('No se pudo crear el archivo de Excel. Prueba otra vez.'); }
 }
 /* ---------- avatar y amigos ---------- */
 function avatarSheet(){
@@ -1096,12 +1285,12 @@ function avatarSheet(){
     prev.innerHTML = ''; prev.append(avatar(U, 'xl', cur));
     animals.innerHTML = ''; AV_ANIMALS.forEach(a => animals.append(h('button', {type:'button', 'aria-pressed':String(cur.a === a), 'aria-label':'Personaje ' + a, onclick:() => { cur.a = a; draw(); }}, a)));
     colors.innerHTML = ''; AV_COLORS.forEach((c, i) => colors.append(h('button', {type:'button', style:'background:' + c, 'aria-label':'Color ' + (i + 1), 'aria-pressed':String(cur.c === i), onclick:() => { cur.c = i; draw(); }})));
-    accs.innerHTML = ''; AV_ACC.forEach(x => { const locked = S.xp < x.xp; accs.append(h('button', {type:'button', disabled:locked, 'aria-pressed':String(cur.x === x.g), 'aria-label':x.name + (locked ? `, se desbloquea con ${x.xp} XP` : ''), onclick:() => { cur.x = x.g; draw(); }}, x.g || '🚫', h('small', {}, locked ? `🔒 ${x.xp} XP` : x.name))); });
+    accs.innerHTML = ''; [...AV_ACC, ...ownedAcc().map(x => ({g:x.g, name:x.name, xp:0}))].forEach(x => { const locked = S.xp < x.xp; accs.append(h('button', {type:'button', disabled:locked, 'aria-pressed':String(cur.x === x.g), 'aria-label':x.name + (locked ? `, se desbloquea con ${x.xp} XP` : ''), onclick:() => { cur.x = x.g; draw(); }}, x.g || '🚫', h('small', {}, locked ? `🔒 ${x.xp} XP` : x.name))); });
   };
   draw();
   const sh = sheet(h('h2', {style:'font-size:24px'}, 'Mi avatar'), prev,
     h('div', {class:'lbl'}, 'Personaje'), animals, h('div', {class:'lbl'}, 'Color'), colors,
-    h('div', {class:'lbl'}, 'Accesorio'), h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Gana XP practicando para desbloquear más accesorios.'), accs,
+    h('div', {class:'lbl'}, 'Accesorio'), h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Gana XP para desbloquear accesorios, o cómpralos con gemas en la 💎 Tienda.'), accs,
     h('button', {class:'btn', type:'button', onclick:() => { S.avatar = {a:cur.a, c:cur.c, x:cur.x}; save(); sh.remove(); renderMe(); renderStats(); toast('¡Avatar guardado!'); }}, 'Guardar avatar'),
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cancelar'));
 }
@@ -1142,14 +1331,16 @@ function friendsCard(){
   const today_ = today();
   return h('div', {class:'card', style:'margin-top:18px'},
     h('div', {style:'display:flex;justify-content:space-between;align-items:center;gap:8px'}, h('h3', {style:'font-size:19px'}, '👫 Mis amigos'), h('button', {class:'btn small', type:'button', style:'width:auto', onclick:addFriendSheet}, '+ Agregar')),
-    h('p', {class:'muted', style:'margin:4px 0 6px;font-size:14px'}, 'Practiquen los dos el mismo día para mantener su racha de amigos 🔥'),
+    h('p', {class:'muted', style:'margin:4px 0 6px;font-size:14px'}, 'Practiquen los dos el mismo día para mantener su racha 🔥. Quien gane más XP en la semana gana 10 💎 el lunes.'),
     ...reqs.map(f => h('div', {class:'friend-row'}, avatar(userOf(f.from)), h('div', {class:'nm'}, nameOf(f.from), h('small', {}, 'Quiere ser tu amigo')),
       h('button', {class:'btn small', type:'button', style:'width:auto', onclick:() => friendOp('accept', f.from)}, 'Aceptar'),
       h('button', {class:'btn ghost small', type:'button', style:'width:auto', 'aria-label':'Rechazar a ' + nameOf(f.from), onclick:() => friendOp('reject', f.from)}, '✕'))),
     ...fr.map(id => { const n = pairStreak(uid, id), meToday = (S.days || []).includes(today_), themToday = (prog(id).days || []).includes(today_);
       const hint = meToday && themToday ? '¡Los dos practicaron hoy!' : meToday ? `Falta que ${nameOf(id).split(' ')[0]} practique hoy` : themToday ? 'Te toca practicar hoy' : 'Practiquen hoy para seguir';
+      const mw = xpInWeek(S, thisMonday()), tw = xpInWeek(prog(id), thisMonday()), first = nameOf(id).split(' ')[0];
+      const duel = `⚔️ Desafío de la semana: tú ${mw} · ${first} ${tw} XP` + (mw > tw ? ' 🏆' : '');
       return h('div', {class:'friend-row', role:'button', tabindex:'0', style:'cursor:pointer', onclick:() => confirmSheet(`¿Quitar a ${nameOf(id)}?`, 'Dejarán de ser amigos y se pierde su racha juntos.', 'Quitar amigo', () => friendOp('remove', id))},
-        avatar(userOf(id)), h('div', {class:'nm'}, nameOf(id), h('small', {}, hint)), h('b', {style:'color:var(--orange);font-size:18px', 'aria-label':`Racha de ${n} días juntos`}, `🔥 ${n}`)); }),
+        avatar(userOf(id)), h('div', {class:'nm'}, nameOf(id), h('small', {}, hint), h('small', {class:'duel'}, duel)), h('b', {style:'color:var(--orange);font-size:18px', 'aria-label':`Racha de ${n} días juntos`}, `🔥 ${n}`)); }),
     !reqs.length && !fr.length ? h('p', {style:'margin:6px 0 0'}, 'Todavía no tienes amigos. Toca “+ Agregar” para invitar a un compañero de tu grupo.') : null);
 }
 function addFriendSheet(){
@@ -1168,7 +1359,7 @@ function renderMe(){
   const root = $('#tab-me'); root.innerHTML = '';
   root.append(
     h('div', {class:'profile'}, avatar(U), h('div', {style:'flex:1;min-width:0'}, h('h2', {style:'font-size:26px'}, U.name), h('div', {class:'muted'}, '@' + U.user + ' · ' + curGroup().name))),
-    h('button', {class:'btn ghost', type:'button', style:'margin-top:12px', onclick:avatarSheet}, '🎨 Personalizar mi avatar'),
+    h('div', {style:'display:flex;gap:10px;margin-top:12px'}, h('button', {class:'btn ghost', type:'button', onclick:avatarSheet}, '🎨 Mi avatar'), h('button', {class:'btn ghost', type:'button', onclick:shopSheet}, '💎 Tienda')),
     h('div', {class:'stats', style:'margin:18px 0'},
       h('div', {class:'stat'}, h('b', {}, S.xp), h('span', {}, 'XP total')),
       h('div', {class:'stat'}, h('b', {}, streak()), h('span', {}, 'Días seguidos')),
@@ -1400,6 +1591,7 @@ function renderHW(){
   const st = groupStudents();
   root.append(h('div', {style:'display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px'}, h('h2', {class:'section-title', style:'margin:0'}, 'Tareas'), h('button', {class:'btn small', type:'button', style:'width:auto', onclick:() => assignmentSheet(null)}, '+ Nueva tarea')),
     groupBar(),
+    h('button', {class:'btn ghost', type:'button', style:'margin-top:12px', onclick:downloadGrades}, '⬇️ Descargar notas del grupo (Excel)'),
     list.length ? h('div', {class:'stack', style:'margin-top:14px'}, ...list.map(a => {
       const tasks = a.lessons.filter(lessonTitle);
       const complete = st.filter(u => { const p = prog(u.id); return tasks.every(id => p.done[id]) && (!a.writing || (hwOf(p, a.id) || {}).sentAt); }).length;
@@ -1959,7 +2151,8 @@ async function remoteLoad(uid){
     const own = must(await SB.from('progress').select('*').eq('user_id', uid).maybeSingle());
     db.progress[uid] = P(own ? own.data : {});
     must(await SB.rpc('class_ranking')).forEach(r => { if (r.user_id === uid) return; db.users.push({id:r.user_id, name:r.name, role:'student', groupId:me.group_id, user:''}); db.progress[r.user_id] = P({xp:r.xp, xpDays:r.xp_days || {}, days:r.days || [], avatar:r.avatar || null}); });
-    db.friends = must(await SB.from('friendships').select('from_id,to_id,status')).map(f => ({from:f.from_id, to:f.to_id, status:f.status}));
+    // Si la base todavía no tiene la tabla de amigos (schema.sql viejo), la app igual carga
+    try { const fr = await SB.from('friendships').select('from_id,to_id,status'); if (fr.error) console.warn('friendships:', fr.error.message); db.friends = fr.error ? [] : (fr.data || []).map(f => ({from:f.from_id, to:f.to_id, status:f.status})); } catch (e) { db.friends = []; }
     subs = must(await SB.from('submissions').select('*').eq('user_id', uid));
   }
   Object.values(db.progress).forEach(p => { p.hw = {}; });
@@ -2070,7 +2263,7 @@ function renderStep(){
 function grade(ok, correct){
   const s = L.cur, foot = $('#lfoot'), btn = $('#lbtn');
   L.graded++;
-  if (ok){ L.xp += 10; sfx(true); }
+  if (ok){ L.xp += 10; sfx(true); if (L.review && S){ const k = missKey(s); if (k && S.miss && S.miss[k]){ S.miss[k]--; if (S.miss[k] <= 0) delete S.miss[k]; } } }
   else { L.mistakes++; sfx(false); noteMiss(s); if (!L.requeued.has(s)){ L.requeued.add(s); L.queue.push(s); } }
   foot.className = 'lfoot ' + (ok ? 'ok' : 'bad');
   const fb = $('#fbMsg'); fb.innerHTML = '';
@@ -2087,10 +2280,12 @@ function finishLesson(){
   const stars = acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
   const gained = L.xp + 10;
   if (L.preview) return finishPreview(acc, stars, gained);
-  S.xp += gained;
+  const firstToday = !S.days.includes(today());
+  const gems = 5 + (stars === 3 ? 3 : 0);
+  S.xp += gained; S.gems = (S.gems || 0) + gems;
   S.xpDays[today()] = (S.xpDays[today()] || 0) + gained;
-  S.done[L.lesson.id] = Math.max(S.done[L.lesson.id] || 0, stars);
-  if (!S.days.includes(today())) S.days.push(today());
+  if (!L.review) S.done[L.lesson.id] = Math.max(S.done[L.lesson.id] || 0, stars);
+  if (firstToday) S.days.push(today());
   const medals = checkMedals({perfect: L.mistakes === 0 && L.graded > 0});
   save();
   const r = $('#rbody'); r.innerHTML = '';
@@ -2102,9 +2297,11 @@ function finishLesson(){
       h('div', {class:'stat'}, h('b', {style:'color:var(--yellow-d)'}, '+' + gained), h('span', {}, 'XP ganados')),
       h('div', {class:'stat'}, h('b', {style:'color:var(--green)'}, acc + '%'), h('span', {}, 'Precisión')),
       h('div', {class:'stat'}, h('b', {style:'color:var(--orange)'}, streak()), h('span', {}, 'Días seguidos'))),
+    h('div', {class:'gem-earned pop'}, `+${gems} 💎 gemas` + (stars === 3 ? ' (¡bonus por 3 estrellas!)' : '')),
+    firstToday && streak() > 1 ? h('div', {class:'card streak-up pop'}, h('div', {class:'flame'}, '🔥'), h('div', {}, h('div', {class:'lbl'}, '¡Racha encendida!'), h('b', {style:'font-size:18px'}, `${streak()} días seguidos`))) : null,
     ...medals.map(m => h('div', {class:'card new-medal pop'}, h('div', {class:'m'}, m.g), h('div', {}, h('div', {class:'lbl'}, 'Nueva medalla'), h('b', {style:'font-size:18px'}, m.name)))),
     h('button', {class:'btn', type:'button', onclick:() => { show('home'); setTab('learn'); }}, 'Continuar'));
-  show('result'); sfx(true);
+  show('result'); celebrate(stars === 3 || medals.length || (firstToday && streak() > 1) ? 'big' : 'normal');
 }
 $('#lclose').addEventListener('click', () => L && L.preview ? leaveLesson() : confirmSheet('¿Salir de la lección?', 'Si sales ahora, perderás el avance de esta lección.', 'Salir', leaveLesson));
 function finishPreview(acc, stars, gained){

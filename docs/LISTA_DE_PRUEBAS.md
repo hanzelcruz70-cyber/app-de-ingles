@@ -49,11 +49,21 @@ Para revisar la app publicada (con el servidor real) antes de enseñarla o despu
 - [ ] Recordatorio: activarlo (pide permiso), cambiar la hora y apagarlo.
 - [ ] Cerrar sesión y volver a entrar → el progreso sigue ahí.
 
+## 5b. Gemas, ligas y repaso
+- [ ] Al terminar una lección sale confeti, suena una fanfarria (sin voz) y dice cuántas gemas ganaste.
+- [ ] Las gemas 💎 se ven arriba y suben.
+- [ ] Perfil → **💎 Tienda** → comprar un accesorio → aparece en **Mi avatar**.
+- [ ] Comprar un **Protector de racha** (máximo 2).
+- [ ] Fallar varias palabras en lecciones → en Aprender aparece **🧠 Repaso inteligente** → al acertarlas en el repaso, la lista baja.
+- [ ] Ranking → tarjeta **Tu liga** con la barra de XP de la semana.
+- [ ] (Lunes) Si la semana pasada hiciste 150 XP o más, subes de liga y recibes 20 💎.
+
 ## 6. Amigos (necesitas dos estudiantes del mismo grupo)
 - [ ] Estudiante A → Perfil → **+ Agregar** → solo aparecen compañeros de su grupo → **Invitar** a B.
 - [ ] Estudiante B → Perfil → ve "Quiere ser tu amigo" → **Aceptar**.
 - [ ] Los dos se ven en "Mis amigos". Si los dos practican el mismo día, la racha 🔥 sube.
 - [ ] Quitar a un amigo → desaparece para los dos (después de recargar).
+- [ ] Cada amigo muestra **⚔️ Desafío de la semana** con los XP de los dos.
 - [ ] Un estudiante de **otro** grupo no aparece para invitar.
 
 ## 7. Profe: revisar y calificar
@@ -65,6 +75,7 @@ Para revisar la app publicada (con el servidor real) antes de enseñarla o despu
 - [ ] En el dispositivo del estudiante → Tareas → ve la nota, el comentario y el motivo del cambio.
 - [ ] Ficha del estudiante → **Reporte para padres** → el mensaje se lee completo → **Enviar por WhatsApp** abre WhatsApp con el texto.
 - [ ] Resumen → **Palabras que más se fallan** muestra las palabras que falló el estudiante.
+- [ ] Tareas → **⬇️ Descargar notas del grupo (Excel)** → el archivo abre en Excel o Google Sheets con las hojas Resumen y Tareas.
 - [ ] Resumen → **Recordar** (en "Necesitan un empujón") arma el mensaje.
 
 ## 8. Dueño

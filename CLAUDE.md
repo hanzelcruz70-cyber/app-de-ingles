@@ -17,6 +17,7 @@ Guía para cualquier modelo o persona que trabaje en este repositorio. Léela co
 3. **No copiar contenido de Pearson** (imágenes, audios, historias, textos del libro). La app usa la misma estructura y vocabulario por tema, con ejercicios, emojis y textos propios.
 4. **Idioma:** la interfaz está en español (Nicaragua); el contenido de las lecciones, en inglés. Los textos de la UI son cortos y para niños.
 5. `index.html` **se genera**. Edita `src/app.html` y corre `python3 build.py`.
+6. **Copia del dueño en su computadora:** `C:\Users\Hanzel\Documents\Pandi Ingles`. Después de cada cambio subido a GitHub, actualiza también esa carpeta (con el puente a su computadora: `git pull` o copiando los archivos). El dueño corre `supabase/schema.sql` desde ahí, así que una copia vieja rompe cosas: el 12 de octubre corrió un schema viejo y los estudiantes no podían entrar.
 
 ## Estructura
 
@@ -49,24 +50,25 @@ Un solo archivo con una sección `<style>` (tokens de color en `:root` con modo 
 3. **course:** `courseSeed()` y `extraUnits()` contienen el Nivel 1 (5 unidades: Hello!, Animals, My Family, My School, Food). Cada lección es `{id, title, kind, shuffle?, items:[...]}`. Los ejercicios se guardan como datos, no como código.
 4. **Tipos de ejercicio (`items`):** `flash`, `pickword`, `listen`, `match`, `write`, `speak`, `order`, `fill`, `memory`, `tip`, `read`. `toStep()` convierte cada item en un paso jugable y `buildSteps()` arma la lección (las opciones incorrectas salen de palabras de la misma lección o unidad).
 5. **data:** objeto global `DB` = `{users, progress, groups, assignments, friends, course, courseVer, session, seq}`.
-   - `progress[userId]` = `{xp, xpDays:{fecha:xp}, done:{lessonId:estrellas}, days:[fechas], medals, spoken, miss:{palabra:errores}, avatar:{a:emoji, c:índice de color, x:accesorio}, hw:{assignmentId:{text, sentAt, note, grade, reviewed, reviewedAt, history:[{at, from, to, reason}]}}}`.
+   - `progress[userId]` = `{xp, xpDays:{fecha:xp}, done:{lessonId:estrellas}, days:[fechas], medals, spoken, miss:{palabra:errores}, gems, owned:[ids de la tienda], freezes, frozen:[fechas salvadas], claimed:{premios cobrados}, avatar:{a:emoji, c:índice de color, x:accesorio}, hw:{assignmentId:{text, sentAt, note, grade, reviewed, reviewedAt, history:[{at, from, to, reason}]}}}`.
    - `friends[]` = `{from, to, status:'pending'|'accepted'}`. En modo servidor se leen de `friendships` y se cambian al momento con `friendOp` (no pasan por `doSync`).
    - `groups[]` = `{id, name, open:{unitId:bool}}`. Cada grupo abre sus propias unidades.
    - `assignments[]` = `{id, title, due, lessons:[ids], writing:{title,prompt}|null, groups:[ids]}`.
    - `save()` guarda: en modo demo en `localStorage` (clave `pandi-english-v2`); en modo servidor programa `scheduleSync()`.
    - `migrate()` actualiza datos viejos de `localStorage`. Si cambias el contenido semilla, sube `courseVer` y agrega la migración.
-6. **recordatorios:** `remindCard` y `remCheck`: notificación local diaria, con la hora guardada en `localStorage`.
-7. **audio:** `say(texto, lento)` usa la mejor voz en inglés (`voiceScore`); `sfx(ok)` hace sonidos con WebAudio; `unlockAudio` desbloquea en el primer toque; `speechScore` compara la voz del niño con tolerancia; `audioTestSheet` sirve para probar sonido y micrófono.
-8. **login & routing:** `route()` decide entre login, `#home` (estudiante) o `#admin`. `U` es el usuario actual y `S` su progreso.
-9. **student app:** `renderMap`, `renderWork` (tareas), `renderRank` (ranking por grupo; semana o total), `renderMe` (perfil, medallas, `avatarSheet`, `friendsCard`/`addFriendSheet`, racha de amigos `pairStreak`). `avatar(u)` dibuja el avatar elegido o la inicial.
-10. **admin panel:** `renderSum` (+ `missedCard`: palabras más falladas), `renderStudents` (+ `groupSheet`, `addStudentSheet`, `studentSheet`), `renderHW` (+ `renderAssignment`, `assignmentSheet`). Reportes por WhatsApp: `shareSheet`, `reportSheet`, `remindSheet`. Calificación: `gradeForm`, `gradeView`, `editGradeSheet` (editar exige motivo y guarda historial). `groupBar()` es el selector de grupo y `curGroup()` el grupo activo.
-11. **content editor:** `renderContent` → `renderUnitEd` → `renderLessonEd` → `exerciseSheet`; banco de palabras con `renderWordsEd` y `wordSheet`. Se reordena con flechas (`move`). `lessonSheet` puede generar ejercicios automáticos (`autoItems`). Con "Probar lección" se juega en modo vista previa, sin guardar.
-12. **real backend:** solo actúa si `window.PANDI_CONFIG` tiene `supabaseUrl` y `supabaseAnonKey` (`REMOTE = true`).
+6. **ligas, gemas, tienda, desafíos, repaso y celebraciones:** semanas de lunes a domingo (`mondayOf`, `xpInWeek`). `leagueOf(p)` calcula la liga a partir de `xpDays` (sube con 150 XP y baja con menos de 30). `claimWeekly` cobra una sola vez los premios de la semana pasada (liga y desafíos con amigos). `applyFreezes` usa los protectores de racha. `shopSheet`/`SHOP`, `startReview` (repaso con `S.miss`; los aciertos lo bajan), `celebrate`/`fanfare` (confeti y sonido, sin voz) y `downloadGrades` (xlsx real hecho a mano: `zipStore`, `buildXlsx`; nombre de archivo sin tildes).
+7. **recordatorios:** `remindCard` y `remCheck`: notificación local diaria, con la hora guardada en `localStorage`.
+8. **audio:** `say(texto, lento)` usa la mejor voz en inglés (`voiceScore`); `sfx(ok)` hace sonidos con WebAudio; `unlockAudio` desbloquea en el primer toque; `speechScore` compara la voz del niño con tolerancia; `audioTestSheet` sirve para probar sonido y micrófono.
+9. **login & routing:** `route()` decide entre login, `#home` (estudiante) o `#admin`. `U` es el usuario actual y `S` su progreso.
+10. **student app:** `renderMap`, `renderWork` (tareas), `renderRank` (ranking por grupo; semana o total), `renderMe` (perfil, medallas, `avatarSheet`, `friendsCard`/`addFriendSheet`, racha de amigos `pairStreak`). `avatar(u)` dibuja el avatar elegido o la inicial.
+11. **admin panel:** `renderSum` (+ `missedCard`: palabras más falladas), `renderStudents` (+ `groupSheet`, `addStudentSheet`, `studentSheet`), `renderHW` (+ `renderAssignment`, `assignmentSheet`). Reportes por WhatsApp: `shareSheet`, `reportSheet`, `remindSheet`. Calificación: `gradeForm`, `gradeView`, `editGradeSheet` (editar exige motivo y guarda historial). `groupBar()` es el selector de grupo y `curGroup()` el grupo activo.
+12. **content editor:** `renderContent` → `renderUnitEd` → `renderLessonEd` → `exerciseSheet`; banco de palabras con `renderWordsEd` y `wordSheet`. Se reordena con flechas (`move`). `lessonSheet` puede generar ejercicios automáticos (`autoItems`). Con "Probar lección" se juega en modo vista previa, sin guardar.
+13. **real backend:** solo actúa si `window.PANDI_CONFIG` tiene `supabaseUrl` y `supabaseAnonKey` (`REMOTE = true`).
     - `remoteBoot` → `remoteLogin` → `remoteLoad` traen todo a `DB`.
     - `doSync` compara `DB` con la última copia (`SNAP`) y sube solo lo que cambió (curso, grupos, tareas, perfiles, progreso propio, entregas).
     - `adminCall` llama a la Edge Function.
     - `maybeRefresh` recarga los datos al cambiar de pestaña (cada 20 s como máximo).
-13. **lesson engine:** `startLesson(unit, lesson, preview)`, `renderStep`, `grade` (lo que se responde mal se repite al final), `finishLesson` (XP, estrellas, medallas, racha). Los dibujantes de cada tipo de ejercicio están en el objeto `R`.
+14. **lesson engine:** `startLesson(unit, lesson, preview)`, `renderStep`, `grade` (lo que se responde mal se repite al final), `finishLesson` (XP, estrellas, medallas, racha). Los dibujantes de cada tipo de ejercicio están en el objeto `R`.
 
 ### Modo demo vs. modo servidor
 
@@ -106,6 +108,7 @@ Antes de dar por terminado un cambio: corre `python3 build.py` y luego las prueb
 - No hay `box-sizing` global: si un bloque tiene `width:100%` y relleno, ponle `box-sizing:border-box`.
 - Colores solo desde tokens CSS (`var(--...)`) y siempre probados en modo claro y oscuro. Botones grandes y texto mínimo de 15 px.
 - Cada cambio de datos termina en `save()`. Los ids nuevos se crean con `newId(prefijo)`.
+- Los datos nuevos del progreso (gemas, liga, etc.) viven en `progress.data` (jsonb), así que no requieren cambiar el esquema. Si la app depende de una tabla nueva, cárgala de forma tolerante (si falta, sigue funcionando).
 - **La app no habla sola:** `say()` solo se llama desde botones que toca el usuario (bocina, Probar sonido). Nada de saludos ni frases automáticas.
 - `append()` está parcheado para ignorar `null`/`false`, así un `cond ? h(...) : null` nunca pinta "null".
 - Las hojas emergentes usan `sheet(...)`, las confirmaciones `confirmSheet(...)` y los avisos `toast(...)`. Nunca `alert`, `confirm` ni `prompt`.

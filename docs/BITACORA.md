@@ -29,6 +29,19 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-12 (noche) · Error al entrar, repaso, ligas, gemas, tienda, desafíos, Excel y celebraciones
+- **Bug:** "Entraste, pero no se pudo cargar tu cuenta" al entrar como estudiante. El dueño corrió el `schema.sql` de su carpeta de Documentos, que era una copia vieja (commit 755e60c) sin la tabla `friendships`, y `remoteLoad` fallaba al leerla. Arreglos: la carga de amigos es tolerante (si falta la tabla, sigue sin amigos), se actualizó la carpeta de Documentos y se agregó la **regla 6 en CLAUDE.md: mantener esa carpeta al día con cada cambio**. El servidor simulado ahora da error si falta una tabla, y la prueba verifica que el estudiante igual entre.
+- **Legal:** `config.js` ya tiene `legalName: 'Hanzel Gabriel Cruz Escorcia'` y `contactEmail: 'redinformaticatotal@gmail.com'` (datos que dio el dueño).
+- **Repaso inteligente:** lección generada con las 5 palabras más falladas (unir, elegir, escribir y escuchar). Cada acierto baja `S.miss[palabra]`. No marca nada en `done`.
+- **Ligas semanales:** Bronce, Plata, Oro, Zafiro y Diamante. Se calculan en el cliente a partir de `xpDays` (semanas de lunes a domingo): se sube con ≥150 XP y se baja con <30. Así funciona para compañeros sin cambios en el servidor, porque `class_ranking` ya trae `xp_days`. Subir da 20 💎, una sola vez (`claimed`).
+- **Gemas y tienda:** 5 por lección (+3 con 3 estrellas), 10 por tarea, 20 por subir de liga y 10 por desafío ganado. Tienda con 8 accesorios y el protector de racha (40, máximo 2). `applyFreezes` rellena los días faltantes con `frozen` y `streakOf` los cuenta.
+- **Desafío entre amigos:** XP de la semana tú contra tu amigo; el lunes, quien ganó la semana anterior recibe 10 💎 (`claimWeekly`).
+- **Exportar a Excel:** `.xlsx` real sin librerías (ZIP sin compresión + SpreadsheetML), con las hojas Resumen y Tareas, validado con openpyxl. El nombre del archivo va sin tildes porque Chrome ignora el nombre de descarga si trae acentos.
+- **Celebraciones:** confeti y fanfarria (WebAudio, sin voz) al terminar una lección, con medallas, racha, liga y compras. Respeta "reducir movimiento".
+- Encabezado del estudiante con 💎; se ajustó para que quepa en 390 px.
+- **Pruebas:** nueva `tests/e2e/extras.js`; RLS 40/40; e2e completo PASS.
+- **El dueño debe correr el `schema.sql` NUEVO** (el de GitHub o el de su carpeta ya actualizada) para que funcionen los amigos, la nota 0-100 y el avatar en el ranking.
+
 ## 2026-10-12 · Calificación editable, avatar, amigos, avisos legales y app sin voz automática
 - **Bug real (servidor):** al revisar una tarea salía "No se pudo guardar en el servidor". El admin hacía `upsert` en `submissions`; RLS lo trata como INSERT y el admin no tiene permiso de insertar a nombre del niño. Ahora el admin usa `update`. El servidor simulado de las pruebas e2e también rechaza ese upsert, para que no vuelva a pasar desapercibido.
 - **Bug:** salía "null" en el ranking del estudiante (otro `append(..., null)`). Se parcheó `append()` para ignorar `null`/`false` en toda la app.

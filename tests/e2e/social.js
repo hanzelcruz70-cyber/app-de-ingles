@@ -18,7 +18,7 @@ const path = require('path');
   await p.click('[data-tab="rank"]'); R.rankNoNull = !/\bnull\b/.test(await p.innerText('#tab-rank'));
   // avatar
   await p.click('[data-tab="me"]');
-  await p.click('button:has-text("Personalizar mi avatar")');
+  await p.click('button:has-text("Mi avatar")');
   await p.click('.sheet .av-grid button[aria-label="Personaje 🦊"]');
   R.crownLocked = await p.isDisabled('.sheet .av-grid button[aria-label^="Corona"]');
   await p.click('.sheet .av-grid button[aria-label="Gorra"]');

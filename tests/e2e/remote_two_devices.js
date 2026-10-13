@@ -20,6 +20,7 @@ function handle(m){
     }
     return {status:400, body:{error:'?'}};
   }
+  if (!T[m.table]) return {data:null, error:{message:`relation "public.${m.table}" does not exist`}}; // como Supabase si falta la tabla
   const rows = T[m.table]; const match = r => m.filters.every(([c, v]) => r[c] === v);
   log.push(m.op + ' ' + m.table);
   if (m.op === 'select'){ const out = rows.filter(match); if (m.single) return out.length ? {data:out[0], error:null} : {data:null, error:{message:'no rows'}}; if (m.maybe) return {data:out[0] || null, error:null}; return {data:out, error:null}; }
@@ -61,8 +62,9 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   R.server1 = {groupsOpenU2: T.groups[0] && T.groups[0].open.u2, assignments:T.assignments.length};
   // student device
   const B = await device(b);
+  const savedFr = T.friendships; delete T.friendships; // schema.sql viejo, sin la tabla de amigos
   await B.fill('#lgUser','ana'); await B.fill('#lgPass','ana123'); await B.click('#loginForm button'); await wait(500);
-  R.studentIn = await B.isVisible('#home');
+  R.studentIn = await B.isVisible('#home'); R.loginWithoutFriendsTable = R.studentIn; T.friendships = savedFr;
   R.openUnits = await B.$$eval('.unit-banner', els => els.filter(e => !e.classList.contains('locked')).length);
   await B.evaluate(() => { S.xp += 60; S.done.u1l1 = 3; S.xpDays[new Date().toISOString().slice(0,10)] = 60; save(); });
   await B.click('[data-tab="work"]'); await wait(200);
