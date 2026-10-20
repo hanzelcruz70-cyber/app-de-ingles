@@ -46,7 +46,26 @@ Abajo hay cuatro secciones: **Aprender**, **Tareas**, **Ranking** y **Perfil**.
 
 - Arriba, Pandi saluda: *"¡Hello, Ana! Toca la lección que brilla para seguir practicando."*
 - Si ese día todavía no practicaste, sale un aviso naranja: *"¡Hoy todavía no has practicado!"* o *"¡Tu racha de N días está en peligro!"*.
-- Las lecciones están agrupadas por **unidades** (Nivel 1: Hello!, Animals, My Family, My School, Food). Solo se pueden jugar las unidades que el profe abrió para tu grupo. Las cerradas dicen que el profe está preparando las lecciones.
+- Las lecciones están agrupadas por **unidades** y las unidades por **nivel**. Solo se pueden jugar las unidades que el profe abrió para tu grupo. Las cerradas dicen que el profe está preparando las lecciones.
+  - **Nivel 1:** Hello!, Animals, My Family, My School, Food (contenido provisional, hasta tener el libro del Nivel 1).
+  - **Nivel 2:** sigue el libro del Nivel 2. **Bienvenida** (6 lecciones), 8 unidades de **10 lecciones** cada una (My toys, My family, Move your body, My face, Animals, Food, Clothes, Weather) y un **Repaso** de 2 lecciones cada dos unidades, en el mismo orden del libro. Cada unidad tiene las mismas lecciones que el libro: vocabulario, canto, canción, gramática, cuento, valores, matemática o ciencias, fonética, *I can do it!* y *Have fun!*.
+  - **Nivel 3:** sigue el libro del Nivel 3 (*Space Island*, con Kim, Katy, el capitán Conrad, PROD 1, PROD 2 y la presidenta Pop). Bienvenida (6 lecciones), 8 unidades (Nature, Me, Pets, Home, Clothes, Sports, Food, Things we do), 4 *Wider World* y 4 repasos de 2 lecciones, Despedida (4) y Festivales (Halloween, April Fools' Day, Earth Day). La Unidad 8 tiene 8 lecciones porque al PDF le faltan las páginas 102 y 103 (lecciones 7 y 8).
+  - **⭐ Reto de Pandi:** al terminar la parte del libro, cada lección de los niveles 2 y 3 trae hasta 3 retos extra que cambian de lección en lección (siempre al menos uno de gramática):
+    - *Encuentra el error:* una oración con una palabra mal (por ejemplo *He have*). Se toca la palabra mala y, si se falla, la app explica la regla en español.
+    - *Responde a tu amigo:* un personaje pregunta y se escoge la respuesta que va con la pregunta (Do → I do, Is → it is, Can → I can).
+    - *¿Verdadero o falso?:* ¿esta frase pasó en el cuento de la unidad?
+    - *Ordena el cuento:* tocar partes del cuento en orden.
+    - *Arma la palabra:* letras revueltas con su dibujo.
+    - *Atrapa la burbuja:* escuchar y tocar la burbuja correcta, 3 rondas.
+  - **Pestañas de nivel** arriba del mapa: *Tu nivel* (el de tu grupo), *Repasar* (niveles anteriores, siempre abiertos) y los siguientes con 🔒 hasta que el profe los abra. Si ya avanzaste en un nivel, ese nivel no se te cierra aunque te cambien de grupo.
+  - **Escenas del libro (Nivel 2):** cada lección empieza con la actividad de su página, dibujada e interactiva. El título es la instrucción del libro y debajo va la explicación en español:
+    - *Look and match* / *Listen and write*: toca una palabra (o arrástrala) y ponla en su lugar del dibujo (por ejemplo, los colores del loro).
+    - *Listen and find* / *Listen and circle*: toca la bocina y luego el dibujo que escuchaste.
+    - *Listen and number*: igual, y cada dibujo recibe su número en orden.
+    - *Listen and chant* / *Listen and sing*: el canto con los personajes; **▶ Escuchar** lo lee línea por línea.
+    - *Listen to the story*: el cuento en viñetas, cada una con su globo y su bocina.
+    - *Look and check*: toca todos los dibujos que van (por ejemplo, la comida sana).
+    - Canastas (fonética, ejercicio, día o noche): pon cada palabra en su canasta.
 - La lección que sigue "brilla". Las terminadas muestran estrellas (1 a 3).
 - **🧠 Repaso inteligente:** si hay al menos 2 palabras que el niño ha fallado, aparece esta tarjeta con **Repasar ahora**. Arma una lección con esas palabras (unir, elegir, escribir y escuchar). Cada acierto baja el contador de esa palabra; cuando la domina, sale de la lista. Da XP y gemas, pero no cuenta como lección del mapa.
 - Arriba se ven la racha 🔥, los XP ⭐ y las **gemas 💎**.
@@ -122,14 +141,16 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 ### 3.2 Estudiantes y grupos
 
 - Lista de estudiantes del grupo con su XP y última práctica.
-- **+ Nuevo grupo** crea un grupo (ej. *Lunes 3 pm · Nivel 1*). Al tocar la tarjeta de un grupo se abre **Editar grupo**, para cambiar el nombre o eliminarlo (debe quedar al menos un grupo, y primero hay que mover o eliminar a sus estudiantes).
+- **+ Nuevo grupo** crea un grupo (ej. *Lunes 3 pm · Nivel 2*). En **Nivel del grupo** escoges Nivel 1 o Nivel 2: se abre la primera unidad de ese nivel y las demás las abres en **Contenido**. Al tocar la tarjeta de un grupo se abre **Editar grupo**, para cambiar el nombre o eliminarlo (debe quedar al menos un grupo, y primero hay que mover o eliminar a sus estudiantes).
 - **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 6 con servidor), y la casilla obligatoria **"Tengo la autorización del papá, la mamá o el tutor"** (lo pide la ley de protección de datos, porque son menores). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
 - Al tocar un estudiante se abre su **ficha**: XP, racha, avance por unidad, medallas, última práctica, **Le cuesta** (sus palabras más falladas), **Reporte para padres**, cambio de **Grupo**, **Cambiar contraseña** (solo con servidor) y **Eliminar estudiante**.
 
 ### 3.3 Contenido (editor del curso)
 
-- **Contenido del curso:** lista de unidades. El interruptor de cada unidad la **abre o la cierra para el grupo elegido** (dice *Abierta* o *Cerrada*). Las flechas cambian el orden.
-- **+ Nueva unidad**, editar o **Eliminar unidad**.
+- **Nivel de [grupo]** (arriba, en Contenido): escoge hasta qué nivel ve el grupo elegido. Los niveles anteriores quedan abiertos para repasar y los siguientes no se ven. Al subir de nivel se abre la primera unidad de ese nivel. Si asignas una tarea con lecciones de un nivel más alto, el grupo sube a ese nivel y la app lo avisa.
+- **Contenido del curso:** lista de unidades, separada en **Nivel 1** y **Nivel 2**. Los interruptores solo se usan en el nivel del grupo; los anteriores dicen *Para repasar* y los siguientes *Oculta*. El interruptor de cada unidad la **abre o la cierra para el grupo elegido** (dice *Abierta* o *Cerrada*). Las flechas cambian el orden dentro del mismo nivel.
+- **+ Nueva unidad** (con su **Nivel**), editar o **Eliminar unidad**.
+- Las escuelas que ya usaban la app reciben el Nivel 2 solo, con todas sus unidades **cerradas**. Lo que el profe ya había editado no se toca.
 - Dentro de una unidad: lista de lecciones, **+ Nueva lección**, reordenar y eliminar.
 - **Nueva lección:** título y tipo. **Atajo:** si eliges palabras del banco, Pandi arma los ejercicios automáticamente.
 - **Editar una lección ya creada:** dentro de la unidad, toca la lección o el lápiz. En **Editar lección** cambias el título, el tipo y la **Unidad** (para moverla a otra unidad). Los cambios se guardan solos.
@@ -196,3 +217,7 @@ Si el código está mal: *"Código de configuración incorrecto"*. El código no
 | Un profe olvidó su contraseña | El dueño la cambia en el panel del dueño. |
 | El profe no ve el progreso nuevo | Cambiar de pestaña o volver a abrir la app; se actualiza solo. |
 | No llegan los recordatorios con la app cerrada | Hoy el aviso es del teléfono: si el sistema cerró la app, sale al volver a abrirla. |
+
+### Voz de la app
+
+La app usa la voz en inglés del teléfono, más aguda y alegre para los niños. En **Probar audio y micrófono** (en el inicio de sesión y en el perfil) aparece **Escoge la voz que más te guste** con todas las voces en inglés del teléfono; la elegida se recuerda en ese teléfono. Las voces marcadas con 🧒 son de niño. En Windows, el navegador Edge trae voces naturales (por ejemplo *Ana*, voz de niña); las voces de Windows sin conexión (Zira, David) suenan robóticas. En Android conviene instalar o actualizar **Texto a voz de Google**.

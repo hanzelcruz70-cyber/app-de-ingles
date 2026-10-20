@@ -6,7 +6,7 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ## Estado actual (resumen rápido)
 
-- **App:** completa en modo demo y con backend Supabase listo. Tiene Nivel 1 con 5 unidades y 28 lecciones, 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
+- **App:** completa en modo demo y con backend Supabase listo. Tiene Nivel 1 con 5 unidades y 28 lecciones (provisional) y **Nivel 2 según el libro** (13 unidades, 94 lecciones), 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
 - **Backend:** funcionando con el Supabase real del dueño (proyecto `itaxhosmkmlnoqdpljzh`). El 11 de octubre se creó la primera escuela desde `setup.html` (admin `pruebaapp`). RLS probado en Postgres 16 (26/26).
 - **Funciones nuevas (11 oct):** estadísticas del profe (palabras más falladas, quién no practicó), reporte para padres y aviso por WhatsApp, recordatorio diario, prueba de audio y micrófono, y panel del dueño (`owner.html`).
 - **Repositorio:** `hanzelcruz70-cyber/app-de-ingles` (publicado en GitHub Pages: https://hanzelcruz70-cyber.github.io/app-de-ingles/). Copia local del dueño: `C:\Users\Hanzel\Documents\Pandi Ingles`.
@@ -28,6 +28,35 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 - Recordatorios con Web Push desde el servidor (hoy son locales). Empaquetar para Google Play (TWA o Capacitor).
 
 ---
+
+## 2026-10-20 (noche, 2) · Retos de Pandi al final de cada lección
+- El dueño pidió que las lecciones no sean repetitivas, que se basen en el cuento y tengan algo extra para aprender gramática y divertirse, sin perder la parte del libro.
+- **Reto de Pandi:** después de la parte del libro, cada lección de los niveles 2 y 3 suma hasta 3 retos: encuentra el error (gramática, con la regla en español), responde a tu amigo (pregunta y respuesta), verdadero o falso del cuento, ordena el cuento, arma la palabra y atrapa la burbuja. Se arman solos con el contenido de cada lección, así que también funcionan en los niveles nuevos.
+- **Pruebas:** 593 retos en 201 lecciones; cada tipo sale entre 87 y 117 veces y casi nunca se repite la combinación seguida. 7 lecciones tienen 1 o 2 retos (hora, rutina y despedida: sin cuento ni palabras sueltas). En el navegador se dibujaron los 2296 pasos sin errores, se resolvió cada tipo de reto y nada se desborda a 375 px.
+
+## 2026-10-20 (noche) · Nivel 3 completo y control de niveles
+- **Niveles por grupo:** el profe escoge el nivel de cada grupo en Contenido. Los niveles anteriores quedan abiertos para repasar, los siguientes no se ven y lo que el niño ya avanzó no se le cierra. El mapa tiene pestañas de nivel.
+- **Nivel 3** (libro *Space Island*, PDF de 116 páginas): Bienvenida (6), 8 unidades de 10 lecciones, 4 *Wider World*, 4 repasos, Despedida (4) y Festivales (3): 107 lecciones. **Al PDF le faltan las páginas 102 y 103** (Unidad 8, lecciones 7 y 8: texto sobre máquinas que vuelan, proyecto y fonética); no se inventaron. Cuando el dueño las mande, se agregan como `n3u8l7` y `n3u8l8`.
+- Cuentos, cantos, canciones y lecturas son textos propios con las mismas palabras y la misma historia (Kim y Katy buscan la planta tifftiff para curar la *tickilitis*). Personajes dibujados en código: Kim, Katy, el capitán Conrad, dos robots y la presidenta Pop. 506 palabras en total.
+- Todas las lecciones de los niveles 2 y 3 (201) empiezan con una escena del libro; en el navegador se dibujaron los 1703 pasos sin errores. `COURSE_VER = 4`: las escuelas existentes reciben el Nivel 3 cerrado.
+- **Bug corregido:** en los cuentos en viñetas el botón «Continuar» quedaba escondido y el niño no podía pasar de la lección (lo encontró el dueño en la Bienvenida del Nivel 3; también pasaba en el Nivel 2). Ahora el cuento, igual que el canto, muestra «Continuar»; se revisaron los 57 cuentos y cantos.
+- El servidor de prueba se configura en `.claude/launch.json` (`pandi-demo`, puerto 4320, script en la carpeta temporal de la sesión).
+
+## 2026-10-20 (tarde) · Lecciones como escenas del libro y voz más alegre
+- El dueño comparó la app con la página 6 del libro (el loro de *Look and match*) y mandó un video de la plataforma digital del profe: quiere que cada lección **se parezca a su página**, como escena dibujada e interactiva, con dibujos propios (sin copiar los de Pearson). Se hizo primero una muestra (Bienvenida 1 y 2: amigos en la playa, loro, canto, manchas de colores); al dueño le gustó y pidió el resto con el mismo formato.
+- **Motor de escenas** (`t:'scene'`): modos drop, find, number, chant, story (viñetas), pick y sort. Fondos propios por unidad (juguetería, calle, parque, cuarto, granja, noche, cocina, teatro, montaña, playa, aula, papel). Dibujos fijos: los cuatro amigos, el loro, la cara grande (Unidad 4), las manchas de pintura y el saludo.
+- **Las 94 lecciones del Nivel 2** empiezan con la actividad de su página: 127 escenas (28 find, 34 number, 22 drop, 18 cantos/canciones, 8 cuentos en viñetas, 7 pick, 10 sort). Los ejercicios que ya tenían (hablar, ordenar, completar, lectura) siguen después.
+- **Voz:** al dueño no le gustó. Ahora se prefieren voces naturales o de niña (Ana en Edge), se evitan las de hombre, el tono es más agudo y alegre, y en *Probar audio* cada niño escoge la voz de su teléfono. En la PC del dueño solo hay voces de Windows sin conexión (Zira, David, Mark), que siguen sonando robóticas; quedó Zira.
+- **Pruebas:** revisión de datos (palabras e imágenes existen, sin dibujos repetidos en una escena) y en el navegador a 390 px se dibujaron los 936 pasos sin errores; se jugó la lección 1 completa.
+- **Pendiente:** si se quiere una voz igual de amigable en todos los teléfonos, hay que grabar o generar los audios (mp3) con una voz de niño y guardarlos con la app; eso necesita decidir el servicio y su costo. Lo demás pendiente sigue igual (pruebas e2e con Python/Playwright y prueba en Supabase real).
+
+## 2026-10-20 · Nivel 2 completo según el libro
+- El dueño mandó el libro del **Nivel 2** (PDF escaneado de 100 páginas, llega hasta la página 99: sin Goodbye, Festivals ni diccionario). Pidió que las lecciones sean **las mismas del libro**, sin inventar contenido, pero con diseño propio (sin personajes ni dibujos del libro). Los grupos empiezan en el Nivel 2; el **Nivel 1 actual se queda** hasta que llegue su libro.
+- **Decisiones del dueño:** se usan los nombres de los personajes (Charlie, Rose, Ola, Uncle Dan). Cantos, canciones y cuentos son **versiones propias** con las mismas palabras y frases (no se copia la letra ni el diálogo, por derechos de autor, ya que la app se vende).
+- **Contenido:** Bienvenida (6 lecciones), 8 unidades de 10 lecciones y un repaso de 2 lecciones cada dos unidades, en el orden del libro. Cada lección sigue su página: vocabulario, canto + *Look!*, vocabulario + canción, gramática, cuento propio, valores, matemática/ciencias/salud, fonética, *I can do it!* y *Have fun!*. 94 lecciones, 847 ejercicios y 218 palabras nuevas (271 en total). Imágenes con emoji; falda, pantalón, rectángulo y pasas son dibujos SVG propios.
+- **Código:** unidades con `level` y `tag`; mapa y editor agrupados por nivel; grupo nuevo con **Nivel del grupo**; `upgradeCourse` para escuelas existentes (`COURSE_VER = 3`).
+- **Pruebas en esta sesión** (PC del dueño, sin Python ni Playwright): `index.html` se generó con un script de Node equivalente a `build.py` (se verificó que da el mismo archivo byte por byte). Un script revisó que todas las palabras e imágenes existan, que no haya ids repetidos ni dibujos iguales en *Escucha*. En el navegador (modo demo, 390 px) se dibujaron los 847 ejercicios sin errores, se probó la actualización de un curso viejo, el editor por niveles y un grupo de Nivel 2 que solo ve su nivel.
+- **Pendiente:** correr `tests/e2e/run.sh` en una máquina con Python y Playwright. La actualización en modo servidor (`remoteLoad`) no se probó contra Supabase real: el admin debe entrar una vez para que el Nivel 2 se guarde en el servidor. Revisar en un celular Android viejo que se vean los emojis nuevos (🪿 no se usó; 🛝, 🫘 y 🐦‍⬛ son de 2021-2022). Libro del Nivel 1 cuando el dueño lo tenga.
 
 ## 2026-10-12 (noche, 2) · Personaje dibujado, bienvenida, trajes y quién falla cada palabra
 - Al dueño no le gustaron los avatares de emoji. Mandó de referencia ilustraciones planas de niños (pelo, ropa, lentes, audífonos, capucha de panda). Pidió que las prendas queden **puestas de verdad**, no encima.
