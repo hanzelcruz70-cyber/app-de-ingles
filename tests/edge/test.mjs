@@ -1,6 +1,6 @@
 globalThis.Deno = { env: { get: k => ({PANDI_SETUP_TOKEN:'secreto'})[k] } };
 const { handle } = await import('./index.mjs');
-const T = { schools:[], profiles:[], groups:[{school_id:null,id:'g1'}], progress:[] }; const authUsers = []; const tokens = {};
+const T = { schools:[], profiles:[], groups:[{school_id:null,id:'g1'}], progress:[] }; const authUsers = []; const tokens = {}; const revoked = [];
 let n=0; const uid = () => 'u'+(++n);
 function q(table){ let rows = null, filters=[], op='select', payload=null;
   const api = {
@@ -15,7 +15,7 @@ function q(table){ let rows = null, filters=[], op='select', payload=null;
     const out = T[table].filter(match); return {data: one ? (out[0]||null) : out, error:null};
   }
   return api; }
-const admin = { from:q, auth:{ admin:{
+const admin = { from:q, async rpc(name, args){ if (name==='revoke_user_sessions') revoked.push(args.uid); return {error:null}; }, auth:{ admin:{
   async createUser({email,password}){ if (authUsers.some(u=>u.email===email)) return {data:null, error:{message:'User already registered'}}; const u={id:uid(),email,password}; authUsers.push(u); return {data:{user:u}, error:null}; },
   async deleteUser(id){ const i=authUsers.findIndex(u=>u.id===id); authUsers.splice(i,1); T.profiles=T.profiles.filter(p=>p.id!==id); return {error:null}; },
   async updateUserById(id,{password}){ authUsers.find(u=>u.id===id).password=password; return {error:null}; } },
@@ -32,12 +32,12 @@ out.push(['short pw', ...(await call({action:'create_student', name:'Leo', usern
 out.push(['bad group', ...(await call({action:'create_student', name:'Leo', username:'leo', password:'leo123', group_id:'zz'}, 'A'))]);
 tokens.S = st.id;
 out.push(['student acting as admin', ...(await call({action:'reset_password', user_id:st.id, password:'xxxxxx'}, 'S'))]);
-out.push(['reset ok', ...(await call({action:'reset_password', user_id:st.id, password:'nueva1'}, 'A')), authUsers.find(u=>u.id===st.id).password]);
+out.push(['reset ok', ...(await call({action:'reset_password', user_id:st.id, password:'nueva1'}, 'A')), authUsers.find(u=>u.id===st.id).password, 'sesiones cerradas:'+revoked.includes(st.id)]);
 out.push(['delete ok', ...(await call({action:'delete_student', user_id:st.id}, 'A')), T.profiles.length]);
 out.push(['list no token', ...(await call({action:'list_schools', setup_token:'x'}))]);
 out.push(['list ok', ...(await call({action:'list_schools', setup_token:'secreto'}))]);
 out.push(['owner reset bad user', ...(await call({action:'owner_reset_admin_password', setup_token:'secreto', username:'nadie', password:'abcdef'}))]);
 out.push(['owner reset short', ...(await call({action:'owner_reset_admin_password', setup_token:'secreto', username:'profe.sk', password:'123'}))]);
-out.push(['owner reset ok', ...(await call({action:'owner_reset_admin_password', setup_token:'secreto', username:'profe.sk', password:'nueva99'})), authUsers.find(u=>u.email.startsWith('profe.sk')).password]);
+out.push(['owner reset ok', ...(await call({action:'owner_reset_admin_password', setup_token:'secreto', username:'profe.sk', password:'nueva99'})), authUsers.find(u=>u.email.startsWith('profe.sk')).password, 'sesiones cerradas:'+revoked.includes(sc.user_id)]);
 out.push(['unknown', ...(await call({action:'zzz'}, 'A'))]);
 console.log(out.map(x=>JSON.stringify(x)).join('\n'));

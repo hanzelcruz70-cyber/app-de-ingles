@@ -108,21 +108,34 @@ $$;
 
 -- Ranking del grupo del estudiante (solo nombre y puntos de sus compañeros)
 -- (se borra y se vuelve a crear porque ahora también devuelve el avatar; no toca datos)
+-- El progreso lo escribe el propio estudiante, así que cada campo se revisa antes de usarlo:
+-- un xp que no es un número entero (o es enorme) cuenta como 0, en vez de romper el ranking de todo el grupo.
 drop function if exists public.class_ranking();
 create or replace function public.class_ranking()
 returns table (user_id uuid, name text, xp int, xp_days jsonb, days jsonb, avatar jsonb)
 language sql stable security definer set search_path = public as $$
   select p.id, p.name,
-         coalesce((pr.data->>'xp')::int, 0),
-         coalesce(pr.data->'xpDays', '{}'::jsonb),
-         coalesce(pr.data->'days', '[]'::jsonb),
-         pr.data->'avatar'
+         case when jsonb_typeof(pr.data->'xp') = 'number' and pr.data->>'xp' ~ '^[0-9]{1,9}$'
+              then (pr.data->>'xp')::int else 0 end,
+         case when jsonb_typeof(pr.data->'xpDays') = 'object' then pr.data->'xpDays' else '{}'::jsonb end,
+         case when jsonb_typeof(pr.data->'days') = 'array' then pr.data->'days' else '[]'::jsonb end,
+         case when jsonb_typeof(pr.data->'avatar') = 'object' then pr.data->'avatar' end
   from public.profiles p
   left join public.progress pr on pr.user_id = p.id
   where p.role = 'student'
     and p.school_id = public.my_school()
     and p.group_id is not distinct from public.my_group()
 $$;
+
+-- Cierra todas las sesiones abiertas de una cuenta. La usa la función admin-users justo después de cambiar
+-- una contraseña, así quien tenía la cuenta abierta en otro teléfono ya no puede seguir usándola.
+-- Solo la llave de servicio (la función) puede llamarla; estudiantes y profes no.
+create or replace function public.revoke_user_sessions(uid uuid) returns void
+language sql security definer set search_path = '' as $$
+  delete from auth.sessions where user_id = uid;
+$$;
+revoke all on function public.revoke_user_sessions(uuid) from public, anon, authenticated;
+do $$ begin grant execute on function public.revoke_user_sessions(uuid) to service_role; exception when undefined_object then null; end $$;
 
 -- Un estudiante no puede calificarse a sí mismo: solo el admin cambia nota y revisión
 create or replace function public.guard_submission() returns trigger
