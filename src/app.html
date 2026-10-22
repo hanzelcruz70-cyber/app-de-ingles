@@ -123,99 +123,98 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .unit-div{display:flex;align-items:center;gap:10px;margin:22px 0 0;color:var(--ink-2);font-weight:800;font-size:16px;text-align:center}
 .unit-div::before,.unit-div::after{content:'';flex:1;height:2px;background:var(--line)}
 .unit-div span{max-width:75%}
-.buddy{position:absolute;top:-16px;width:100px;height:121px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.buddy{position:absolute;top:-18px;width:100px;height:129px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .buddy.left{right:calc(100% + 26px)}
 .buddy.right{left:calc(100% + 26px)}
 .buddy .bprop{position:absolute;font-size:34px;line-height:1;pointer-events:none}
 .buddy .bsay{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:4px 10px;font-weight:800;font-size:14px;animation:pop .3s;z-index:2}
-/* el Pandi real: dibujo de 240×290 achicado al tamaño del botón; cada grupo gira sobre su articulación */
-.pr{position:absolute;left:0;top:0;width:240px;height:290px;transform:scale(.4167);transform-origin:0 0;pointer-events:none}
-.pr img,.pr i,.pr span{position:absolute;display:block;max-width:none}
+/* el Pandi: capas de 266×343 achicadas al tamaño del botón; el brazo gira en el hombro y la cabeza en el cuello */
+.pr{position:absolute;left:0;top:0;width:266px;height:343px;transform:scale(.376);transform-origin:0 0;pointer-events:none}
+.pr img{position:absolute;left:0;top:0;width:266px;height:343px;max-width:none}
 .pr-g{position:absolute;inset:0}
-.pr-back{width:24px;height:25px;border-radius:50%;background:#16161a}
-.pr-arc{filter:invert(1) brightness(.8)}
-.pr-arc,.pr-mouth{opacity:0}
-.pr-hold{left:224px;top:66px;font-size:34px;line-height:1}
-.pr-all{transform-origin:120px 280px}.pr-body{transform-origin:120px 240px}.pr-head{transform-origin:120px 108px}.pr-eyes{transform-origin:120px 57px}
-.pr-armL{transform-origin:177px 143px}.pr-armR{transform-origin:38px 120px}.pr-legL{transform-origin:87px 196px}.pr-legR{transform-origin:153px 196px}
-.pr-eyes{animation:prBlink 4s infinite}
+.pr-all{transform-origin:133px 340px}.pr-body{transform-origin:133px 340px}
+.pr-arm{transform-origin:194px 170px}.pr-head{transform-origin:104px 170px}
+.pr-mc{opacity:0}
+.pr-hold{position:absolute;left:216px;top:62px;font-size:38px;line-height:1}
+/* párpados del mismo negro de las manchas; dormido muestra una línea clara de ojo cerrado */
+.pr-lid{position:absolute;display:block;border-radius:50%;background:#151317;transform:scaleY(0);transform-origin:50% 0}
+.pr-lidL{left:57px;top:80px;width:37px;height:36px}
+.pr-lidR{left:127px;top:66px;width:35px;height:32px}
+.pr-lid::after{content:'';position:absolute;left:18%;right:18%;top:38%;height:30%;border-bottom:3px solid rgba(235,235,240,.75);border-radius:50%;opacity:0}
+.pr-lid{animation:prBlink 4s infinite}
+.pr-lidR{animation-delay:.02s}
 .pr-body{animation:prBob 2.4s ease-in-out infinite}
-.pr-armL{animation:prRest 3s ease-in-out infinite}
-@keyframes prBlink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
-@keyframes prBob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(2px) scale(1.02,.98)}}
-@keyframes prRest{0%,100%{transform:rotate(0)}50%{transform:rotate(-5deg)}}
-@keyframes prLook{0%,40%{transform:translate(0,0)}50%,90%{transform:translate(3px,-2px)}100%{transform:translate(0,0)}}
-/* gira el mundo sobre la mano, como Duolingo con la pelota */
-.b-spin .pr-hold{left:222px;top:58px;font-size:38px;animation:prSpin 1s linear infinite}
-.b-spin .pr-armL{animation:prHoldUp 1.6s ease-in-out infinite}
-.b-spin .pr-head{animation:prTiltR 1.6s ease-in-out infinite}
-.b-spin .pr-eyes{animation:prBlink 4s infinite,prLook 3.2s ease-in-out infinite}
-@keyframes prSpin{to{transform:rotate(360deg)}}
-@keyframes prHoldUp{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg) translateY(-3px)}}
-@keyframes prTiltR{0%,100%{transform:rotate(3deg)}50%{transform:rotate(8deg)}}
-/* hace rebotar la pelota con la mano */
-.b-bounce .pr-hold{left:224px;top:44px;animation:prBall .7s cubic-bezier(.45,0,.55,1) infinite}
-.b-bounce .pr-armL{animation:prPump .7s ease-in-out infinite}
-.b-bounce .pr-body{animation:prBob .7s ease-in-out infinite}
-@keyframes prBall{0%,100%{transform:translateY(-34px) rotate(0)}50%{transform:translateY(8px) rotate(180deg) scale(1.1,.9)}}
-@keyframes prPump{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(7deg) translateY(4px)}}
-/* lee el libro que sostiene en alto y pasa la página */
-.b-read .pr-hold{left:214px;top:62px;font-size:42px;animation:prFlip 3.2s ease-in-out infinite}
-.b-read .pr-head{animation:prRead 2.4s ease-in-out infinite}
-.b-read .pr-armL{animation:none;transform:rotate(-6deg)}
-@keyframes prFlip{0%,80%,100%{transform:scaleX(1)}88%{transform:scaleX(-1)}}
-@keyframes prRead{0%,100%{transform:rotate(6deg)}50%{transform:rotate(9deg) translateY(2px)}}
-/* se lleva el bambú a la boca y mastica */
-.b-munch .pr-armR{animation:prEat 1.8s ease-in-out infinite}
-.b-munch .pr-mo{animation:prChew 1.8s steps(1) infinite}
-.b-munch .pr-head{animation:prNod 1.8s ease-in-out infinite}
-@keyframes prEat{0%,100%{transform:rotate(0)}40%,70%{transform:rotate(-62deg)}}
-@keyframes prChew{0%,42%{opacity:0}46%{opacity:1}52%{opacity:0}58%{opacity:1}64%{opacity:0}100%{opacity:0}}
-@keyframes prNod{0%,100%{transform:rotate(0)}55%{transform:rotate(-3deg) translateY(1px)}}
-/* saluda con la mano y habla */
-.b-wave .pr-armL{animation:prWave .9s ease-in-out infinite}
-.b-wave .pr-mo{animation:prTalk 1.8s steps(1) infinite}
-.b-wave .pr-head{animation:prTiltR 1.8s ease-in-out infinite}
-@keyframes prWave{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(12deg)}}
+.pr-arm{animation:prRest 3s ease-in-out infinite}
+@keyframes prBlink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+@keyframes prBob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(2px) scale(1.015,.985)}}
+@keyframes prRest{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
 @keyframes prTalk{0%,50%{opacity:0}55%,65%,75%{opacity:1}60%,70%,80%,100%{opacity:0}}
-/* flota con el globo y patalea */
-.b-float .pr-hold{left:220px;top:16px;font-size:46px;animation:prBalloon 3s ease-in-out infinite}
+@keyframes prTiltR{0%,100%{transform:rotate(1deg)}50%{transform:rotate(3deg)}}
+/* gira el mundo sobre la mano */
+.b-spin .pr-hold{left:214px;top:52px;font-size:40px;animation:prSpin 1s linear infinite}
+.b-spin .pr-arm{animation:prHoldUp 1.6s ease-in-out infinite}
+.b-spin .pr-head{animation:prTiltR 1.6s ease-in-out infinite}
+@keyframes prSpin{to{transform:rotate(360deg)}}
+@keyframes prHoldUp{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-3px)}}
+/* hace rebotar la pelota con la mano */
+.b-bounce .pr-hold{left:216px;top:40px;animation:prBall .7s cubic-bezier(.45,0,.55,1) infinite}
+.b-bounce .pr-arm{animation:prPump .7s ease-in-out infinite}
+.b-bounce .pr-body{animation:prBob .7s ease-in-out infinite}
+@keyframes prBall{0%,100%{transform:translateY(-36px) rotate(0)}50%{transform:translateY(8px) rotate(180deg) scale(1.1,.9)}}
+@keyframes prPump{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(6deg) translateY(4px)}}
+/* lee el libro que sostiene en alto y pasa la página */
+.b-read .pr-hold{left:206px;top:58px;font-size:44px;animation:prFlip 3.2s ease-in-out infinite}
+.b-read .pr-head{animation:prRead 2.4s ease-in-out infinite}
+.b-read .pr-arm{animation:none;transform:rotate(-4deg)}
+@keyframes prFlip{0%,80%,100%{transform:scaleX(1)}88%{transform:scaleX(-1)}}
+@keyframes prRead{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg) translateY(2px)}}
+/* mastica: cierra y abre la boca y mueve la cabeza */
+.b-munch .pr-mc{animation:prChew 1.2s steps(1) infinite}
+.b-munch .pr-head{animation:prNod 1.2s ease-in-out infinite}
+@keyframes prChew{0%,25%{opacity:1}30%,45%{opacity:0}50%,75%{opacity:1}80%,100%{opacity:0}}
+@keyframes prNod{0%,100%{transform:rotate(0)}50%{transform:rotate(-2deg) translateY(2px)}}
+/* saluda con la mano y habla */
+.b-wave .pr-arm{animation:prWave .9s ease-in-out infinite}
+.b-wave .pr-mc{animation:prTalk 1.8s steps(1) infinite}
+.b-wave .pr-head{animation:prTiltR 1.8s ease-in-out infinite}
+@keyframes prWave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}}
+/* flota con el globo */
+.b-float .pr-hold{left:212px;top:6px;font-size:48px;animation:prBalloon 3s ease-in-out infinite}
 .b-float .pr-all{animation:prFloat 3s ease-in-out infinite}
-.b-float .pr-armL{animation:prHoldUp 3s ease-in-out infinite}
-.b-float .pr-legL{animation:prKick .8s ease-in-out infinite}.b-float .pr-legR{animation:prKick .8s ease-in-out -.4s infinite}
+.b-float .pr-arm{animation:prHoldUp 3s ease-in-out infinite}
+.b-float .pr-body{animation:prSway 3s ease-in-out infinite}
 @keyframes prBalloon{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
 @keyframes prFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
-@keyframes prKick{0%,100%{transform:rotate(10deg)}50%{transform:rotate(-10deg)}}
 /* malabares */
-.b-juggle .pr-armL{animation:prJugL .9s ease-in-out infinite}.b-juggle .pr-armR{animation:prJugR .9s ease-in-out -.45s infinite}
-.b-juggle .pr-eyes{animation:prBlink 4s infinite,prUp 1.8s ease-in-out infinite}
-.b-juggle .bprop{left:36px;top:-8px;font-size:20px;animation:juggle 1.8s linear infinite}
+.b-juggle .pr-arm{animation:prJug .9s ease-in-out infinite}
+.b-juggle .pr-head{animation:prUp 1.8s ease-in-out infinite}
+.b-juggle .bprop{left:34px;top:-10px;font-size:20px;animation:juggle 1.8s linear infinite}
 .b-juggle .p1{animation-delay:-.6s}.b-juggle .p2{animation-delay:-1.2s}
-@keyframes prJugL{0%,100%{transform:rotate(8deg)}50%{transform:rotate(-14deg) translateY(-4px)}}
-@keyframes prJugR{0%,100%{transform:rotate(0)}50%{transform:rotate(-24deg)}}
-@keyframes prUp{0%,100%{transform:translateY(-2px)}50%{transform:translateY(-3px)}}
-/* canta: boca abierta, se mece y salen notas */
-.b-sing .pr-mh{animation:prSing .8s steps(1) infinite}
-.b-sing .pr-head{animation:prSway 1.6s ease-in-out infinite}.b-sing .pr-body{animation:prSway 1.6s ease-in-out infinite}
-.b-sing .pr-armL{animation:prWave 1.6s ease-in-out infinite}
-.b-sing .bprop{left:64px;top:14px;font-size:22px;opacity:0;animation:note 2.4s ease-out infinite}
+@keyframes prJug{0%,100%{transform:rotate(6deg)}50%{transform:rotate(-10deg) translateY(-4px)}}
+@keyframes prUp{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(-3deg)}}
+/* canta: abre y cierra la boca, se mece y salen notas */
+.b-sing .pr-mc{animation:prSing .8s steps(1) infinite}
+.b-sing .pr-body{animation:prSway 1.6s ease-in-out infinite}
+.b-sing .pr-arm{animation:prWave 1.6s ease-in-out infinite}
+.b-sing .bprop{left:62px;top:10px;font-size:22px;opacity:0;animation:note 2.4s ease-out infinite}
 .b-sing .p1{animation-delay:.8s}.b-sing .p2{animation-delay:1.6s}
-@keyframes prSing{0%{opacity:1}50%{opacity:0}}
-@keyframes prSway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
-/* duerme: ojos cerrados, cabeza caída y respira */
-.b-sleep .pr-eyes{opacity:0;animation:none}.b-sleep .pr-arc{opacity:1}
+@keyframes prSing{0%{opacity:0}50%{opacity:1}}
+@keyframes prSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+/* duerme: ojos y boca cerrados, cabeza caída y respira */
+.b-sleep .pr-lid{animation:none;transform:scaleY(1)}.b-sleep .pr-lid::after{opacity:1}
+.b-sleep .pr-mc{opacity:1}
 .b-sleep .pr-head{animation:prDroop 3s ease-in-out infinite}.b-sleep .pr-body{animation:prBreath 3s ease-in-out infinite}
-.b-sleep .pr-armL{animation:none;transform:rotate(18deg)}
-.b-sleep .bprop{left:70px;top:-2px;font-size:24px;animation:note 2.6s ease-out infinite}
-@keyframes prDroop{0%,100%{transform:rotate(7deg)}50%{transform:rotate(11deg) translateY(3px)}}
-@keyframes prBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.03,1.015)}}
-/* al tocarlo: salta, sube los brazos y se ríe */
+.b-sleep .pr-arm{animation:none;transform:rotate(10deg)}
+.b-sleep .bprop{left:66px;top:-4px;font-size:24px;animation:note 2.6s ease-out infinite}
+@keyframes prDroop{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg) translateY(2px)}}
+@keyframes prBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.02,1.01)}}
+/* al tocarlo: salta, saluda rápido y se ríe (boca abierta, ojos abiertos) */
 .buddy.hop .pr-all{animation:prHop .5s ease-out 2}
-.buddy.hop .pr-armL{animation:none;transform:rotate(-16deg)}.buddy.hop .pr-armR{animation:none;transform:rotate(-40deg)}
-.buddy.hop .pr-mouth{animation:none;opacity:0}.buddy.hop .pr-ml{opacity:1}
-.buddy.hop .pr-eyes{opacity:1}.buddy.hop .pr-arc{opacity:0}
+.buddy.hop .pr-arm{animation:prWave .3s ease-in-out 3}
+.buddy.hop .pr-mc{animation:none;opacity:0}
+.buddy.hop .pr-lid{animation:none;transform:scaleY(0)}
 @keyframes prHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}}
-@media (prefers-reduced-motion:reduce){.buddy .pr *,.buddy .bprop,.lv-pandi{animation:none!important}.buddy .bprop{opacity:1!important}}
+@media (prefers-reduced-motion:reduce){.buddy .pr *,.buddy .pr *::after,.buddy .bprop,.lv-pandi{animation:none!important}.buddy .bprop{opacity:1!important}}
 .node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
 .node{width:74px;height:74px;border-radius:50%;background:var(--uc);box-shadow:0 6px 0 var(--ucd);display:grid;place-items:center;color:var(--uink);transition:transform .08s}
 .node:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ucd)}
@@ -2861,31 +2860,22 @@ function renderStats(){ $('#streakN').textContent = streak(); $('#xpN').textCont
 const OFF = [0, 46, 70, 46, 0, -46, -70, -46];
 let MAPLV = null; // nivel que el estudiante está viendo en el mapa
 let MAPVIEW = 'path'; // 'path' (el camino) o 'levels' (escoger nivel)
-// Pandi animado al lado del camino: el Pandi real armado con sus piezas (icons/pandi/*.png, recortadas de la
-// hoja de partes del personaje). Cada parte gira sobre su articulación; el dibujo mide 240×290 y se achica con CSS.
-// Lo que lleva en la mano levantada (hold) se mueve con ese brazo; props son cosas que flotan alrededor.
+// Pandi animado al lado del camino: capas sacadas de la imagen original del personaje (icons/pandi/, se generan con
+// tools/pandi/capas.cjs): base, brazo levantado, tirante (va delante del brazo), cabeza y boca cerrada. Lo que queda
+// escondido detrás de cada capa se rellenó con pelo de la misma imagen, así no se ven costuras al moverse.
+// El dibujo mide 266×343 y se achica con CSS; el brazo gira en el hombro y la cabeza en el cuello.
 const BUDDY = [
   {k:'spin', hold:'🌍'}, {k:'bounce', hold:'⚽'}, {k:'read', hold:'📖'}, {k:'munch'}, {k:'wave'},
   {k:'float', hold:'🎈'}, {k:'juggle', props:['⭐', '⭐', '⭐']}, {k:'sing', props:['🎵', '🎶', '🎵']}, {k:'sleep', props:['💤']}
 ];
 const BUDDY_SAY = ['¡Tú puedes!', '¡Sigue así!', '¡Hello!', '¡Me encanta el inglés!', '¡Una lección más!', '¡Qué bien lo haces!', '¡Vamos!', 'Let’s go!'];
-// [pieza, x, y, ancho] en coordenadas del dibujo de 240×290
-const PR = n => 'icons/pandi/' + n + '.png';
 function pandiRig(b){
-  const img = (n, x, y, w, cls = '', extra = '') => `<img class="${cls}" src="${PR(n)}" alt="" draggable="false" style="left:${x}px;top:${y}px${w ? ';width:' + w + 'px' : ''}${extra}">`;
-  const back = (x, y) => `<i class="pr-back" style="left:${x}px;top:${y}px"></i>`;
-  const hold = b.hold ? `<span class="pr-hold">${b.hold}</span>` : '';
-  return `<div class="pr" aria-hidden="true"><div class="pr-g pr-all">`
-    + `<div class="pr-g pr-legL">${img('legL', 62, 188)}</div><div class="pr-g pr-legR">${img('legR', 128, 188)}</div>`
-    + `<div class="pr-g pr-body">`
-    +   `<div class="pr-g pr-armL">${img('armL', 168, 96)}${hold}</div>`
-    +   img('torso', 24, 104) + img('scarf', 80, 92)
-    +   `<div class="pr-g pr-head">${back(85, 44)}${back(130, 44)}${img('head', 59, 4)}`
-    +     `<div class="pr-g pr-eyes">${img('eyeL', 84, 43, 27)}${img('eyeR', 129, 43, 27)}</div>`
-    +     img('arcL', 84, 54, 27, 'pr-arc') + img('arcR', 129, 54, 27, 'pr-arc')
-    +     img('mouthO', 112, 79, 16, 'pr-mouth pr-mo') + img('mouthHappy', 105, 78, 30, 'pr-mouth pr-mh') + img('mouthLaugh', 105, 80, 30, 'pr-mouth pr-ml')
-    +   `</div>`
-    +   `<div class="pr-g pr-armR">${img('armR', 16, 114)}${img('bamboo', 74, 128, 0, '', ';transform:rotate(-22deg);transform-origin:50% 60%')}${img('handR', 66, 160, 30)}</div>`
+  const img = (n, cls = '') => `<img class="${cls}" src="icons/pandi/${n}.png" alt="" draggable="false">`;
+  return `<div class="pr" aria-hidden="true"><div class="pr-g pr-all"><div class="pr-g pr-body">`
+    + img('base')
+    + `<div class="pr-g pr-arm">${img('arm')}${b.hold ? `<span class="pr-hold">${b.hold}</span>` : ''}</div>`
+    + img('strap')
+    + `<div class="pr-g pr-head">${img('head')}${img('mouth', 'pr-mc')}<i class="pr-lid pr-lidL"></i><i class="pr-lid pr-lidR"></i></div>`
     + `</div></div></div>`;
 }
 function pathBuddy(n, side){
