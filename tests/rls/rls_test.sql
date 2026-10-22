@@ -22,6 +22,13 @@ select pg_temp.check('2 ranking solo de su grupo (Ana+Sofía)', (select count(*)
 select pg_temp.check('3 no lee progreso ajeno', (select count(*) from progress) = 0);
 select pg_temp.check('4a guarda su propio progreso', not pg_temp.fails($q$insert into progress(user_id,school_id,data) values ('a0000000-0000-0000-0000-000000000001','aaaaaaaa-0000-0000-0000-000000000000','{"xp":10}')$q$));
 select pg_temp.check('4b no puede escribir progreso de otro', pg_temp.fails($q$insert into progress(user_id,school_id,data) values ('a0000000-0000-0000-0000-000000000002','aaaaaaaa-0000-0000-0000-000000000000','{"xp":9999}') on conflict (user_id) do update set data = excluded.data$q$));
+-- un xp raro (texto, decimal, enorme) no debe romper el ranking del grupo: cuenta como 0
+update progress set data='{"xp":"x","days":5,"xpDays":[1]}' where user_id = auth.uid();
+select pg_temp.check('4c xp de texto no rompe el ranking', not pg_temp.fails($q$select * from class_ranking()$q$) and (select xp from class_ranking() where user_id = auth.uid()) = 0 and (select jsonb_typeof(days) from class_ranking() where user_id = auth.uid()) = 'array');
+update progress set data='{"xp":99999999999}' where user_id = auth.uid();
+select pg_temp.check('4d xp enorme no rompe el ranking', not pg_temp.fails($q$select * from class_ranking()$q$) and (select xp from class_ranking() where user_id = auth.uid()) = 0);
+update progress set data='{"xp":10}' where user_id = auth.uid();
+select pg_temp.check('4e no puede cerrar sesiones de otra cuenta', pg_temp.fails($q$select public.revoke_user_sessions('a0000000-0000-0000-0000-000000000002')$q$));
 with u as (update groups set name='hack' returning 1) select pg_temp.check('5 no puede cambiar grupos', (select count(*) from u) = 0);
 with u as (update profiles set group_id='g2' where id = auth.uid() returning 1) select pg_temp.check('6 no puede cambiarse de grupo', (select count(*) from u) = 0);
 select pg_temp.check('6b no puede cambiarse el rol', pg_temp.fails($q$update profiles set role='admin' where id = auth.uid()$q$));

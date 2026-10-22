@@ -24,6 +24,14 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), { status
 const USER_RE = /^[a-z0-9._-]{3,24}$/;
 const clean = (v) => String(v ?? '').trim();
 
+// Después de cambiar una contraseña se cierran todas las sesiones abiertas de esa cuenta (función revoke_user_sessions
+// de schema.sql). Si la base todavía no tiene esa función, la contraseña igual queda cambiada y se avisa en el registro.
+async function closeSessions(admin, userId) {
+  const { error } = await admin.rpc('revoke_user_sessions', { uid: userId });
+  if (error) console.error('revoke_user_sessions:', error.message);
+  return !error;
+}
+
 async function createAuthUser(admin, username, password, name) {
   const { data, error } = await admin.auth.admin.createUser({
     email: `${username}@${EMAIL_DOMAIN}`,
@@ -97,7 +105,7 @@ export async function handle(req, admin) {
       if (!adm || adm.role !== 'admin') return json({ error: 'No encontré un profe (admin) con ese usuario.' }, 404);
       const { error } = await admin.auth.admin.updateUserById(adm.id, { password });
       if (error) throw error;
-      return json({ ok: true });
+      return json({ ok: true, sessions_closed: await closeSessions(admin, adm.id) });
     }
 
     // Todo lo demás lo puede hacer solo el admin de la escuela
@@ -134,7 +142,7 @@ export async function handle(req, admin) {
         if (password.length < 6) return json({ error: 'La contraseña debe tener al menos 6 caracteres.' }, 400);
         const { error } = await admin.auth.admin.updateUserById(st.id, { password });
         if (error) throw error;
-        return json({ ok: true });
+        return json({ ok: true, sessions_closed: await closeSessions(admin, st.id) });
       }
       const { error } = await admin.auth.admin.deleteUser(st.id); // borra también su perfil, progreso y entregas
       if (error) throw error;
