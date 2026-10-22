@@ -67,7 +67,7 @@ Abajo hay cuatro secciones: **Aprender**, **Tareas**, **Ranking** y **Perfil**.
   - **Encabezado del camino** (como en Duolingo): una franja del color de la unidad, pegada arriba, que dice el nivel y la unidad que se está viendo (*NIVEL 2, UNIDAD 3 · My face*) y cambia al bajar por el camino.
   - **📚 Niveles:** si el niño puede ver más de un nivel, al tocar la franja sale la lista de sus niveles: *Tu nivel* (el de su grupo, con **CONTINUAR**), *Para repasar* (los anteriores, con **REPASAR**) y *Ya lo empezaste* (uno más alto donde ya completó algo). Cada uno muestra cuántas lecciones lleva o **¡COMPLETADO!**. **← Regresar** vuelve al camino. Los niveles que todavía no le tocan no aparecen, y si ya avanzó en un nivel, no se le cierra aunque lo cambien de grupo.
   - **Unidades en el camino:** la unidad de arriba sale en la franja; las siguientes se separan con una línea que dice su nombre y cuántas lecciones lleva (por ejemplo *Unidad 1 · My toys (3/10)*), o 🔒 si está cerrada.
-  - **Pandi en el camino:** Pandi está dibujado por partes y se mueve de verdad (brazos, cabeza, ojos, boca y piernas). En cada unidad hace algo distinto: gira el mundo en un dedo, rebota una pelota, lee un libro y pasa la página, come bambú y mastica, saluda con la mano, flota con un globo pataleando, hace malabares, canta con los brazos abiertos o duerme. Si lo tocan, salta con los brazos arriba y dice algo como *¡Tú puedes!*.
+  - **Pandi en el camino:** es la misma imagen de Pandi, separada en capas para que se mueva sin que se noten uniones: parpadea, mueve la cabeza, abre y cierra la boca, mueve el brazo levantado y todo el cuerpo. En cada unidad hace algo distinto: gira el mundo sobre la mano, rebota una pelota, lee un libro y pasa la página, mastica, saluda y habla, flota con un globo, hace malabares, canta o duerme (con los ojos y la boca cerrados). Si lo tocan, salta, saluda y se ríe, y dice algo como *¡Tú puedes!*.
   - **Escenas del libro (Nivel 2):** cada lección empieza con la actividad de su página, dibujada e interactiva. El título es la instrucción del libro y debajo va la explicación en español:
     - *Look and match* / *Listen and write*: toca una palabra (o arrástrala) y ponla en su lugar del dibujo (por ejemplo, los colores del loro).
     - *Listen and find* / *Listen and circle*: toca la bocina y luego el dibujo que escuchaste.
@@ -155,7 +155,7 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 
 - Lista de estudiantes del grupo con su XP y última práctica.
 - **+ Nuevo grupo** crea un grupo (ej. *Lunes 3 pm · Nivel 2*). En **Nivel del grupo** escoges Nivel 1 o Nivel 2: se abre la primera unidad de ese nivel y las demás las abres en **Contenido**. Al tocar la tarjeta de un grupo se abre **Editar grupo**, para cambiar el nombre o eliminarlo (debe quedar al menos un grupo, y primero hay que mover o eliminar a sus estudiantes).
-- **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 6 con servidor), y la casilla obligatoria **"Tengo la autorización del papá, la mamá o el tutor"** (lo pide la ley de protección de datos, porque son menores). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
+- **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 8 con servidor), y la casilla obligatoria **"Tengo la autorización del papá, la mamá o el tutor"** (lo pide la ley de protección de datos, porque son menores). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
 - Al tocar un estudiante se abre su **ficha**: XP, racha, avance por unidad, medallas, última práctica, **Le cuesta** (sus palabras más falladas), **Reporte para padres**, cambio de **Grupo**, **Cambiar contraseña** (solo con servidor) y **Eliminar estudiante**.
 
 ### 3.3 Contenido (editor del curso)
@@ -203,14 +203,14 @@ En **Resumen → Necesitan un empujón**, toca **Recordar**. Se abre el mismo ti
 
 ### 4.1 Crear la primera escuela (`setup.html`)
 
-Abre `…/setup.html`, escribe el nombre de la escuela, el nombre y usuario del profe, la contraseña (mínimo 6) y el **código de configuración** (`PANDI_SETUP_TOKEN`). Al terminar: *"¡Listo! Escuela creada…"*.
+Abre `…/setup.html`, escribe el nombre de la escuela, el nombre y usuario del profe, la contraseña (mínimo 8) y el **código de configuración** (`PANDI_SETUP_TOKEN`). Al terminar: *"¡Listo! Escuela creada…"*.
 
 ### 4.2 Panel del dueño (`owner.html`)
 
 1. Abre `…/owner.html` y escribe el código de configuración. Toca **Entrar**.
 2. **Escuelas:** cada escuela con su número de estudiantes, última actividad y profe. **Actualizar** recarga la lista.
 3. **Crear escuela nueva:** igual que `setup.html`.
-4. **Cambiar la clave de un profe:** usuario del profe y contraseña nueva (mínimo 6).
+4. **Cambiar la clave de un profe:** usuario del profe y contraseña nueva (mínimo 8).
 
 Si el código está mal: *"Código de configuración incorrecto"*. El código no se guarda en el navegador. Para crear una escuela en `setup.html` hay que aceptar los términos.
 

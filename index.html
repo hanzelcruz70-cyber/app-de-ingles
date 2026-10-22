@@ -139,106 +139,98 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .unit-div{display:flex;align-items:center;gap:10px;margin:22px 0 0;color:var(--ink-2);font-weight:800;font-size:16px;text-align:center}
 .unit-div::before,.unit-div::after{content:'';flex:1;height:2px;background:var(--line)}
 .unit-div span{max-width:75%}
-.buddy{position:absolute;top:-14px;width:96px;height:120px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.buddy.left{right:calc(100% + 30px)}
-.buddy.right{left:calc(100% + 30px)}
-.buddy .pd{position:absolute;left:0;bottom:0;width:96px;height:120px;overflow:visible}
+.buddy{position:absolute;top:-18px;width:100px;height:129px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.buddy.left{right:calc(100% + 26px)}
+.buddy.right{left:calc(100% + 26px)}
 .buddy .bprop{position:absolute;font-size:34px;line-height:1;pointer-events:none}
 .buddy .bsay{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:4px 10px;font-weight:800;font-size:14px;animation:pop .3s;z-index:2}
-/* cada parte gira sobre su propia articulación (coordenadas del dibujo de 120×150) */
-.pd *{transform-box:view-box}
-.pd-arm-l{transform-origin:35px 82px}.pd-arm-r{transform-origin:85px 82px}
-.pd-head{transform-origin:60px 76px}.pd-body{transform-origin:60px 132px}.pd-all{transform-origin:60px 140px}
-.pd-leg-l{transform-origin:49px 118px}.pd-leg-r{transform-origin:70px 118px}
-.pd-eyes{transform-origin:60px 49px}.pd-hold{transform-origin:85px 121px}.pd-book{transform-origin:60px 103px}.pd-shadow{transform-origin:60px 143px}.pd-ball{transform-origin:101px 132px}
-.pd-closed,.pd-mouth{opacity:0}
-.pd-eyes{animation:pdBlink 4s infinite}
-.pd-body{animation:pdBob 2.4s ease-in-out infinite}
-.pd-arm-l{animation:pdRestL 2.4s ease-in-out infinite}.pd-arm-r{animation:pdRestR 2.4s ease-in-out infinite}
-@keyframes pdBlink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
-@keyframes pdBob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(1px) scale(1.025,.975)}}
-@keyframes pdRestL{0%,100%{transform:rotate(8deg)}50%{transform:rotate(14deg)}}
-@keyframes pdRestR{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(-14deg)}}
-/* gira el mundo en un dedo (como Duolingo con la pelota) */
-.b-spin .pd-arm-r{animation:pdSpinArm 1.6s ease-in-out infinite}
-.b-spin .pd-hold{animation:pdRot .9s linear infinite}
-.b-spin .pd-arm-l{animation:pdSwing 1.6s ease-in-out infinite}
-.b-spin .pd-head{animation:pdTilt 1.6s ease-in-out infinite}
-.b-spin .pd-pupil{transform:translate(1.5px,-1.5px)}
-@keyframes pdSpinArm{0%,100%{transform:rotate(-165deg)}50%{transform:rotate(-150deg)}}
-@keyframes pdRot{to{transform:rotate(360deg)}}
-@keyframes pdSwing{0%,100%{transform:rotate(10deg)}50%{transform:rotate(38deg)}}
-@keyframes pdTilt{0%,100%{transform:rotate(4deg)}50%{transform:rotate(9deg)}}
-/* rebota la pelota */
-.b-bounce .pd-arm-r{animation:pdDribble .7s ease-in-out infinite}
-.b-bounce .pd-ball{animation:pdBall .7s cubic-bezier(.45,0,.55,1) infinite}
-.b-bounce .pd-body{animation:pdBob .7s ease-in-out infinite}
-.b-bounce .pd-pupil{transform:translate(1.5px,1.5px)}
-@keyframes pdDribble{0%,100%{transform:rotate(-55deg)}50%{transform:rotate(-20deg)}}
-@keyframes pdBall{0%,100%{transform:translateY(-18px)}50%{transform:translateY(6px) scale(1.1,.9)}}
-/* lee un libro: mueve la cabeza y pasa la página */
-.b-read .pd-arm-l{animation:pdHoldL 2.4s ease-in-out infinite}.b-read .pd-arm-r{animation:pdHoldR 2.4s ease-in-out infinite}
-.b-read .pd-head{animation:pdNod 2.4s ease-in-out infinite}
-.b-read .pd-book{animation:pdFlip 3.2s ease-in-out infinite}
-.b-read .pd-pupil{transform:translateY(2px)}
-@keyframes pdHoldL{0%,100%{transform:rotate(-46deg)}50%{transform:rotate(-40deg)}}
-@keyframes pdHoldR{0%,100%{transform:rotate(46deg)}50%{transform:rotate(40deg)}}
-@keyframes pdNod{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(4deg) translateY(2px)}}
-@keyframes pdFlip{0%,80%,100%{transform:scaleX(1)}88%{transform:scaleX(-1)}}
-/* come bambú: lo lleva a la boca y mastica */
-.b-munch .pd-arm-r{animation:pdEat 1.6s ease-in-out infinite}
-.b-munch .pd-mouth{animation:pdChew 1.6s steps(1) infinite}.b-munch .pd-smile{animation:pdChewS 1.6s steps(1) infinite}
-.b-munch .pd-head{animation:pdNod 1.6s ease-in-out infinite}
-@keyframes pdEat{0%,100%{transform:rotate(15deg)}40%,65%{transform:rotate(140deg)}}
-@keyframes pdChew{0%,40%{opacity:0}44%{opacity:1}50%{opacity:0}56%{opacity:1}62%,100%{opacity:0}}
-@keyframes pdChewS{0%,40%{opacity:1}44%{opacity:0}50%{opacity:1}56%{opacity:0}62%,100%{opacity:1}}
+/* el Pandi: capas de 266×343 achicadas al tamaño del botón; el brazo gira en el hombro y la cabeza en el cuello */
+.pr{position:absolute;left:0;top:0;width:266px;height:343px;transform:scale(.376);transform-origin:0 0;pointer-events:none}
+.pr img{position:absolute;left:0;top:0;width:266px;height:343px;max-width:none}
+.pr-g{position:absolute;inset:0}
+.pr-all{transform-origin:133px 340px}.pr-body{transform-origin:133px 340px}
+.pr-arm{transform-origin:194px 170px}.pr-head{transform-origin:104px 170px}
+.pr-mc{opacity:0}
+.pr-hold{position:absolute;left:216px;top:62px;font-size:38px;line-height:1}
+/* párpados del mismo negro de las manchas; dormido muestra una línea clara de ojo cerrado */
+.pr-lid{position:absolute;display:block;border-radius:50%;background:#151317;transform:scaleY(0);transform-origin:50% 0}
+.pr-lidL{left:57px;top:80px;width:37px;height:36px}
+.pr-lidR{left:127px;top:66px;width:35px;height:32px}
+.pr-lid::after{content:'';position:absolute;left:18%;right:18%;top:38%;height:30%;border-bottom:3px solid rgba(235,235,240,.75);border-radius:50%;opacity:0}
+.pr-lid{animation:prBlink 4s infinite}
+.pr-lidR{animation-delay:.02s}
+.pr-body{animation:prBob 2.4s ease-in-out infinite}
+.pr-arm{animation:prRest 3s ease-in-out infinite}
+@keyframes prBlink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+@keyframes prBob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(2px) scale(1.015,.985)}}
+@keyframes prRest{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+@keyframes prTalk{0%,50%{opacity:0}55%,65%,75%{opacity:1}60%,70%,80%,100%{opacity:0}}
+@keyframes prTiltR{0%,100%{transform:rotate(1deg)}50%{transform:rotate(3deg)}}
+/* gira el mundo sobre la mano */
+.b-spin .pr-hold{left:214px;top:52px;font-size:40px;animation:prSpin 1s linear infinite}
+.b-spin .pr-arm{animation:prHoldUp 1.6s ease-in-out infinite}
+.b-spin .pr-head{animation:prTiltR 1.6s ease-in-out infinite}
+@keyframes prSpin{to{transform:rotate(360deg)}}
+@keyframes prHoldUp{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-3px)}}
+/* hace rebotar la pelota con la mano */
+.b-bounce .pr-hold{left:216px;top:40px;animation:prBall .7s cubic-bezier(.45,0,.55,1) infinite}
+.b-bounce .pr-arm{animation:prPump .7s ease-in-out infinite}
+.b-bounce .pr-body{animation:prBob .7s ease-in-out infinite}
+@keyframes prBall{0%,100%{transform:translateY(-36px) rotate(0)}50%{transform:translateY(8px) rotate(180deg) scale(1.1,.9)}}
+@keyframes prPump{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(6deg) translateY(4px)}}
+/* lee el libro que sostiene en alto y pasa la página */
+.b-read .pr-hold{left:206px;top:58px;font-size:44px;animation:prFlip 3.2s ease-in-out infinite}
+.b-read .pr-head{animation:prRead 2.4s ease-in-out infinite}
+.b-read .pr-arm{animation:none;transform:rotate(-4deg)}
+@keyframes prFlip{0%,80%,100%{transform:scaleX(1)}88%{transform:scaleX(-1)}}
+@keyframes prRead{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg) translateY(2px)}}
+/* mastica: cierra y abre la boca y mueve la cabeza */
+.b-munch .pr-mc{animation:prChew 1.2s steps(1) infinite}
+.b-munch .pr-head{animation:prNod 1.2s ease-in-out infinite}
+@keyframes prChew{0%,25%{opacity:1}30%,45%{opacity:0}50%,75%{opacity:1}80%,100%{opacity:0}}
+@keyframes prNod{0%,100%{transform:rotate(0)}50%{transform:rotate(-2deg) translateY(2px)}}
 /* saluda con la mano y habla */
-.b-wave .pd-arm-r{animation:pdWave .9s ease-in-out infinite}
-.b-wave .pd-head{animation:pdTilt 1.8s ease-in-out infinite}
-.b-wave .pd-mouth{animation:pdTalk 1.8s steps(1) infinite}.b-wave .pd-smile{animation:pdTalkS 1.8s steps(1) infinite}
-@keyframes pdWave{0%,100%{transform:rotate(-140deg)}50%{transform:rotate(-178deg)}}
-@keyframes pdTalk{0%,50%{opacity:0}55%,65%,75%{opacity:1}60%,70%,80%,100%{opacity:0}}
-@keyframes pdTalkS{0%,50%{opacity:1}55%,65%,75%{opacity:0}60%,70%,80%,100%{opacity:1}}
-/* flota con un globo y patalea */
-.b-float .pd-all{animation:pdFloat 3s ease-in-out infinite}
-.b-float .pd-shadow{animation:pdShadow 3s ease-in-out infinite}
-.b-float .pd-arm-r{animation:pdHoldUp 3s ease-in-out infinite}
-.b-float .pd-hold{transform:rotate(168deg) translateY(-6px)}
-.b-float .pd-leg-l{animation:pdKick .8s ease-in-out infinite}.b-float .pd-leg-r{animation:pdKick .8s ease-in-out -.4s infinite}
-.b-float .pd-pupil{transform:translate(1px,-1.5px)}
-@keyframes pdFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes pdShadow{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.7);opacity:.6}}
-@keyframes pdHoldUp{0%,100%{transform:rotate(-168deg)}50%{transform:rotate(-160deg)}}
-@keyframes pdKick{0%,100%{transform:rotate(14deg)}50%{transform:rotate(-14deg)}}
-/* malabares: brazos que suben y bajan alternados */
-.b-juggle .pd-arm-l{animation:pdJugL .9s ease-in-out infinite}.b-juggle .pd-arm-r{animation:pdJugR .9s ease-in-out -.45s infinite}
-.b-juggle .pd-pupil{transform:translateY(-2px)}
-.b-juggle .bprop{left:36px;top:-8px;font-size:22px;animation:juggle 1.8s linear infinite}
+.b-wave .pr-arm{animation:prWave .9s ease-in-out infinite}
+.b-wave .pr-mc{animation:prTalk 1.8s steps(1) infinite}
+.b-wave .pr-head{animation:prTiltR 1.8s ease-in-out infinite}
+@keyframes prWave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}}
+/* flota con el globo */
+.b-float .pr-hold{left:212px;top:6px;font-size:48px;animation:prBalloon 3s ease-in-out infinite}
+.b-float .pr-all{animation:prFloat 3s ease-in-out infinite}
+.b-float .pr-arm{animation:prHoldUp 3s ease-in-out infinite}
+.b-float .pr-body{animation:prSway 3s ease-in-out infinite}
+@keyframes prBalloon{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@keyframes prFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+/* malabares */
+.b-juggle .pr-arm{animation:prJug .9s ease-in-out infinite}
+.b-juggle .pr-head{animation:prUp 1.8s ease-in-out infinite}
+.b-juggle .bprop{left:34px;top:-10px;font-size:20px;animation:juggle 1.8s linear infinite}
 .b-juggle .p1{animation-delay:-.6s}.b-juggle .p2{animation-delay:-1.2s}
-@keyframes pdJugL{0%,100%{transform:rotate(25deg)}50%{transform:rotate(125deg)}}
-@keyframes pdJugR{0%,100%{transform:rotate(-25deg)}50%{transform:rotate(-125deg)}}
-/* canta con los brazos abiertos */
-.b-sing .pd-arm-l{animation:pdSingL 1.6s ease-in-out infinite}.b-sing .pd-arm-r{animation:pdSingR 1.6s ease-in-out infinite}
-.b-sing .pd-head{animation:pdSway 1.6s ease-in-out infinite}.b-sing .pd-body{animation:pdSway 1.6s ease-in-out infinite}
-.b-sing .pd-mouth{animation:pdSing .8s steps(1) infinite}.b-sing .pd-smile{opacity:0}
-.b-sing .bprop{left:66px;top:18px;font-size:24px;opacity:0;animation:note 2.4s ease-out infinite}
+@keyframes prJug{0%,100%{transform:rotate(6deg)}50%{transform:rotate(-10deg) translateY(-4px)}}
+@keyframes prUp{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(-3deg)}}
+/* canta: abre y cierra la boca, se mece y salen notas */
+.b-sing .pr-mc{animation:prSing .8s steps(1) infinite}
+.b-sing .pr-body{animation:prSway 1.6s ease-in-out infinite}
+.b-sing .pr-arm{animation:prWave 1.6s ease-in-out infinite}
+.b-sing .bprop{left:62px;top:10px;font-size:22px;opacity:0;animation:note 2.4s ease-out infinite}
 .b-sing .p1{animation-delay:.8s}.b-sing .p2{animation-delay:1.6s}
-@keyframes pdSingL{0%,100%{transform:rotate(55deg)}50%{transform:rotate(80deg)}}
-@keyframes pdSingR{0%,100%{transform:rotate(-80deg)}50%{transform:rotate(-55deg)}}
-@keyframes pdSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-@keyframes pdSing{0%{opacity:1}50%{opacity:.35}}
-/* duerme: ojos cerrados, cabeza caída y respira */
-.b-sleep .pd-open{opacity:0}.b-sleep .pd-closed{opacity:1}.b-sleep .pd-eyes{animation:none}
-.b-sleep .pd-head{animation:pdDroop 3s ease-in-out infinite}.b-sleep .pd-body{animation:pdBreath 3s ease-in-out infinite}
-.b-sleep .bprop{left:70px;top:0;font-size:26px;animation:note 2.6s ease-out infinite}
-@keyframes pdDroop{0%,100%{transform:rotate(9deg)}50%{transform:rotate(14deg) translateY(2px)}}
-@keyframes pdBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.04,1.02)}}
-/* al tocarlo: salta con los brazos arriba */
-.buddy.hop .pd-all{animation:pdHop .5s ease-out 2}
-.buddy.hop .pd-arm-l{animation:none;transform:rotate(150deg)}.buddy.hop .pd-arm-r{animation:none;transform:rotate(-150deg)}
-.buddy.hop .pd-mouth{animation:none;opacity:1}.buddy.hop .pd-smile{animation:none;opacity:0}
-@keyframes pdHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}}
-@media (prefers-reduced-motion:reduce){.buddy .pd *,.buddy .bprop,.lv-pandi{animation:none!important}.buddy .bprop{opacity:1!important}}
+@keyframes prSing{0%{opacity:0}50%{opacity:1}}
+@keyframes prSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+/* duerme: ojos y boca cerrados, cabeza caída y respira */
+.b-sleep .pr-lid{animation:none;transform:scaleY(1)}.b-sleep .pr-lid::after{opacity:1}
+.b-sleep .pr-mc{opacity:1}
+.b-sleep .pr-head{animation:prDroop 3s ease-in-out infinite}.b-sleep .pr-body{animation:prBreath 3s ease-in-out infinite}
+.b-sleep .pr-arm{animation:none;transform:rotate(10deg)}
+.b-sleep .bprop{left:66px;top:-4px;font-size:24px;animation:note 2.6s ease-out infinite}
+@keyframes prDroop{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg) translateY(2px)}}
+@keyframes prBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.02,1.01)}}
+/* al tocarlo: salta, saluda rápido y se ríe (boca abierta, ojos abiertos) */
+.buddy.hop .pr-all{animation:prHop .5s ease-out 2}
+.buddy.hop .pr-arm{animation:prWave .3s ease-in-out 3}
+.buddy.hop .pr-mc{animation:none;opacity:0}
+.buddy.hop .pr-lid{animation:none;transform:scaleY(0)}
+@keyframes prHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}}
+@media (prefers-reduced-motion:reduce){.buddy .pr *,.buddy .pr *::after,.buddy .bprop,.lv-pandi{animation:none!important}.buddy .bprop{opacity:1!important}}
 .node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
 .node{width:74px;height:74px;border-radius:50%;background:var(--uc);box-shadow:0 6px 0 var(--ucd);display:grid;place-items:center;color:var(--uink);transition:transform .08s}
 .node:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ucd)}
@@ -2512,13 +2504,16 @@ const KEY = 'pandi-english-v2';
 // no rompe las pantallas de los compañeros ni las del profe. La clave __proto__ se ignora.
 const P_DEF = () => ({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, gems:0, owned:[], freezes:0, frozen:[], claimed:{}, hw:null});
 const kindOf = v => Array.isArray(v) ? 'array' : v === null ? 'null' : typeof v;
+// xpDays: solo fechas AAAA-MM-DD con un número (una fecha rara como «-271800-01-01» congelaba el Ranking de los compañeros)
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+const cleanXpDays = o => Object.fromEntries(Object.entries(o).filter(([d, n]) => DAY_RE.test(d) && typeof n === 'number' && Number.isFinite(n)));
 const P = (extra) => {
   const out = P_DEF();
   for (const [k, v] of Object.entries(extra || {})){
     if (k === '__proto__') continue;
     if (Object.hasOwn(out, k) && out[k] !== null && kindOf(v) !== kindOf(out[k])) continue;
     if (typeof v === 'number' && !Number.isFinite(v)) continue;
-    out[k] = v;
+    out[k] = k === 'xpDays' ? cleanXpDays(v) : v;
   }
   return out;
 };
@@ -2886,39 +2881,28 @@ function renderStats(){ $('#streakN').textContent = streak(); $('#xpN').textCont
 const OFF = [0, 46, 70, 46, 0, -46, -70, -46];
 let MAPLV = null; // nivel que el estudiante está viendo en el mapa
 let MAPVIEW = 'path'; // 'path' (el camino) o 'levels' (escoger nivel)
-// Pandi animado al lado del camino: dibujado por partes (pandiSVG) para que se muevan sus brazos, cabeza, ojos, boca y piernas.
-// Cada uno hace algo distinto; lo que lleva en la mano (hold) se mueve con el brazo.
+// Pandi animado al lado del camino: capas sacadas de la imagen original del personaje (icons/pandi/, se generan con
+// tools/pandi/capas.cjs): base, brazo levantado, tirante (va delante del brazo), cabeza y boca cerrada. Lo que queda
+// escondido detrás de cada capa se rellenó con pelo de la misma imagen, así no se ven costuras al moverse.
+// El dibujo mide 266×343 y se achica con CSS; el brazo gira en el hombro y la cabeza en el cuello.
 const BUDDY = [
-  {k:'spin', hold:'🌍'}, {k:'bounce', ball:'⚽'}, {k:'read', book:'📖'}, {k:'munch', hold:'🎋'}, {k:'wave'},
+  {k:'spin', hold:'🌍'}, {k:'bounce', hold:'⚽'}, {k:'read', hold:'📖'}, {k:'munch'}, {k:'wave'},
   {k:'float', hold:'🎈'}, {k:'juggle', props:['⭐', '⭐', '⭐']}, {k:'sing', props:['🎵', '🎶', '🎵']}, {k:'sleep', props:['💤']}
 ];
 const BUDDY_SAY = ['¡Tú puedes!', '¡Sigue así!', '¡Hello!', '¡Me encanta el inglés!', '¡Una lección más!', '¡Qué bien lo haces!', '¡Vamos!', 'Let’s go!'];
-function pandiSVG(b){
-  const K = '#24272E', O = 'stroke="#14161B" stroke-width="2.5" stroke-linejoin="round"';
-  const txt = (cls, x, y, size, e) => `<text class="${cls}" x="${x}" y="${y}" font-size="${size}" text-anchor="middle" dominant-baseline="central">${e}</text>`;
-  return `<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="pd">`
-    + `<ellipse class="pd-shadow" cx="60" cy="143" rx="28" ry="5" fill="rgba(0,0,0,.28)"/><g class="pd-all">`
-    + `<g class="pd-leg pd-leg-l"><rect x="42" y="116" width="15" height="24" rx="7.5" fill="${K}" ${O}/></g><g class="pd-leg pd-leg-r"><rect x="63" y="116" width="15" height="24" rx="7.5" fill="${K}" ${O}/></g>`
-    + (b.ball ? txt('pd-ball', 101, 132, 18, b.ball) : '')
-    + `<g class="pd-body"><ellipse cx="60" cy="104" rx="29" ry="27" fill="${K}" ${O}/><ellipse cx="60" cy="109" rx="19" ry="19" fill="#FFFFFF"/>`
-    + `<path d="M37 80 Q60 92 83 80 L82 88 Q60 99 38 88 Z" fill="#F07A2E" ${O}/>`
-    + (b.book ? txt('pd-book', 60, 103, 30, b.book) : '')
-    + `<g class="pd-head"><circle cx="35" cy="27" r="11" fill="${K}" ${O}/><circle cx="85" cy="27" r="11" fill="${K}" ${O}/>`
-    + `<ellipse cx="60" cy="50" rx="31" ry="28" fill="#FFFFFF" ${O}/>`
-    + `<ellipse cx="47" cy="49" rx="8" ry="10.5" fill="${K}" transform="rotate(28 47 49)"/><ellipse cx="73" cy="49" rx="8" ry="10.5" fill="${K}" transform="rotate(-28 73 49)"/>`
-    + `<g class="pd-eyes"><g class="pd-open"><circle cx="48" cy="48" r="4.2" fill="#FFFFFF"/><circle cx="72" cy="48" r="4.2" fill="#FFFFFF"/><g class="pd-pupil"><circle cx="48.6" cy="48.6" r="2.5" fill="#111"/><circle cx="72.6" cy="48.6" r="2.5" fill="#111"/></g></g>`
-    + `<path class="pd-closed" d="M43 50 Q48 54 53 50 M67 50 Q72 54 77 50" stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round"/></g>`
-    + `<ellipse cx="60" cy="60" rx="4.6" ry="3.3" fill="${K}"/><circle cx="40" cy="62" r="4" fill="#F7A8C4"/><circle cx="80" cy="62" r="4" fill="#F7A8C4"/>`
-    + `<path class="pd-smile" d="M54 65 Q60 71 66 65" fill="none" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/>`
-    + `<ellipse class="pd-mouth" cx="60" cy="67.5" rx="4.4" ry="5" fill="#C2364A" stroke="${K}" stroke-width="2"/></g>`
-    + `<g class="pd-arm pd-arm-l"><rect x="28" y="78" width="14" height="34" rx="7" fill="${K}" ${O}/></g>`
-    + `<g class="pd-arm pd-arm-r"><rect x="78" y="78" width="14" height="34" rx="7" fill="${K}" ${O}/>${b.hold ? txt('pd-hold', 85, 121, 23, b.hold) : ''}</g>`
-    + `</g></g></svg>`;
+function pandiRig(b){
+  const img = (n, cls = '') => `<img class="${cls}" src="icons/pandi/${n}.png" alt="" draggable="false">`;
+  return `<div class="pr" aria-hidden="true"><div class="pr-g pr-all"><div class="pr-g pr-body">`
+    + img('base')
+    + `<div class="pr-g pr-arm">${img('arm')}${b.hold ? `<span class="pr-hold">${b.hold}</span>` : ''}</div>`
+    + img('strap')
+    + `<div class="pr-g pr-head">${img('head')}${img('mouth', 'pr-mc')}<i class="pr-lid pr-lidL"></i><i class="pr-lid pr-lidR"></i></div>`
+    + `</div></div></div>`;
 }
 function pathBuddy(n, side){
   const b = BUDDY[n % BUDDY.length];
-  const el = h('button', {type:'button', class:'buddy b-' + b.k + ' ' + side, 'aria-label':'Pandi', html:pandiSVG(b)}, ...(b.props || []).map((p, i) => h('span', {class:'bprop p' + i, 'aria-hidden':'true'}, p)));
-  // al tocarlo: salta, levanta los brazos y dice algo
+  const el = h('button', {type:'button', class:'buddy b-' + b.k + ' ' + side, 'aria-label':'Pandi', html:pandiRig(b)}, ...(b.props || []).map((p, i) => h('span', {class:'bprop p' + i, 'aria-hidden':'true'}, p)));
+  // al tocarlo: salta, levanta los brazos, se ríe y dice algo
   el.onclick = () => {
     el.classList.remove('hop'); void el.offsetWidth; el.classList.add('hop'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('hop'), 1100);
     const old = el.querySelector('.bsay'); if (old) old.remove();
@@ -3094,13 +3078,16 @@ const thisMonday = () => mondayOf(today());
 const lastMonday = () => addDays(thisMonday(), -7);
 // Ligas: se sube con LEAGUE_UP XP en una semana, se baja con menos de LEAGUE_DOWN
 const LEAGUES = [{n:'Bronce', g:'🥉'}, {n:'Plata', g:'🥈'}, {n:'Oro', g:'🥇'}, {n:'Zafiro', g:'🔷'}, {n:'Diamante', g:'💠'}];
-const LEAGUE_UP = 150, LEAGUE_DOWN = 30;
+const LEAGUE_UP = 150, LEAGUE_DOWN = 30, LEAGUE_WEEKS = 104;
 function leagueOf(p){
-  const days = Object.keys(p.xpDays || {}).sort();
+  // Solo cuentan las semanas cerradas de los últimos 2 años: así el cálculo nunca da más de 104 vueltas,
+  // aunque el progreso de un compañero traiga fechas raras o muy viejas.
+  const cur = thisMonday(), floor = addDays(cur, -7 * LEAGUE_WEEKS);
+  const xd = Object.fromEntries(Object.entries(p.xpDays || {}).filter(([d]) => DAY_RE.test(d) && d >= floor && d < cur));
+  const days = Object.keys(xd).sort();
   let lvl = 0, change = null; if (!days.length) return {lvl, change};
-  const cur = thisMonday();
   for (let m = mondayOf(days[0]); m < cur; m = addDays(m, 7)){
-    const w = xpInWeek(p, m), before = lvl;
+    const w = xpInWeek({xpDays:xd}, m), before = lvl;
     if (w >= LEAGUE_UP) lvl = Math.min(lvl + 1, LEAGUES.length - 1); else if (w < LEAGUE_DOWN) lvl = Math.max(lvl - 1, 0);
     change = lvl > before ? 'up' : lvl < before ? 'down' : null; // al terminar el ciclo queda el cambio de la última semana cerrada
   }
@@ -3498,7 +3485,7 @@ function groupSelect(id, value){
 function addStudentSheet(){
   const name = h('input', {class:'in', id:'nsName', placeholder:'Ej. Carlos P.', maxlength:'24'});
   const user = h('input', {class:'in', id:'nsUser', placeholder:'Ej. carlos', autocapitalize:'off', spellcheck:'false', maxlength:'16'});
-  const pass = h('input', {class:'in', id:'nsPass', placeholder:REMOTE ? 'Mínimo 6 caracteres' : 'Mínimo 4 caracteres', maxlength:'30'});
+  const pass = h('input', {class:'in', id:'nsPass', placeholder:REMOTE ? 'Mínimo 8 caracteres' : 'Mínimo 4 caracteres', maxlength:'30'});
   const err = h('p', {class:'err', hidden:true});
   const gsel = groupSelect('nsGroup');
   const consent = h('input', {type:'checkbox', id:'nsConsent'});
@@ -3518,7 +3505,7 @@ function addStudentSheet(){
       if (!n) return fail('Escribe el nombre del estudiante.');
       if (!/^[a-z0-9._-]{3,16}$/.test(us)) return fail('El usuario debe tener de 3 a 16 letras o números, sin espacios.');
       if (DB.users.some(u => u.user === us)) return fail('Ese usuario ya existe. Prueba con otro.');
-      const minPw = REMOTE ? 6 : 4;
+      const minPw = REMOTE ? 8 : 4;
       if (pw.length < minPw) return fail(`La contraseña debe tener al menos ${minPw} caracteres.`);
       if (!consent.checked) return fail('Marca la casilla de autorización del papá, la mamá o el tutor.');
       if (REMOTE){
@@ -4145,6 +4132,12 @@ let SB = null, SNAP = null, SCHOOL = null, syncTimer = null, syncing = null, las
 const clone = o => JSON.parse(JSON.stringify(o));
 const toEmail = u => `${u.toLowerCase()}@${EMAIL_DOMAIN}`;
 const must = r => { if (r.error) throw r.error; return r.data; };
+// Trae todas las filas de a 1000 (Supabase corta cada respuesta en «Max rows» = 1000; sin esto el profe no veía lo que pasaba de ahí)
+const PAGE = 1000;
+async function allRows(make){
+  const out = [];
+  for (let i = 0; ; i += PAGE){ const rows = must(await make().range(i, i + PAGE - 1)); out.push(...rows); if (rows.length < PAGE) return out; }
+}
 function loadScript(src){ return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = () => no(new Error('No se pudo cargar ' + src)); document.head.append(sc); }); }
 function setLoginBusy(on, label){ const b = $('#loginForm button[type=submit]'); b.disabled = on; b.textContent = on ? (label || 'Entrando…') : 'Iniciar sesión'; }
 async function remoteBoot(){
@@ -4183,9 +4176,9 @@ async function remoteLoad(uid){
   db.friends = [];
   let subs;
   if (isAdmin){
-    must(await SB.from('profiles').select('*').eq('school_id', SCHOOL)).forEach(r => db.users.push(userFromRow(r)));
-    must(await SB.from('progress').select('*').eq('school_id', SCHOOL)).forEach(r => db.progress[r.user_id] = P(r.data));
-    subs = must(await SB.from('submissions').select('*').eq('school_id', SCHOOL));
+    (await allRows(() => SB.from('profiles').select('*').eq('school_id', SCHOOL).order('id'))).forEach(r => db.users.push(userFromRow(r)));
+    (await allRows(() => SB.from('progress').select('*').eq('school_id', SCHOOL).order('user_id'))).forEach(r => db.progress[r.user_id] = P(r.data));
+    subs = await allRows(() => SB.from('submissions').select('*').eq('school_id', SCHOOL).order('assignment_id').order('user_id'));
   } else {
     db.users.push(userFromRow(me));
     const own = must(await SB.from('progress').select('*').eq('user_id', uid).maybeSingle());
@@ -4262,9 +4255,9 @@ async function adminCall(body){
 function resetPasswordSheet(u){
   const d = {pw:''}; const err = h('p', {class:'err', hidden:true});
   const sh = sheet(h('h2', {style:'font-size:24px'}, 'Cambiar contraseña'), h('p', {class:'muted', style:'margin:0'}, `Nueva contraseña para ${u.name} (@${u.user}).`),
-    inField('Nueva contraseña', d, 'pw', {placeholder:'Mínimo 6 caracteres', maxlength:'30'}), err,
+    inField('Nueva contraseña', d, 'pw', {placeholder:'Mínimo 8 caracteres', maxlength:'30'}), err,
     h('button', {class:'btn', type:'button', onclick:async ev => {
-      if (d.pw.length < 6){ err.textContent = 'La contraseña debe tener al menos 6 caracteres.'; err.hidden = false; return; }
+      if (d.pw.length < 8){ err.textContent = 'La contraseña debe tener al menos 8 caracteres.'; err.hidden = false; return; }
       ev.target.disabled = true; const r = await adminCall({action:'reset_password', user_id:u.id, password:d.pw}); ev.target.disabled = false;
       if (r.error){ err.textContent = r.error; err.hidden = false; return; }
       sh.remove(); toast(`Contraseña cambiada: ${u.user} / ${d.pw}`);
