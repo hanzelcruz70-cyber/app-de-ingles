@@ -44,26 +44,37 @@ Abajo hay cuatro secciones: **Aprender**, **Tareas**, **Ranking** y **Perfil**.
 
 ### 2.1 Aprender (mapa de lecciones)
 
-- Arriba, Pandi saluda: *"¡Hello, Ana! Toca la lección que brilla para seguir practicando."*
 - Si ese día todavía no practicaste, sale un aviso naranja: *"¡Hoy todavía no has practicado!"* o *"¡Tu racha de N días está en peligro!"*.
 - Las lecciones están agrupadas por **unidades** y las unidades por **nivel**. Solo se pueden jugar las unidades que el profe abrió para tu grupo. Las cerradas dicen que el profe está preparando las lecciones.
-  - **Nivel 1:** Hello!, Animals, My Family, My School, Food (contenido provisional, hasta tener el libro del Nivel 1).
+  - **Nivel 1:** sigue el libro del Nivel 1 (con Harry, Beth, Cody, la tía Fifi y Waldo, el dragón). Alfabeto (2 lecciones), Bienvenida (4), 8 unidades de 10 lecciones (My birthday, At school, My family, My body, Pets, My house, Food, I'm happy!), 4 repasos de 2, Despedida (4), Festivales (Halloween, Navidad, Día de la Madre y Día del Padre) y Wider World (4 lecturas).
   - **Nivel 2:** sigue el libro del Nivel 2. **Bienvenida** (6 lecciones), 8 unidades de **10 lecciones** cada una (My toys, My family, Move your body, My face, Animals, Food, Clothes, Weather) y un **Repaso** de 2 lecciones cada dos unidades, en el mismo orden del libro. Cada unidad tiene las mismas lecciones que el libro: vocabulario, canto, canción, gramática, cuento, valores, matemática o ciencias, fonética, *I can do it!* y *Have fun!*.
   - **Nivel 3:** sigue el libro del Nivel 3 (*Space Island*, con Kim, Katy, el capitán Conrad, PROD 1, PROD 2 y la presidenta Pop). Bienvenida (6 lecciones), 8 unidades (Nature, Me, Pets, Home, Clothes, Sports, Food, Things we do), 4 *Wider World* y 4 repasos de 2 lecciones, Despedida (4) y Festivales (Halloween, April Fools' Day, Earth Day). La Unidad 8 tiene 8 lecciones porque al PDF le faltan las páginas 102 y 103 (lecciones 7 y 8).
-  - **⭐ Reto de Pandi:** al terminar la parte del libro, cada lección de los niveles 2 y 3 trae hasta 3 retos extra que cambian de lección en lección (siempre al menos uno de gramática):
+  - **Nivel 4:** sigue el libro del Nivel 4 (*Discovery Studios*, con Oliver, Sophie, el tío James, Coco el mono y la estrella de cine Finley Keen). Bienvenida (5 lecciones), 8 unidades de 10 (Free time, Wild animals, The seasons, My week, Jobs, In the rain forest, Feelings, By the sea), 3 lecturas *Wider World*, 4 repasos de 2, Despedida (3) y Festivales (Halloween y Día de la Madre).
+  - **Juegos en cada lección:** muchos ejercicios se juegan como un juego, y en una misma lección ningún juego se repite (cuando se acaban, el ejercicio sale en su forma normal):
+    - *Escucha y toca:* Desfile (los dibujos pasan en dos carriles), Lluvia de dibujos (caen en paracaídas) y Topos (salen de los hoyos). Hasta 5 rondas, cada vez más rápidas.
+    - *Escucha y elige:* Canasta (los dibujos caen y se mueve la canasta para atrapar el que se escuchó, con el dedo o las flechas) y Vasos mágicos (se ven 3 dibujos, se tapan, se revuelven y hay que encontrar el que se escuchó).
+    - *¿Cómo se dice?:* Penal (se patea la pelota a la palabra correcta; Pandi es el portero) y Cofres del tesoro (el cofre con la palabra correcta tiene un diamante).
+    - *Ordena la oración:* el Tren (las palabras se enganchan como vagones y el tren sale andando si está bien).
+    - *Palabras nuevas:* cuando hay 3 o más seguidas, salen en una mesa de cartas (hasta 8). Primero se voltean todas para aprenderlas; después se tapan las palabras, las cartas se revuelven y hay que **encontrar la carta de cada palabra** que se pide (al menos 4 rondas). Con 2 fallos o más se repite al final de la lección.
+    - Si hay dos juegos de memoria (o dos de unir) en la misma lección, el segundo cambia al otro. Lo que se falla se repite al final en su forma normal.
+  - **⭐ Reto de Pandi:** al terminar la parte del libro, cada lección de los cuatro niveles trae hasta 3 retos extra que cambian de lección en lección (siempre al menos uno de gramática):
     - *Encuentra el error:* una oración con una palabra mal (por ejemplo *He have*). Se toca la palabra mala y, si se falla, la app explica la regla en español.
     - *Responde a tu amigo:* un personaje pregunta y se escoge la respuesta que va con la pregunta (Do → I do, Is → it is, Can → I can).
-    - *¿Verdadero o falso?:* ¿esta frase pasó en el cuento de la unidad?
+    - *¿Verdadero o falso?:* ¿esta frase pasó en el cuento de la unidad? (Este y *Ordena el cuento* solo salen desde la lección del cuento en adelante, cuando el niño ya lo leyó.)
     - *Ordena el cuento:* tocar partes del cuento en orden.
     - *Arma la palabra:* letras revueltas con su dibujo.
-    - *Atrapa la burbuja:* escuchar y tocar la burbuja correcta, 3 rondas.
-  - **Pestañas de nivel** arriba del mapa: *Tu nivel* (el de tu grupo), *Repasar* (niveles anteriores, siempre abiertos) y los siguientes con 🔒 hasta que el profe los abra. Si ya avanzaste en un nivel, ese nivel no se te cierra aunque te cambien de grupo.
+    - *Atrapa la burbuja:* las burbujas suben desde abajo, cruzan la pantalla de lado a lado y rebotan entre ellas. Se toca la bocina y se atrapa la burbuja con lo que se escuchó; son 3 rondas y cada una va más rápido. La palabra buscada siempre está en alguna burbuja y no se repiten dibujos.
+  - **Encabezado del camino** (como en Duolingo): una franja del color de la unidad, pegada arriba, que dice el nivel y la unidad que se está viendo (*NIVEL 2, UNIDAD 3 · My face*) y cambia al bajar por el camino.
+  - **📚 Niveles:** si el niño puede ver más de un nivel, al tocar la franja sale la lista de sus niveles: *Tu nivel* (el de su grupo, con **CONTINUAR**), *Para repasar* (los anteriores, con **REPASAR**) y *Ya lo empezaste* (uno más alto donde ya completó algo). Cada uno muestra cuántas lecciones lleva o **¡COMPLETADO!**. **← Regresar** vuelve al camino. Los niveles que todavía no le tocan no aparecen, y si ya avanzó en un nivel, no se le cierra aunque lo cambien de grupo.
+  - **Unidades en el camino:** la unidad de arriba sale en la franja; las siguientes se separan con una línea que dice su nombre y cuántas lecciones lleva (por ejemplo *Unidad 1 · My toys (3/10)*), o 🔒 si está cerrada.
+  - **Pandi en el camino:** Pandi está dibujado por partes y se mueve de verdad (brazos, cabeza, ojos, boca y piernas). En cada unidad hace algo distinto: gira el mundo en un dedo, rebota una pelota, lee un libro y pasa la página, come bambú y mastica, saluda con la mano, flota con un globo pataleando, hace malabares, canta con los brazos abiertos o duerme. Si lo tocan, salta con los brazos arriba y dice algo como *¡Tú puedes!*.
   - **Escenas del libro (Nivel 2):** cada lección empieza con la actividad de su página, dibujada e interactiva. El título es la instrucción del libro y debajo va la explicación en español:
     - *Look and match* / *Listen and write*: toca una palabra (o arrástrala) y ponla en su lugar del dibujo (por ejemplo, los colores del loro).
     - *Listen and find* / *Listen and circle*: toca la bocina y luego el dibujo que escuchaste.
     - *Listen and number*: igual, y cada dibujo recibe su número en orden.
-    - *Listen and chant* / *Listen and sing*: el canto con los personajes; **▶ Escuchar** lo lee línea por línea.
-    - *Listen to the story*: el cuento en viñetas, cada una con su globo y su bocina.
+    - *Listen and chant* / *Listen and sing*: los personajes cantan en un escenario animado, línea por línea (**▶ Escuchar el canto completo** o **Siguiente línea ▶**). Hasta 3 líneas salen con un espacio (**«Completa el canto»**): hay que escoger la palabra que falta para seguir cantando. Abajo se van juntando las líneas ya cantadas.
+    - *Listen to the story*: el cuento animado, al estilo de los cuentos de Duolingo. Los personajes entran caminando, el que habla se mueve, saltan si dicen algo con «!», el globo se escribe solo y aparecen dibujos de lo que dicen. Se avanza con **Siguiente ▶** o **▶ Escuchar todo**. En hasta 3 globos falta una palabra (**«Completa lo que dice…»**) y a la mitad sale **«¿Quién dijo esto?»**: sin responder, **Siguiente** no avanza. Al terminar el cuento salen otro *¿Quién lo dijo?* y una frase del cuento para completar.
+    - **Voces:** en cuentos y cantos cada personaje habla con su voz: niños con voz aguda (la del niño distinta a la de la niña), adultos con voz normal y robots, monos y el dragón con voces divertidas. Depende de las voces en inglés que tenga el teléfono o la computadora.
     - *Look and check*: toca todos los dibujos que van (por ejemplo, la comida sana).
     - Canastas (fonética, ejercicio, día o noche): pon cada palabra en su canasta.
 - La lección que sigue "brilla". Las terminadas muestran estrellas (1 a 3).
@@ -85,8 +96,8 @@ Tipos de ejercicio:
 
 | Ejercicio | Qué hace el niño |
 | --- | --- |
-| Flashcard | Ve la imagen, la palabra y su traducción; puede escucharla (**Escuchar** / **Lento**). |
-| Elegir la palabra | *"¿Cómo se dice en inglés?"*: ve la imagen y elige la palabra correcta. |
+| Flashcard | Ve la imagen y la palabra en inglés (sin traducción) y toca **Escuchar** o **Lento**. Luego la tarjeta se esconde y sale *«Ahora tú: toca el dibujo de…»* con 3 dibujos. |
+| Elegir la palabra | *"¿Cómo se dice en inglés?"*: ve solo la imagen y elige la palabra correcta. |
 | Escuchar y elegir | *"Escucha y toca la imagen correcta"*. |
 | Unir parejas | *"Une cada palabra con su imagen"*. |
 | Escribir | *"Escribe en inglés"*: escribe la palabra en el cuadro, con una pista de la primera letra y el número de letras. |
@@ -94,8 +105,10 @@ Tipos de ejercicio:
 | Ordenar oración | *"Ordena la oración"* tocando las palabras. |
 | Completar | *"Completa la oración"*: elige la palabra que falta. |
 | Memoria | *"Memoria: encuentra las parejas"* volteando cartas. |
-| Mini clase | Explica una regla con ejemplos (solo leer y **Continuar**). |
-| Lectura | *"Lee y responde"*: un texto corto en inglés (con **Ver en español**) y una pregunta. |
+| Mini clase | Frases de ejemplo en inglés. Hay que tocar la bocina de **cada frase** (se marca con ✓). Después sale **«Ahora tú»**: completar una de las frases, tocar la frase que se escucha u ordenar la frase. Sin eso no aparece **Comprobar**. Si se falla, al final de la lección se repite solo esa pregunta (no toda la mini clase). Las pistas de pronunciación o gramática salen con 💡 en español; las traducciones, no. |
+| Lectura | *"Lee y responde"*: un texto corto en inglés y una pregunta. |
+
+**Sin traducciones:** a pedido del profe, la app no muestra el significado en español de las palabras ni de las frases (ni en las tarjetas, los cantos, los cuentos o las lecturas). En español quedan solo las instrucciones, las pistas (💡, la regla de *Encuentra el error*, *Pista: empieza con…*) y la interfaz. El profe sí ve la traducción en el banco de palabras y en sus estadísticas.
 
 ### 2.3 Tareas
 
