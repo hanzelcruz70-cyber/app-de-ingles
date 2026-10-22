@@ -6,7 +6,7 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ## Estado actual (resumen rápido)
 
-- **App:** completa en modo demo y con backend Supabase listo. Tiene Nivel 1 con 5 unidades y 28 lecciones, 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
+- **App:** completa en modo demo y con backend Supabase listo. Tiene los **niveles 1, 2, 3 y 4 según los libros** (408 lecciones con escenas y Retos de Pandi), 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
 - **Backend:** funcionando con el Supabase real del dueño (proyecto `itaxhosmkmlnoqdpljzh`). El 11 de octubre se creó la primera escuela desde `setup.html` (admin `pruebaapp`). RLS probado en Postgres 16 (26/26).
 - **Funciones nuevas (11 oct):** estadísticas del profe (palabras más falladas, quién no practicó), reporte para padres y aviso por WhatsApp, recordatorio diario, prueba de audio y micrófono, y panel del dueño (`owner.html`).
 - **Repositorio:** `hanzelcruz70-cyber/app-de-ingles` (publicado en GitHub Pages: https://hanzelcruz70-cyber.github.io/app-de-ingles/). Copia local del dueño: `C:\Users\Hanzel\Documents\Pandi Ingles`.
@@ -28,6 +28,108 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 - Recordatorios con Web Push desde el servidor (hoy son locales). Empaquetar para Google Play (TWA o Capacitor).
 
 ---
+
+## 2026-10-21 (7) · Arreglos de la revisión de seguridad
+- Se corrigieron en el código 3 de los 5 puntos por validar (los otros 2 dependen de la configuración de Supabase y del dominio).
+- **Ranking:** `class_ranking()` revisa cada campo del progreso antes de usarlo; un `xp` que no es número entero (o es enorme) cuenta como 0 en vez de romper el ranking de todo el grupo. Si el ranking falla igual, el estudiante puede entrar (solo no ve a sus compañeros). Pruebas RLS nuevas 4c y 4d.
+- **Datos de progreso raros:** `P()` usa cada campo conocido solo si tiene el tipo esperado e ignora `__proto__`, así un `days` como texto no rompe las pantallas de compañeros ni del profe (era la unidad pendiente de la revisión).
+- **Cerrar sesión sin internet:** si el servidor no responde, se borra igual la sesión guardada en el dispositivo (`signOut({scope:'local'})` y la llave `sb-…-auth-token`). Probado con un Supabase falso que falla.
+- **Cambiar contraseña:** `owner_reset_admin_password` y `reset_password` cierran después todas las sesiones de esa cuenta con la función nueva `revoke_user_sessions` (solo la llave de servicio puede usarla; prueba RLS 4e). Un token que ya estaba emitido sigue valiendo hasta que vence (1 hora por defecto en Supabase). Pruebas de la función: todas pasan.
+- **Para que funcione en la app real:** correr de nuevo `supabase/schema.sql` en el SQL Editor y publicar la función (push a `main` con cambios en `supabase/functions/**`). Las pruebas RLS no se pudieron correr aquí (no hay Postgres).
+- **Sin commit todavía.**
+
+## 2026-10-21 (6) · Pandi se mueve de verdad
+- El dueño mandó un video de Duolingo: el personaje gira una pelota en el dedo, mueve los brazos, la cara y el cuerpo. Pandi (una imagen fija) solo flotaba con cosas moviéndose al lado.
+- **Pandi por partes (`pandiSVG`):** ahora se dibuja en código con cabeza, ojos que parpadean, boca, brazos, piernas y bufanda, y cada parte se anima: gira el mundo en un dedo, rebota una pelota, lee y pasa la página, come bambú y mastica, saluda, flota con un globo pataleando, hace malabares, canta y duerme. Al tocarlo salta con los brazos arriba.
+- **Se quitó** el saludo de Pandi arriba del mapa y la tarjeta grande de cada unidad (repetía lo de la franja). Las unidades siguientes se separan con una línea con su nombre y avance.
+- **Pruebas:** los 9 Pandis se mueven (brazos, cabeza o cuerpo cambian con el tiempo); en los 4 niveles a 390 y 320 px no tapan lecciones ni se salen.
+- **Sin commit todavía.**
+
+## 2026-10-21 (5) · Mapa al estilo Duolingo y Pandi animado en el camino
+- Pedido del dueño, con capturas de Duolingo: arriba del camino que diga el nivel y la lección, que se pueda volver a los niveles anteriores tocándolo, y un personaje animado en el camino para que no se vea vacío.
+- **Encabezado fijo:** franja del color de la unidad, pegada debajo de la barra de arriba: «‹ NIVEL 2, UNIDAD 1 · My toys» y «📚 Niveles». Cambia sola al bajar a otra unidad. Reemplaza las pestañas de nivel.
+- **Pantalla de niveles:** «← Regresar» y una tarjeta por nivel que el niño puede ver (su nivel con CONTINUAR, los anteriores con REPASAR), con barra de progreso o ¡COMPLETADO!. Los niveles que no le tocan siguen sin aparecer.
+- **Pandi animado:** junto a la 3.ª y la 7.ª lección de cada unidad, en el hueco del zigzag, Pandi gira un globo terráqueo, rebota una pelota, lee, come bambú, flota con un globo, hace malabares, canta o duerme (cambia por unidad). Al tocarlo salta y dice una frase de ánimo. Con «reducir movimiento» del teléfono se queda quieto.
+- **Bug encontrado al probar:** el encabezado usaba la clase `nav`, que ya existía para la barra de abajo, y salía corrido a la izquierda. Se cambió a `navable`.
+- **Pruebas:** en el navegador, los 4 niveles a 390 y 320 px: Pandi nunca tapa una lección ni se sale de la pantalla y nada se desborda; el encabezado cambia de unidad al bajar; CONTINUAR y REPASAR abren el nivel correcto.
+- **Sin commit todavía.**
+- **Skill de seguridad instalada** (pedido del dueño): `security-audit` de Cloudflare (https://github.com/cloudflare/security-audit-skill, commit `c1c8a8c`) en `.claude/skills/security-audit/` (origen en `ORIGEN.txt`). Sus validadores solo leen archivos. En Windows sus comandos `validate-*.cjs` no corren (piden una protección de archivos que Windows no tiene); se pueden usar llamando a `validateDocument` desde un script. Se corrió el 21 de octubre (perfil rápido, solo lectura de código, 15 agentes): 0 hallazgos confirmados y 5 por validar (sesiones que no se cierran al cambiar contraseña, registro público de Supabase, dominio de correo interno, cierre de sesión sin internet y `xp` no numérico que rompe `class_ranking`). Reporte en `C:UsersHanzelsecurity-audit-skillpandi-inglesun-1REPORT.md`.
+
+## 2026-10-21 (4) · Ninguna pantalla se pasa sin demostrar lo aprendido
+- El dueño: «no quiero ninguna lección que simplemente se pueda pasar sin demostrar que aprendieron». Una prueba automática encontró 4 pantallas que se pasaban sin responder nada: palabra nueva, mesa de cartas, canto y cuento (el cuento terminaba solo tocando «Siguiente» seguido).
+- **Palabra nueva:** se escucha y luego la tarjeta se esconde: *«Ahora tú: toca el dibujo de…»* con 3 dibujos.
+- **Mesa de cartas:** después de voltearlas se tapan las palabras, se revuelven y hay que encontrar la carta de cada palabra (hasta 6, y al menos 4 rondas; todas las cartas siguen en juego). Con 2 fallos o más (por ejemplo tocando todas) se repite al final.
+- **Cuento:** hasta 3 globos salen con una palabra en blanco (*Completa lo que dice…*) y el «¿Quién dijo esto?» de la mitad. Sin responder, «Siguiente» no avanza. **Canto:** hasta 3 líneas para completar; la lista de abajo solo muestra lo ya cantado (antes daba la respuesta). Si un cuento o canto no tiene palabras para completar, se pregunta qué frase dijeron.
+- **Bug:** en cuentos con 5 personajes, «¿Quién dijo esto?» mostraba solo 4 y a veces dejaba fuera al correcto (n1u8l5, n3wl2): el niño se quedaba trabado. Ahora la respuesta siempre está.
+- **Quién habla:** en un globo con dos personajes, el que es nombrado en la frase no es el que habla («What is it, Aunt Fifi?» lo dice Beth).
+- **Voces por personaje** (el dueño: el niño y la niña tenían la misma voz): niñas con voz femenina aguda, niños con voz masculina aguda (o, si el equipo solo tiene una voz, con otro tono), adultos normal, robots grave, monos muy aguda y el dragón grave. `CAST_KIND`/`castVoice`. Depende de las voces del equipo: esta PC tiene David, Mark y Zira.
+- **Mini clase repetida:** si se fallaba la pregunta, al final volvía toda la mini clase (el dueño la vio dos veces). Ahora se repite solo la pregunta.
+- **Pruebas:** en el navegador las 3514 pantallas de los 4 niveles: ninguna se pasa sin responder (ni tocando «Siguiente» o la bocina muchas veces), sin errores ni desbordes a 390 px; y jugando bien se terminan todas las palabras nuevas, cartas, mini clases, cantos y cuentos.
+- Queda una excepción a propósito: en *Escucha y repite*, si el micrófono no funciona aparece «Ya lo dije en voz alta».
+- **Sin commit todavía.**
+
+## 2026-10-21 (3) · Cuentos animados, mini clase con práctica y sin traducciones
+- La sesión anterior se cortó a medias (error de acceso de Claude Code). Se retomó y se terminó lo que faltaba.
+- **Tren:** la locomotora ahora va adelante y los vagones detrás (antes los vagones iban delante).
+- **Desfile, lluvia y topos:** no salen dos dibujos iguales al mismo tiempo ni uno encima de otro.
+- **Cuentos animados** (pedido del dueño: el cuento era una imagen quieta). Inspirados en los cuentos de Duolingo: escenario con fondo, los personajes entran y salen caminando, el que habla se mueve, saltan con «!», se inclinan con «?», la pantalla tiembla con «Oh no!», el globo se escribe solo y flotan los dibujos de lo que se dice. A la mitad, «¿Quién dijo esto?». Los **cantos** usan el mismo escenario.
+- **Preguntas después del cuento y del canto:** ¿Quién lo dijo? (solo frases que el personaje dice de sí mismo) y completar una frase. Las opciones empiezan todas igual (mayúscula o minúscula), para que la letra no delate la respuesta.
+- **Mini clase con práctica** (el dueño: «solo escuchar es inútil, se podía pasar sin hacer nada»). Hay que escuchar cada frase y luego responder: completar una frase (104 mini clases), tocar la frase que se escucha (24, las de fonética y reglas) u ordenar la frase (3, las de una sola frase). Si falla, se repite al final como cualquier ejercicio.
+- **Sin traducciones** (pedido del profe: pistas sí, significado no). Se quitó el español de tarjetas, mesa de cartas, ¿cómo se dice? (y penal/cofres), escribe la palabra, arma la palabra, respuestas correctas, cantos, globos de los cuentos, lecturas («Ver en español») y mini clases. En la mini clase quedan con 💡 solo las 55 líneas que explican pronunciación o gramática (`tipHint`). Seis instrucciones de escena que daban la respuesta en español ahora dan la pista en inglés («Lee y toca: …»); las escuelas existentes las reciben con `COURSE_VER = 7`. El profe sigue viendo la traducción en el banco de palabras.
+- **Pruebas:** en el navegador las 3677 pantallas de los 4 niveles sin errores, sin desbordes a 390 px, sin juegos repetidos y sin ningún significado en español; se jugaron los tres tipos de mini clase (mal y bien) y se probó la actualización de un curso de versión 6.
+- **Sin commit todavía.**
+
+## 2026-10-21 (2) · Nivel 4 según el libro
+- El dueño mandó el libro del **Nivel 4** (*Discovery Studios*). Quedó: Bienvenida (5), 8 unidades de 10 lecciones (Free time, Wild animals, The seasons, My week, Jobs, In the rain forest, Feelings, By the sea), 3 *Wider World*, 4 repasos de 2, Despedida (3) y Festivales (Halloween y Día de la Madre): 101 lecciones. Cuentos, cantos y canciones con texto propio (la historia del guion que se roba Coco).
+- Personajes dibujados en código: Oliver, Sophie, el tío James, Finley Keen y Coco (mono, con otros colores que Ola). Los Retos de Pandi usan a Oliver, Sophie, Coco y el tío James.
+- **Escuelas existentes** (`COURSE_VER = 6`): reciben el Nivel 4 completo y cerrado, sin tocar lo editado.
+- No se pudo leer una página (Unidad 8, lección 3: fond of, crazy about…); se armó con el vocabulario y la gramática del índice del libro.
+- **Pruebas:** revisión de datos sin problemas (784 palabras, las 408 lecciones de los 4 niveles con escena); en el navegador se dibujaron los 840 pasos del Nivel 4 (314 retos) sin errores, nada se desborda a 390 px y se probó la actualización de un curso de versión 5.
+- **Atrapa la burbuja rehecho** (lo pidió el dueño: las burbujas solo se mecían en su lugar). Ahora suben desde abajo, van de lado a lado, rebotan en las orillas y entre ellas, se renuevan al salir por arriba, cada ronda es más rápida, revientan con ✨ y arriba se ven las 3 rondas. La palabra buscada siempre está presente y no se repiten dibujos. Probado en el navegador: 3 rondas completas, sin repetidos, modo claro y oscuro.
+- **Cuento antes de tiempo (lo encontró el dueño en Toys, Nivel 2):** «Verdadero o falso» y «Ordena el cuento» usaban el cuento de la unidad aunque el niño no hubiera llegado a esa lección. Ahora solo usan cuentos de lecciones hasta la actual (revisadas las 408 lecciones: ninguna antes de tiempo).
+- **Escucha y toca menos repetitivo:** el dueño dijo que se repetía demasiado. Ahora esas escenas se turnan entre el dibujo del libro (56) y tres juegos animados: Desfile (45), Lluvia de dibujos en paracaídas (62) y Topos (47). Hasta 5 rondas que van más rápido, bandeja con lo atrapado (con número si es de numerar). Probados los tres jugando completo; en el navegador las 4048 pantallas de los 4 niveles sin errores ni desbordes a 390 px.
+- **Mapa:** las pestañas de nivel muestran solo los niveles que el niño puede ver (su nivel y los anteriores, o donde ya completó algo); ya no salen los cerrados con candado. Si son más de 4, la fila se desliza de lado.
+- **Lecciones menos repetitivas** (pedido del dueño: en Toys el topo salía dos veces): en una lección ningún juego se repite. Juegos nuevos: Canasta y Vasos mágicos (escucha y elige), Penal con Pandi de portero y Cofres del tesoro (¿cómo se dice?), Tren (ordena la oración) y mesa de cartas para voltear (3 o más palabras nuevas seguidas; Toys tenía 7 tarjetas seguidas). Una segunda memoria/unir en la misma lección cambia al otro juego. Lo fallado se repite al final en forma normal.
+- **Bug:** todos los «ordena la oración» mostraban la etiqueta «Reto de Pandi» (el campo `extra` del ejercicio se confundía con la marca de reto). Corregido.
+- **Pruebas:** en el navegador las 3450 pantallas de los 4 niveles sin errores ni desbordes a 390 px, ningún juego repetido por lección, cada juego nuevo jugado completo (bien y mal).
+- **Sin commit todavía:** los niveles 1 y 4 están en la carpeta, sin guardar en git.
+
+## 2026-10-21 · Nivel 1 según el libro
+- Se guardó lo anterior en el commit `2b7ab9c` (rama `nivel-2`, sin subir a GitHub).
+- El dueño mandó el libro del **Nivel 1** (PDF de 124 páginas). Reemplaza al Nivel 1 provisional. Quedó: Alfabeto (2), Bienvenida (4), 8 unidades de 10 lecciones (My birthday, At school, My family, My body, Pets, My house, Food, I'm happy!), 4 repasos de 2, Despedida (4), Festivales (4: Halloween, Navidad, Día de la Madre y del Padre) y Wider World (4). 108 lecciones; cantos, canciones y cuentos con texto propio.
+- Personajes dibujados en código: Harry, Beth, Cody, la tía Fifi y Waldo, el dragón (`dragonSVG`). Los Retos de Pandi ahora salen también en el Nivel 1.
+- **Escuelas existentes** (`COURSE_VER = 5`): se quita el Nivel 1 provisional (`u1`…`u5`), los grupos que lo tenían abierto pasan a la Bienvenida y el Alfabeto, y las tareas pierden esas lecciones; las unidades creadas por el profe se conservan. Medallas «Unidad 1» y «Unidad 2» apuntan al Nivel 1 nuevo; «Lector» se gana con cualquier cuento.
+- No se leyeron 3 páginas (I can do it de la Unidad 7, segunda página de los repasos 3-4 y 5-6); esas lecciones se armaron con el vocabulario de la unidad.
+- **Pruebas:** revisión de datos sin problemas (635 palabras, 385 escenas, las 307 lecciones con escena); en el navegador se dibujaron los 3212 pasos y 902 retos sin errores, se probó la actualización de un curso viejo y nada se desborda a 390 px.
+
+## 2026-10-20 (noche, 2) · Retos de Pandi al final de cada lección
+- El dueño pidió que las lecciones no sean repetitivas, que se basen en el cuento y tengan algo extra para aprender gramática y divertirse, sin perder la parte del libro.
+- **Reto de Pandi:** después de la parte del libro, cada lección de los niveles 2 y 3 suma hasta 3 retos: encuentra el error (gramática, con la regla en español), responde a tu amigo (pregunta y respuesta), verdadero o falso del cuento, ordena el cuento, arma la palabra y atrapa la burbuja. Se arman solos con el contenido de cada lección, así que también funcionan en los niveles nuevos.
+- **Pruebas:** 593 retos en 201 lecciones; cada tipo sale entre 87 y 117 veces y casi nunca se repite la combinación seguida. 7 lecciones tienen 1 o 2 retos (hora, rutina y despedida: sin cuento ni palabras sueltas). En el navegador se dibujaron los 2296 pasos sin errores, se resolvió cada tipo de reto y nada se desborda a 375 px.
+
+## 2026-10-20 (noche) · Nivel 3 completo y control de niveles
+- **Niveles por grupo:** el profe escoge el nivel de cada grupo en Contenido. Los niveles anteriores quedan abiertos para repasar, los siguientes no se ven y lo que el niño ya avanzó no se le cierra. El mapa tiene pestañas de nivel.
+- **Nivel 3** (libro *Space Island*, PDF de 116 páginas): Bienvenida (6), 8 unidades de 10 lecciones, 4 *Wider World*, 4 repasos, Despedida (4) y Festivales (3): 107 lecciones. **Al PDF le faltan las páginas 102 y 103** (Unidad 8, lecciones 7 y 8: texto sobre máquinas que vuelan, proyecto y fonética); no se inventaron. Cuando el dueño las mande, se agregan como `n3u8l7` y `n3u8l8`.
+- Cuentos, cantos, canciones y lecturas son textos propios con las mismas palabras y la misma historia (Kim y Katy buscan la planta tifftiff para curar la *tickilitis*). Personajes dibujados en código: Kim, Katy, el capitán Conrad, dos robots y la presidenta Pop. 506 palabras en total.
+- Todas las lecciones de los niveles 2 y 3 (201) empiezan con una escena del libro; en el navegador se dibujaron los 1703 pasos sin errores. `COURSE_VER = 4`: las escuelas existentes reciben el Nivel 3 cerrado.
+- **Bug corregido:** en los cuentos en viñetas el botón «Continuar» quedaba escondido y el niño no podía pasar de la lección (lo encontró el dueño en la Bienvenida del Nivel 3; también pasaba en el Nivel 2). Ahora el cuento, igual que el canto, muestra «Continuar»; se revisaron los 57 cuentos y cantos.
+- El servidor de prueba se configura en `.claude/launch.json` (`pandi-demo`, puerto 4320, script en la carpeta temporal de la sesión).
+
+## 2026-10-20 (tarde) · Lecciones como escenas del libro y voz más alegre
+- El dueño comparó la app con la página 6 del libro (el loro de *Look and match*) y mandó un video de la plataforma digital del profe: quiere que cada lección **se parezca a su página**, como escena dibujada e interactiva, con dibujos propios (sin copiar los de Pearson). Se hizo primero una muestra (Bienvenida 1 y 2: amigos en la playa, loro, canto, manchas de colores); al dueño le gustó y pidió el resto con el mismo formato.
+- **Motor de escenas** (`t:'scene'`): modos drop, find, number, chant, story (viñetas), pick y sort. Fondos propios por unidad (juguetería, calle, parque, cuarto, granja, noche, cocina, teatro, montaña, playa, aula, papel). Dibujos fijos: los cuatro amigos, el loro, la cara grande (Unidad 4), las manchas de pintura y el saludo.
+- **Las 94 lecciones del Nivel 2** empiezan con la actividad de su página: 127 escenas (28 find, 34 number, 22 drop, 18 cantos/canciones, 8 cuentos en viñetas, 7 pick, 10 sort). Los ejercicios que ya tenían (hablar, ordenar, completar, lectura) siguen después.
+- **Voz:** al dueño no le gustó. Ahora se prefieren voces naturales o de niña (Ana en Edge), se evitan las de hombre, el tono es más agudo y alegre, y en *Probar audio* cada niño escoge la voz de su teléfono. En la PC del dueño solo hay voces de Windows sin conexión (Zira, David, Mark), que siguen sonando robóticas; quedó Zira.
+- **Pruebas:** revisión de datos (palabras e imágenes existen, sin dibujos repetidos en una escena) y en el navegador a 390 px se dibujaron los 936 pasos sin errores; se jugó la lección 1 completa.
+- **Pendiente:** si se quiere una voz igual de amigable en todos los teléfonos, hay que grabar o generar los audios (mp3) con una voz de niño y guardarlos con la app; eso necesita decidir el servicio y su costo. Lo demás pendiente sigue igual (pruebas e2e con Python/Playwright y prueba en Supabase real).
+
+## 2026-10-20 · Nivel 2 completo según el libro
+- El dueño mandó el libro del **Nivel 2** (PDF escaneado de 100 páginas, llega hasta la página 99: sin Goodbye, Festivals ni diccionario). Pidió que las lecciones sean **las mismas del libro**, sin inventar contenido, pero con diseño propio (sin personajes ni dibujos del libro). Los grupos empiezan en el Nivel 2; el **Nivel 1 actual se queda** hasta que llegue su libro.
+- **Decisiones del dueño:** se usan los nombres de los personajes (Charlie, Rose, Ola, Uncle Dan). Cantos, canciones y cuentos son **versiones propias** con las mismas palabras y frases (no se copia la letra ni el diálogo, por derechos de autor, ya que la app se vende).
+- **Contenido:** Bienvenida (6 lecciones), 8 unidades de 10 lecciones y un repaso de 2 lecciones cada dos unidades, en el orden del libro. Cada lección sigue su página: vocabulario, canto + *Look!*, vocabulario + canción, gramática, cuento propio, valores, matemática/ciencias/salud, fonética, *I can do it!* y *Have fun!*. 94 lecciones, 847 ejercicios y 218 palabras nuevas (271 en total). Imágenes con emoji; falda, pantalón, rectángulo y pasas son dibujos SVG propios.
+- **Código:** unidades con `level` y `tag`; mapa y editor agrupados por nivel; grupo nuevo con **Nivel del grupo**; `upgradeCourse` para escuelas existentes (`COURSE_VER = 3`).
+- **Pruebas en esta sesión** (PC del dueño, sin Python ni Playwright): `index.html` se generó con un script de Node equivalente a `build.py` (se verificó que da el mismo archivo byte por byte). Un script revisó que todas las palabras e imágenes existan, que no haya ids repetidos ni dibujos iguales en *Escucha*. En el navegador (modo demo, 390 px) se dibujaron los 847 ejercicios sin errores, se probó la actualización de un curso viejo, el editor por niveles y un grupo de Nivel 2 que solo ve su nivel.
+- **Pendiente:** correr `tests/e2e/run.sh` en una máquina con Python y Playwright. La actualización en modo servidor (`remoteLoad`) no se probó contra Supabase real: el admin debe entrar una vez para que el Nivel 2 se guarde en el servidor. Revisar en un celular Android viejo que se vean los emojis nuevos (🪿 no se usó; 🛝, 🫘 y 🐦‍⬛ son de 2021-2022). Libro del Nivel 1 cuando el dueño lo tenga.
 
 ## 2026-10-12 (noche, 2) · Personaje dibujado, bienvenida, trajes y quién falla cada palabra
 - Al dueño no le gustaron los avatares de emoji. Mandó de referencia ilustraciones planas de niños (pelo, ropa, lentes, audífonos, capucha de panda). Pidió que las prendas queden **puestas de verdad**, no encima.
