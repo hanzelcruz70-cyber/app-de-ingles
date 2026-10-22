@@ -3485,7 +3485,7 @@ function groupSelect(id, value){
 function addStudentSheet(){
   const name = h('input', {class:'in', id:'nsName', placeholder:'Ej. Carlos P.', maxlength:'24'});
   const user = h('input', {class:'in', id:'nsUser', placeholder:'Ej. carlos', autocapitalize:'off', spellcheck:'false', maxlength:'16'});
-  const pass = h('input', {class:'in', id:'nsPass', placeholder:REMOTE ? 'Mínimo 6 caracteres' : 'Mínimo 4 caracteres', maxlength:'30'});
+  const pass = h('input', {class:'in', id:'nsPass', placeholder:REMOTE ? 'Mínimo 8 caracteres' : 'Mínimo 4 caracteres', maxlength:'30'});
   const err = h('p', {class:'err', hidden:true});
   const gsel = groupSelect('nsGroup');
   const consent = h('input', {type:'checkbox', id:'nsConsent'});
@@ -3505,7 +3505,7 @@ function addStudentSheet(){
       if (!n) return fail('Escribe el nombre del estudiante.');
       if (!/^[a-z0-9._-]{3,16}$/.test(us)) return fail('El usuario debe tener de 3 a 16 letras o números, sin espacios.');
       if (DB.users.some(u => u.user === us)) return fail('Ese usuario ya existe. Prueba con otro.');
-      const minPw = REMOTE ? 6 : 4;
+      const minPw = REMOTE ? 8 : 4;
       if (pw.length < minPw) return fail(`La contraseña debe tener al menos ${minPw} caracteres.`);
       if (!consent.checked) return fail('Marca la casilla de autorización del papá, la mamá o el tutor.');
       if (REMOTE){
@@ -4132,6 +4132,12 @@ let SB = null, SNAP = null, SCHOOL = null, syncTimer = null, syncing = null, las
 const clone = o => JSON.parse(JSON.stringify(o));
 const toEmail = u => `${u.toLowerCase()}@${EMAIL_DOMAIN}`;
 const must = r => { if (r.error) throw r.error; return r.data; };
+// Trae todas las filas de a 1000 (Supabase corta cada respuesta en «Max rows» = 1000; sin esto el profe no veía lo que pasaba de ahí)
+const PAGE = 1000;
+async function allRows(make){
+  const out = [];
+  for (let i = 0; ; i += PAGE){ const rows = must(await make().range(i, i + PAGE - 1)); out.push(...rows); if (rows.length < PAGE) return out; }
+}
 function loadScript(src){ return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = () => no(new Error('No se pudo cargar ' + src)); document.head.append(sc); }); }
 function setLoginBusy(on, label){ const b = $('#loginForm button[type=submit]'); b.disabled = on; b.textContent = on ? (label || 'Entrando…') : 'Iniciar sesión'; }
 async function remoteBoot(){
@@ -4170,9 +4176,9 @@ async function remoteLoad(uid){
   db.friends = [];
   let subs;
   if (isAdmin){
-    must(await SB.from('profiles').select('*').eq('school_id', SCHOOL)).forEach(r => db.users.push(userFromRow(r)));
-    must(await SB.from('progress').select('*').eq('school_id', SCHOOL)).forEach(r => db.progress[r.user_id] = P(r.data));
-    subs = must(await SB.from('submissions').select('*').eq('school_id', SCHOOL));
+    (await allRows(() => SB.from('profiles').select('*').eq('school_id', SCHOOL).order('id'))).forEach(r => db.users.push(userFromRow(r)));
+    (await allRows(() => SB.from('progress').select('*').eq('school_id', SCHOOL).order('user_id'))).forEach(r => db.progress[r.user_id] = P(r.data));
+    subs = await allRows(() => SB.from('submissions').select('*').eq('school_id', SCHOOL).order('assignment_id').order('user_id'));
   } else {
     db.users.push(userFromRow(me));
     const own = must(await SB.from('progress').select('*').eq('user_id', uid).maybeSingle());
@@ -4249,9 +4255,9 @@ async function adminCall(body){
 function resetPasswordSheet(u){
   const d = {pw:''}; const err = h('p', {class:'err', hidden:true});
   const sh = sheet(h('h2', {style:'font-size:24px'}, 'Cambiar contraseña'), h('p', {class:'muted', style:'margin:0'}, `Nueva contraseña para ${u.name} (@${u.user}).`),
-    inField('Nueva contraseña', d, 'pw', {placeholder:'Mínimo 6 caracteres', maxlength:'30'}), err,
+    inField('Nueva contraseña', d, 'pw', {placeholder:'Mínimo 8 caracteres', maxlength:'30'}), err,
     h('button', {class:'btn', type:'button', onclick:async ev => {
-      if (d.pw.length < 6){ err.textContent = 'La contraseña debe tener al menos 6 caracteres.'; err.hidden = false; return; }
+      if (d.pw.length < 8){ err.textContent = 'La contraseña debe tener al menos 8 caracteres.'; err.hidden = false; return; }
       ev.target.disabled = true; const r = await adminCall({action:'reset_password', user_id:u.id, password:d.pw}); ev.target.disabled = false;
       if (r.error){ err.textContent = r.error; err.hidden = false; return; }
       sh.remove(); toast(`Contraseña cambiada: ${u.user} / ${d.pw}`);

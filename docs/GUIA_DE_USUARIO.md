@@ -155,7 +155,7 @@ Abajo hay cuatro secciones: **Resumen**, **Estudiantes**, **Contenido** y **Tare
 
 - Lista de estudiantes del grupo con su XP y última práctica.
 - **+ Nuevo grupo** crea un grupo (ej. *Lunes 3 pm · Nivel 2*). En **Nivel del grupo** escoges Nivel 1 o Nivel 2: se abre la primera unidad de ese nivel y las demás las abres en **Contenido**. Al tocar la tarjeta de un grupo se abre **Editar grupo**, para cambiar el nombre o eliminarlo (debe quedar al menos un grupo, y primero hay que mover o eliminar a sus estudiantes).
-- **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 6 con servidor), y la casilla obligatoria **"Tengo la autorización del papá, la mamá o el tutor"** (lo pide la ley de protección de datos, porque son menores). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
+- **+ Agregar** (agregar estudiante): nombre, usuario y contraseña (mínimo 4 caracteres en demo, 8 con servidor), y la casilla obligatoria **"Tengo la autorización del papá, la mamá o el tutor"** (lo pide la ley de protección de datos, porque son menores). Si el usuario ya existe: *"Ese usuario ya existe. Prueba con otro."*
 - Al tocar un estudiante se abre su **ficha**: XP, racha, avance por unidad, medallas, última práctica, **Le cuesta** (sus palabras más falladas), **Reporte para padres**, cambio de **Grupo**, **Cambiar contraseña** (solo con servidor) y **Eliminar estudiante**.
 
 ### 3.3 Contenido (editor del curso)
@@ -203,14 +203,14 @@ En **Resumen → Necesitan un empujón**, toca **Recordar**. Se abre el mismo ti
 
 ### 4.1 Crear la primera escuela (`setup.html`)
 
-Abre `…/setup.html`, escribe el nombre de la escuela, el nombre y usuario del profe, la contraseña (mínimo 6) y el **código de configuración** (`PANDI_SETUP_TOKEN`). Al terminar: *"¡Listo! Escuela creada…"*.
+Abre `…/setup.html`, escribe el nombre de la escuela, el nombre y usuario del profe, la contraseña (mínimo 8) y el **código de configuración** (`PANDI_SETUP_TOKEN`). Al terminar: *"¡Listo! Escuela creada…"*.
 
 ### 4.2 Panel del dueño (`owner.html`)
 
 1. Abre `…/owner.html` y escribe el código de configuración. Toca **Entrar**.
 2. **Escuelas:** cada escuela con su número de estudiantes, última actividad y profe. **Actualizar** recarga la lista.
 3. **Crear escuela nueva:** igual que `setup.html`.
-4. **Cambiar la clave de un profe:** usuario del profe y contraseña nueva (mínimo 6).
+4. **Cambiar la clave de un profe:** usuario del profe y contraseña nueva (mínimo 8).
 
 Si el código está mal: *"Código de configuración incorrecto"*. El código no se guarda en el navegador. Para crear una escuela en `setup.html` hay que aceptar los términos.
 

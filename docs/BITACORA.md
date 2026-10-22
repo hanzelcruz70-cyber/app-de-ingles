@@ -29,6 +29,18 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-22 (3) · Las 3 pistas que dependían de Supabase, cerradas
+- **Lo que el dueño vio en Supabase:** «Max rows» = 1000; «Secure email change» activado; límite de inicio de sesión 30 cada 5 min por IP; Email provider activado (lo necesita el login); sin SMTP propio; no hay dominio para Pandi ni se piensa usar. El dueño ya corrió el `schema.sql` de la entrada (2).
+- **Entregas basura (aplicaba por el límite de 1000):** un estudiante solo puede entregar tareas que existen en su escuela (`submissions_own_insert` revisa `assignments`), así que no puede crear miles de entregas inventadas. Además el panel del profe trae perfiles, progresos y entregas de a 1000 (`allRows`) y ya no se corta. Pruebas: RLS 7d; con un Supabase falso, 2500 entregas llegan completas en 3 partes.
+- **Cambio de correo:** con «Confirm email» apagado, «Secure email change» probablemente no frena el cambio. Ahora el trigger `pandi_block_email_change` en `auth.users` no deja cambiar el correo de ninguna cuenta con perfil de Pandi (la app nunca cambia correos). Si Supabase no deja crearlo, el `schema.sql` sigue igual y muestra el aviso «Pandi: Supabase no dejó crear el bloqueo…». Pruebas RLS E1 y E2.
+- **Contraseñas de mínimo 8 caracteres** (antes 6) en la función (`MIN_PW`), en el panel del profe, en `setup.html` y `owner.html`; la guía y el README dicen 8. Las contraseñas viejas siguen funcionando. El límite de 30 intentos es por IP, no por cuenta, por eso se subió el mínimo.
+- **Correo `@alumnos.pandienglish.app`:** hoy no es un riesgo, porque el SMTP de Supabase solo manda correos a los miembros del equipo. **Regla: nunca activar un SMTP propio** mientras las cuentas usen ese dominio.
+- **Pruebas en el entorno aislado:** RLS **51/51 PASS**, `schema.sql` se puede correr dos veces seguidas, la función responde bien con 8 caracteres.
+- **Para que funcione en la app real:**
+  1. Correr de nuevo `supabase/schema.sql` en el SQL Editor y fijarse en el aviso «Pandi: bloqueo de cambio de correo activo».
+  2. En Authentication → Policies, poner el mínimo de contraseña en 8.
+  3. Publicar: unir `nivel-2` a `main`. Eso publica la app y también la función, porque cambió `supabase/functions/**`.
+
 ## 2026-10-22 (2) · Revisión de seguridad completa y sus 3 arreglos
 - **Revisión completa** (perfil `standard` de la skill de Cloudflare, 30 agentes, con pruebas reales en el entorno aislado). Informe en `C:\Users\Hanzel\security-audit-skill\pandi-ingles\run-2\REPORT.md`. Resultado: 3 problemas confirmados, 3 pistas que dependen de la configuración de Supabase o del dominio, 1 descartada (registro público, ya apagado). Los 3 arreglos de la revisión rápida se confirmaron.
 - **Ranking congelado (media):** un estudiante podía guardar en su progreso una fecha rara (`xpDays` con `-271800-01-01`) y el Ranking de sus compañeros y la exportación del profe se trababan ~40 s. Ahora `P()` deja en `xpDays` solo fechas `AAAA-MM-DD` con un número, `leagueOf` cuenta solo las semanas de los últimos 2 años (`LEAGUE_WEEKS = 104`) y `class_ranking()` solo devuelve fechas válidas de los últimos 730 días. Probado: la fecha rara tarda 1 ms; en la demo, el Ranking con esa fecha y 2000 fechas viejas abrió en 0,2 s.

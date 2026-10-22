@@ -11,6 +11,7 @@ insert into profiles(id,school_id,role,username,name,group_id) values
  ('b0000000-0000-0000-0000-000000000001','bbbbbbbb-0000-0000-0000-000000000000','student','tom','Tom','g1');
 insert into progress(user_id,school_id,data) values ('a0000000-0000-0000-0000-000000000002','aaaaaaaa-0000-0000-0000-000000000000','{"xp":120,"xpDays":{},"days":[]}'),('a0000000-0000-0000-0000-000000000003','aaaaaaaa-0000-0000-0000-000000000000','{"xp":50}');
 insert into groups(school_id,id,name,open) values ('aaaaaaaa-0000-0000-0000-000000000000','g1','Sábados','{"u1":true}'),('bbbbbbbb-0000-0000-0000-000000000000','g1','B grupo','{}');
+insert into assignments(school_id,id,title,due,lessons,groups) values ('aaaaaaaa-0000-0000-0000-000000000000','a1','Semana 1',current_date,'{u1l1}','{g1}');
 
 create or replace function pg_temp.check(label text, ok boolean) returns void language plpgsql as $$ begin raise notice '% %', case when ok then 'PASS' else 'FAIL' end, label; end $$;
 create or replace function pg_temp.fails(sqltext text) returns boolean language plpgsql as $$ begin execute sqltext; return false; exception when others then return true; end $$;
@@ -39,6 +40,7 @@ insert into submissions(school_id,assignment_id,user_id,text,sent_at,note,review
 select pg_temp.check('7 no puede calificarse sola', (select note='' and not reviewed from submissions where user_id = auth.uid()));
 select pg_temp.check('7b ve las tareas y unidades de su escuela', (select count(*) from groups) = 1);
 select pg_temp.check('7c no puede borrar el curso', pg_temp.fails($q$insert into courses(school_id,data) values ('aaaaaaaa-0000-0000-0000-000000000000','{}')$q$));
+select pg_temp.check('7d no puede entregar una tarea que no existe (entregas basura)', pg_temp.fails($q$insert into submissions(school_id,assignment_id,user_id,text) values ('aaaaaaaa-0000-0000-0000-000000000000','basura-1','a0000000-0000-0000-0000-000000000001','x')$q$));
 commit;
 
 -- ===== admin A =====
@@ -50,7 +52,7 @@ select pg_temp.check('9b nota guardada', (select note from submissions where ass
 with u as (update profiles set group_id='g2' where username='sofia' returning 1) select pg_temp.check('10 admin mueve estudiante de grupo', (select count(*) from u) = 1);
 select pg_temp.check('11 admin no puede cambiar roles', pg_temp.fails($q$update profiles set role='admin' where username='ana'$q$));
 select pg_temp.check('12 admin guarda el curso', not pg_temp.fails($q$insert into courses(school_id,data) values ('aaaaaaaa-0000-0000-0000-000000000000','{"units":[]}') on conflict (school_id) do update set data=excluded.data$q$));
-select pg_temp.check('13 admin crea grupo y tarea', not pg_temp.fails($q$insert into groups(school_id,id,name) values ('aaaaaaaa-0000-0000-0000-000000000000','g2','Martes'); insert into assignments(school_id,id,title,due,lessons,groups) values ('aaaaaaaa-0000-0000-0000-000000000000','a1','Semana 1',current_date,'{u1l1}','{g1}')$q$));
+select pg_temp.check('13 admin crea grupo y tarea', not pg_temp.fails($q$insert into groups(school_id,id,name) values ('aaaaaaaa-0000-0000-0000-000000000000','g2','Martes'); insert into assignments(school_id,id,title,due,lessons,groups) values ('aaaaaaaa-0000-0000-0000-000000000000','a2','Semana 2',current_date,'{u1l1}','{g1}')$q$));
 select pg_temp.check('14 admin NO ve la otra escuela', (select count(*) from profiles where school_id='bbbbbbbb-0000-0000-0000-000000000000') = 0 and (select count(*) from groups where school_id='bbbbbbbb-0000-0000-0000-000000000000') = 0);
 select pg_temp.check('15 admin NO escribe en la otra escuela', pg_temp.fails($q$insert into groups(school_id,id,name) values ('bbbbbbbb-0000-0000-0000-000000000000','gx','hack')$q$));
 with u as (update progress set data='{}' returning 1) select pg_temp.check('15b admin NO cambia progreso de estudiantes', (select count(*) from u) = 0);
@@ -99,6 +101,11 @@ commit;
 begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000001';
 with d as (delete from friendships returning 1) select pg_temp.check('F11 Ana puede quitar la amistad', (select count(*) from d) = 1);
 commit;
+
+-- ===== correo de las cuentas (como el servidor de Supabase Auth) =====
+select pg_temp.check('E1 no se puede cambiar el correo de una cuenta de Pandi', pg_temp.fails($q$update auth.users set email='pedro@alumnos.pandienglish.app' where id='a0000000-0000-0000-0000-000000000001'$q$));
+insert into auth.users values ('c0000000-0000-0000-0000-000000000001', 'sinperfil@ejemplo.com');
+select pg_temp.check('E2 otros cambios de la cuenta siguen funcionando', not pg_temp.fails($q$update auth.users set email=email where id='a0000000-0000-0000-0000-000000000001'; update auth.users set email='otro@ejemplo.com' where id='c0000000-0000-0000-0000-000000000001'$q$));
 
 -- ===== anonymous =====
 begin; set local role anon;

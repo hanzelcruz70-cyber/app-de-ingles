@@ -154,6 +154,27 @@ $$;
 revoke all on function public.revoke_user_sessions(uuid) from public, anon, authenticated;
 do $$ begin grant execute on function public.revoke_user_sessions(uuid) to service_role; exception when undefined_object then null; end $$;
 
+-- El correo interno de una cuenta (usuario@dominio) no se puede cambiar (versión 2026-10-22): con «Confirm email»
+-- apagado, un estudiante podía ponerse el correo de otro nombre de usuario y así nadie podía crear ese usuario.
+-- La app nunca cambia correos; solo afecta a cuentas que tienen perfil de Pandi.
+create or replace function public.block_email_change() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if exists (select 1 from public.profiles where id = new.id) then
+    raise exception 'El correo de las cuentas de Pandi no se puede cambiar';
+  end if;
+  return new;
+end $$;
+revoke all on function public.block_email_change() from public, anon, authenticated;
+do $$ begin
+  drop trigger if exists pandi_block_email_change on auth.users;
+  create trigger pandi_block_email_change before update on auth.users
+    for each row when (old.email is distinct from new.email) execute function public.block_email_change();
+  raise notice 'Pandi: bloqueo de cambio de correo activo';
+exception when insufficient_privilege then
+  raise notice 'Pandi: Supabase no dejó crear el bloqueo de cambio de correo (todo lo demás sí se aplicó)';
+end $$;
+
 -- Un estudiante no puede calificarse a sí mismo: solo el admin cambia nota y revisión.
 -- Nadie (ni el admin) puede cambiar de quién es una entrega, de qué tarea es ni de qué escuela.
 create or replace function public.guard_submission() returns trigger
@@ -238,9 +259,12 @@ create policy progress_own_update on public.progress for update to authenticated
 drop policy if exists submissions_read on public.submissions;
 create policy submissions_read on public.submissions for select to authenticated
   using (user_id = auth.uid() or (public.is_admin() and school_id = public.my_school()));
+-- Solo se entrega una tarea que existe en su escuela (versión 2026-10-22): antes un estudiante podía crear miles
+-- de entregas inventadas, y como Supabase corta cada respuesta en 1000 filas, el profe dejaba de ver tareas reales.
 drop policy if exists submissions_own_insert on public.submissions;
 create policy submissions_own_insert on public.submissions for insert to authenticated
-  with check (user_id = auth.uid() and school_id = public.my_school());
+  with check (user_id = auth.uid() and school_id = public.my_school()
+    and exists (select 1 from public.assignments a where a.school_id = public.my_school() and a.id = submissions.assignment_id));
 drop policy if exists submissions_own_update on public.submissions;
 create policy submissions_own_update on public.submissions for update to authenticated
   using (user_id = auth.uid() and not reviewed) with check (user_id = auth.uid() and school_id = public.my_school());

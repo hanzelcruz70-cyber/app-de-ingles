@@ -97,7 +97,7 @@ Para vender la app a otra escuela, repite este paso con otros datos. Cada escuel
 
 ## Cómo se usa ya conectada
 
-- **Profe (admin):** crea los grupos, crea las cuentas de los estudiantes (usuario + contraseña de al menos 6 caracteres), abre unidades, crea lecciones y tareas, y califica escrituras. La contraseña se muestra solo al crearla; si un niño la olvida, el profe le pone una nueva desde su ficha.
+- **Profe (admin):** crea los grupos, crea las cuentas de los estudiantes (usuario + contraseña de al menos 8 caracteres), abre unidades, crea lecciones y tareas, y califica escrituras. La contraseña se muestra solo al crearla; si un niño la olvida, el profe le pone una nueva desde su ficha.
 - **Estudiante:** entra con su usuario y contraseña desde cualquier teléfono. Su progreso, racha y tareas se guardan en el servidor.
 - Los cambios se guardan solos en menos de un segundo. El panel del profe se actualiza al cambiar de pestaña.
 

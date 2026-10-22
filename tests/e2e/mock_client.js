@@ -6,7 +6,7 @@
   function builder(table){
     const st = {table, op:'select', filters:[], single:false, maybe:false, payload:null};
     const b = {
-      select(){ return b; }, order(){ return b; },
+      select(){ return b; }, order(){ return b; }, range(){ return b; },
       eq(c, v){ st.filters.push([c, v]); return b; },
       insert(p){ st.op = 'insert'; st.payload = p; return b; },
       upsert(p){ st.op = 'upsert'; st.payload = p; return b; },

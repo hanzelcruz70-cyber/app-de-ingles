@@ -22,6 +22,7 @@ const CORS = {
 };
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...CORS, 'Content-Type': 'application/json' } });
 const USER_RE = /^[a-z0-9._-]{3,24}$/;
+const MIN_PW = 8; // contraseñas de al menos 8 caracteres (con 6, adivinarlas era más fácil)
 const clean = (v) => String(v ?? '').trim();
 
 // Después de cambiar una contraseña se cierran todas las sesiones abiertas de esa cuenta (función revoke_user_sessions
@@ -49,7 +50,7 @@ async function createAuthUser(admin, username, password, name) {
 function checkCredentials(username, password, name) {
   if (!name) return 'Escribe el nombre.';
   if (!USER_RE.test(username)) return 'El usuario debe tener de 3 a 24 letras o números, sin espacios.';
-  if (password.length < 6) return 'La contraseña debe tener al menos 6 caracteres.';
+  if (password.length < MIN_PW) return 'La contraseña debe tener al menos 8 caracteres.';
   return null;
 }
 
@@ -100,7 +101,7 @@ export async function handle(req, admin) {
         return json({ schools: list });
       }
       const username = clean(body.username).toLowerCase(), password = String(body.password ?? '');
-      if (password.length < 6) return json({ error: 'La contraseña debe tener al menos 6 caracteres.' }, 400);
+      if (password.length < MIN_PW) return json({ error: 'La contraseña debe tener al menos 8 caracteres.' }, 400);
       const { data: adm } = await admin.from('profiles').select('*').eq('username', username).maybeSingle();
       if (!adm || adm.role !== 'admin') return json({ error: 'No encontré un profe (admin) con ese usuario.' }, 404);
       const { error } = await admin.auth.admin.updateUserById(adm.id, { password });
@@ -139,7 +140,7 @@ export async function handle(req, admin) {
       if (!st || st.school_id !== me.school_id || st.role !== 'student') return json({ error: 'Estudiante no encontrado' }, 404);
       if (action === 'reset_password') {
         const password = String(body.password ?? '');
-        if (password.length < 6) return json({ error: 'La contraseña debe tener al menos 6 caracteres.' }, 400);
+        if (password.length < MIN_PW) return json({ error: 'La contraseña debe tener al menos 8 caracteres.' }, 400);
         const { error } = await admin.auth.admin.updateUserById(st.id, { password });
         if (error) throw error;
         return json({ ok: true, sessions_closed: await closeSessions(admin, st.id) });
