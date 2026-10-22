@@ -27,6 +27,9 @@ update progress set data='{"xp":"x","days":5,"xpDays":[1]}' where user_id = auth
 select pg_temp.check('4c xp de texto no rompe el ranking', not pg_temp.fails($q$select * from class_ranking()$q$) and (select xp from class_ranking() where user_id = auth.uid()) = 0 and (select jsonb_typeof(days) from class_ranking() where user_id = auth.uid()) = 'array');
 update progress set data='{"xp":99999999999}' where user_id = auth.uid();
 select pg_temp.check('4d xp enorme no rompe el ranking', not pg_temp.fails($q$select * from class_ranking()$q$) and (select xp from class_ranking() where user_id = auth.uid()) = 0);
+-- fechas raras o muy viejas en xpDays no llegan a los compañeros (congelaban su Ranking): solo pasa la de hoy
+update progress set data = jsonb_build_object('xp', 10, 'xpDays', jsonb_build_object('-271800-01-01', 1, '2000-01-01', 5, '2026-01-01x', 3, to_char(current_date, 'YYYY-MM-DD'), 7, to_char(current_date - 1, 'YYYY-MM-DD'), 'x')) where user_id = auth.uid();
+select pg_temp.check('4f el ranking solo pasa fechas válidas y recientes', (select xp_days from class_ranking() where user_id = auth.uid()) = jsonb_build_object(to_char(current_date, 'YYYY-MM-DD'), 7));
 update progress set data='{"xp":10}' where user_id = auth.uid();
 select pg_temp.check('4e no puede cerrar sesiones de otra cuenta', pg_temp.fails($q$select public.revoke_user_sessions('a0000000-0000-0000-0000-000000000002')$q$));
 with u as (update groups set name='hack' returning 1) select pg_temp.check('5 no puede cambiar grupos', (select count(*) from u) = 0);
@@ -67,6 +70,8 @@ select pg_temp.check('G1 el estudiante no se pone nota ni historial', (select gr
 commit;
 begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-00000000000a';
 with u as (update submissions set grade=95, history='[{"reason":"revisé otra vez"}]' where assignment_id='a1' and user_id='a0000000-0000-0000-0000-000000000001' returning 1) select pg_temp.check('G2 el admin guarda nota e historial con update', (select count(*) from u) = 1);
+select pg_temp.check('G4 el admin NO puede pasar una entrega a un niño de otra escuela', pg_temp.fails($q$update submissions set user_id='b0000000-0000-0000-0000-000000000001' where assignment_id='a1' and user_id='a0000000-0000-0000-0000-000000000001'$q$));
+select pg_temp.check('G5 el admin NO puede cambiar de qué tarea es una entrega', pg_temp.fails($q$update submissions set assignment_id='otra' where assignment_id='a1' and user_id='a0000000-0000-0000-0000-000000000001'$q$));
 select pg_temp.check('G3 el admin NO puede hacer upsert (insertar) entregas a nombre del niño', pg_temp.fails($q$insert into submissions(school_id,assignment_id,user_id,note,reviewed) values ('aaaaaaaa-0000-0000-0000-000000000000','a1','a0000000-0000-0000-0000-000000000001','x',true) on conflict (assignment_id,user_id) do update set note=excluded.note$q$));
 commit;
 
@@ -84,6 +89,8 @@ commit;
 begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000004';
 select pg_temp.check('F7 Luis ve la solicitud', (select count(*) from friendships) = 1);
 with u as (update friendships set status='accepted' where to_id=auth.uid() returning 1) select pg_temp.check('F8 Luis acepta', (select count(*) from u) = 1);
+select pg_temp.check('F8b al aceptar no puede cambiar quién la envió', pg_temp.fails($q$update friendships set from_id='a0000000-0000-0000-0000-000000000002' where to_id=auth.uid()$q$));
+select pg_temp.check('F8c al aceptar no puede pasarla a otra escuela', pg_temp.fails($q$update friendships set school_id='bbbbbbbb-0000-0000-0000-000000000000' where to_id=auth.uid()$q$));
 select pg_temp.check('F9 ranking incluye avatar (columna)', (select count(*) from class_ranking() where avatar is null) >= 0);
 commit;
 begin; set local role authenticated; set local request.jwt.claim.sub = 'a0000000-0000-0000-0000-000000000003';

@@ -2486,13 +2486,16 @@ const KEY = 'pandi-english-v2';
 // no rompe las pantallas de los compañeros ni las del profe. La clave __proto__ se ignora.
 const P_DEF = () => ({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, gems:0, owned:[], freezes:0, frozen:[], claimed:{}, hw:null});
 const kindOf = v => Array.isArray(v) ? 'array' : v === null ? 'null' : typeof v;
+// xpDays: solo fechas AAAA-MM-DD con un número (una fecha rara como «-271800-01-01» congelaba el Ranking de los compañeros)
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+const cleanXpDays = o => Object.fromEntries(Object.entries(o).filter(([d, n]) => DAY_RE.test(d) && typeof n === 'number' && Number.isFinite(n)));
 const P = (extra) => {
   const out = P_DEF();
   for (const [k, v] of Object.entries(extra || {})){
     if (k === '__proto__') continue;
     if (Object.hasOwn(out, k) && out[k] !== null && kindOf(v) !== kindOf(out[k])) continue;
     if (typeof v === 'number' && !Number.isFinite(v)) continue;
-    out[k] = v;
+    out[k] = k === 'xpDays' ? cleanXpDays(v) : v;
   }
   return out;
 };
@@ -3057,13 +3060,16 @@ const thisMonday = () => mondayOf(today());
 const lastMonday = () => addDays(thisMonday(), -7);
 // Ligas: se sube con LEAGUE_UP XP en una semana, se baja con menos de LEAGUE_DOWN
 const LEAGUES = [{n:'Bronce', g:'🥉'}, {n:'Plata', g:'🥈'}, {n:'Oro', g:'🥇'}, {n:'Zafiro', g:'🔷'}, {n:'Diamante', g:'💠'}];
-const LEAGUE_UP = 150, LEAGUE_DOWN = 30;
+const LEAGUE_UP = 150, LEAGUE_DOWN = 30, LEAGUE_WEEKS = 104;
 function leagueOf(p){
-  const days = Object.keys(p.xpDays || {}).sort();
+  // Solo cuentan las semanas cerradas de los últimos 2 años: así el cálculo nunca da más de 104 vueltas,
+  // aunque el progreso de un compañero traiga fechas raras o muy viejas.
+  const cur = thisMonday(), floor = addDays(cur, -7 * LEAGUE_WEEKS);
+  const xd = Object.fromEntries(Object.entries(p.xpDays || {}).filter(([d]) => DAY_RE.test(d) && d >= floor && d < cur));
+  const days = Object.keys(xd).sort();
   let lvl = 0, change = null; if (!days.length) return {lvl, change};
-  const cur = thisMonday();
   for (let m = mondayOf(days[0]); m < cur; m = addDays(m, 7)){
-    const w = xpInWeek(p, m), before = lvl;
+    const w = xpInWeek({xpDays:xd}, m), before = lvl;
     if (w >= LEAGUE_UP) lvl = Math.min(lvl + 1, LEAGUES.length - 1); else if (w < LEAGUE_DOWN) lvl = Math.max(lvl - 1, 0);
     change = lvl > before ? 'up' : lvl < before ? 'down' : null; // al terminar el ciclo queda el cambio de la última semana cerrada
   }

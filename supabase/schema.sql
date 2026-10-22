@@ -73,6 +73,17 @@ create table if not exists public.submissions (
 -- Calificación (0 a 100) e historial de cambios de nota (versión 2026-10-12)
 alter table public.submissions add column if not exists grade int check (grade between 0 and 100);
 alter table public.submissions add column if not exists history jsonb not null default '[]'::jsonb;
+-- La entrega siempre es de un estudiante de la misma escuela que la fila (versión 2026-10-22):
+-- antes un profe podía pasarle una entrega de su escuela a un niño de otra escuela.
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'profiles_id_school_key') then
+    alter table public.profiles add constraint profiles_id_school_key unique (id, school_id);
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'submissions_user_school_fk') then
+    alter table public.submissions add constraint submissions_user_school_fk
+      foreign key (user_id, school_id) references public.profiles(id, school_id) on delete cascade;
+  end if;
+end $$;
 
 -- Amigos: solo entre compañeros del mismo grupo. from_id envía la solicitud y to_id la acepta.
 create table if not exists public.friendships (
@@ -110,6 +121,8 @@ $$;
 -- (se borra y se vuelve a crear porque ahora también devuelve el avatar; no toca datos)
 -- El progreso lo escribe el propio estudiante, así que cada campo se revisa antes de usarlo:
 -- un xp que no es un número entero (o es enorme) cuenta como 0, en vez de romper el ranking de todo el grupo.
+-- De xpDays solo salen fechas AAAA-MM-DD de los últimos 2 años con un número (versión 2026-10-22):
+-- una fecha rara como «-271800-01-01» hacía que el Ranking de los compañeros se congelara.
 drop function if exists public.class_ranking();
 create or replace function public.class_ranking()
 returns table (user_id uuid, name text, xp int, xp_days jsonb, days jsonb, avatar jsonb)
@@ -117,7 +130,11 @@ language sql stable security definer set search_path = public as $$
   select p.id, p.name,
          case when jsonb_typeof(pr.data->'xp') = 'number' and pr.data->>'xp' ~ '^[0-9]{1,9}$'
               then (pr.data->>'xp')::int else 0 end,
-         case when jsonb_typeof(pr.data->'xpDays') = 'object' then pr.data->'xpDays' else '{}'::jsonb end,
+         case when jsonb_typeof(pr.data->'xpDays') = 'object' then coalesce((
+                select jsonb_object_agg(e.k, e.v) from jsonb_each(pr.data->'xpDays') as e(k, v)
+                where e.k ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' and e.k >= to_char(current_date - 730, 'YYYY-MM-DD')
+                  and jsonb_typeof(e.v) = 'number'), '{}'::jsonb)
+              else '{}'::jsonb end,
          case when jsonb_typeof(pr.data->'days') = 'array' then pr.data->'days' else '[]'::jsonb end,
          case when jsonb_typeof(pr.data->'avatar') = 'object' then pr.data->'avatar' end
   from public.profiles p
@@ -137,10 +154,14 @@ $$;
 revoke all on function public.revoke_user_sessions(uuid) from public, anon, authenticated;
 do $$ begin grant execute on function public.revoke_user_sessions(uuid) to service_role; exception when undefined_object then null; end $$;
 
--- Un estudiante no puede calificarse a sí mismo: solo el admin cambia nota y revisión
+-- Un estudiante no puede calificarse a sí mismo: solo el admin cambia nota y revisión.
+-- Nadie (ni el admin) puede cambiar de quién es una entrega, de qué tarea es ni de qué escuela.
 create or replace function public.guard_submission() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
+  if tg_op = 'UPDATE' and (new.user_id <> old.user_id or new.assignment_id <> old.assignment_id or new.school_id <> old.school_id) then
+    raise exception 'No se puede cambiar de quién es una entrega';
+  end if;
   if not public.is_admin() then
     if tg_op = 'INSERT' then
       new.note := ''; new.reviewed := false; new.grade := null; new.history := '[]'::jsonb;
@@ -162,6 +183,9 @@ grant select, insert, update, delete on public.schools, public.groups, public.co
 grant select on public.profiles to authenticated;
 revoke update on public.profiles from authenticated;
 grant update (name, group_id) on public.profiles to authenticated;
+-- Al aceptar una amistad solo se cambia el estado (antes se podía cambiar quién la envió o la escuela)
+revoke update on public.friendships from authenticated;
+grant update (status) on public.friendships to authenticated;
 grant execute on function public.my_school(), public.is_admin(), public.my_group(), public.class_ranking() to authenticated;
 revoke all on all tables in schema public from anon;
 
@@ -242,7 +266,8 @@ create policy friendships_send on public.friendships for insert to authenticated
     and public.is_classmate(to_id));
 drop policy if exists friendships_accept on public.friendships;
 create policy friendships_accept on public.friendships for update to authenticated
-  using (to_id = auth.uid()) with check (to_id = auth.uid() and status = 'accepted');
+  using (to_id = auth.uid() and status = 'pending')
+  with check (to_id = auth.uid() and status = 'accepted' and school_id = public.my_school());
 drop policy if exists friendships_remove on public.friendships;
 create policy friendships_remove on public.friendships for delete to authenticated
   using (from_id = auth.uid() or to_id = auth.uid() or (public.is_admin() and school_id = public.my_school()));

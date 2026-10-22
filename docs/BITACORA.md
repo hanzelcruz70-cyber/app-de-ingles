@@ -29,6 +29,15 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-22 (2) · Revisión de seguridad completa y sus 3 arreglos
+- **Revisión completa** (perfil `standard` de la skill de Cloudflare, 30 agentes, con pruebas reales en el entorno aislado). Informe en `C:\Users\Hanzel\security-audit-skill\pandi-ingles\run-2\REPORT.md`. Resultado: 3 problemas confirmados, 3 pistas que dependen de la configuración de Supabase o del dominio, 1 descartada (registro público, ya apagado). Los 3 arreglos de la revisión rápida se confirmaron.
+- **Ranking congelado (media):** un estudiante podía guardar en su progreso una fecha rara (`xpDays` con `-271800-01-01`) y el Ranking de sus compañeros y la exportación del profe se trababan ~40 s. Ahora `P()` deja en `xpDays` solo fechas `AAAA-MM-DD` con un número, `leagueOf` cuenta solo las semanas de los últimos 2 años (`LEAGUE_WEEKS = 104`) y `class_ranking()` solo devuelve fechas válidas de los últimos 730 días. Probado: la fecha rara tarda 1 ms; en la demo, el Ranking con esa fecha y 2000 fechas viejas abrió en 0,2 s.
+- **Amistades falsificadas (baja):** al aceptar se podía cambiar quién envió la solicitud o la escuela. Ahora solo se puede cambiar `status` (`grant update (status)`), la solicitud tiene que estar pendiente y quedarse en la misma escuela. Pruebas RLS F8b y F8c.
+- **Entrega pasada a otra escuela (baja):** el profe podía cambiar el dueño de una entrega por un niño de otra escuela. Ahora una llave (`submissions_user_school_fk`) obliga a que el estudiante sea de la escuela de la entrega, y `guard_submission` no deja cambiar de quién es, de qué tarea ni de qué escuela. Pruebas RLS G4 y G5.
+- **Pruebas:** RLS **48/48 PASS**, `schema.sql` se puede correr dos veces seguidas sobre una base con datos, la función `admin-users` responde igual que antes.
+- **Para que funcione en la app real:** correr de nuevo `supabase/schema.sql` en el SQL Editor y publicar (unir `nivel-2` a `main`). La función no cambió.
+- **Pendiente del dueño (solo mirar en Supabase):** SMTP y magic link/recuperación (Authentication → Emails y Sign In / Providers → Email), «Secure email change», «Max rows» (Project Settings → Data API) y el límite de intentos de inicio de sesión (Authentication → Rate Limits).
+
 ## 2026-10-22 · El Pandi real se mueve, entorno aislado y publicación
 - **Publicado:** la rama `nivel-2` se unió a `main` y está en GitHub Pages (niveles 1 a 4, juegos, mapa nuevo, arreglos). La función `admin-users` (cierre de sesiones al cambiar contraseña) está publicada en Supabase y el dueño corrió el `schema.sql` nuevo. El push se hizo con la cuenta `hanzelcruz70-cyber` de `gh` (la credencial de git de esta PC es otra cuenta sin permiso).
 - **Supabase:** el dueño apagó el registro público («Allow new users to sign up») y el envío de correos está apagado. Las cuentas se siguen creando igual: escuelas en `setup.html` y estudiantes desde el panel del profe (la función usa la llave de servicio). El dominio `pandienglish.app` no es del dueño: sin correos no hay riesgo hoy; a futuro conviene un dominio que no reciba correo.
