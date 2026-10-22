@@ -29,6 +29,13 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-10-22 · El Pandi real se mueve, entorno aislado y publicación
+- **Publicado:** la rama `nivel-2` se unió a `main` y está en GitHub Pages (niveles 1 a 4, juegos, mapa nuevo, arreglos). La función `admin-users` (cierre de sesiones al cambiar contraseña) está publicada en Supabase y el dueño corrió el `schema.sql` nuevo. El push se hizo con la cuenta `hanzelcruz70-cyber` de `gh` (la credencial de git de esta PC es otra cuenta sin permiso).
+- **Supabase:** el dueño apagó el registro público («Allow new users to sign up») y el envío de correos está apagado. Las cuentas se siguen creando igual: escuelas en `setup.html` y estudiantes desde el panel del profe (la función usa la llave de servicio). El dominio `pandienglish.app` no es del dueño: sin correos no hay riesgo hoy; a futuro conviene un dominio que no reciba correo.
+- **Entorno aislado para pruebas** (pedido para la revisión completa): en Ubuntu (WSL) de esta PC, `C:\Users\Hanzel\security-audit-skill\sandbox\sandbox.sh`: sin red, entorno vacío, proyecto y sistema en solo lectura, solo escribe en su carpeta, usuario sin privilegios, memoria 2 GiB (cgroup), 200 procesos, límites de archivo y tiempo; `check-sandbox.sh` verifica cada control. `promote.py` copia evidencia como pide la skill. Node 18 y Postgres 16 instalados en Ubuntu. **Por primera vez corrieron las pruebas RLS: 43/43 PASS** (incluidas 4c, 4d y 4e) y las de la función.
+- **El Pandi real se mueve:** el dueño mandó la hoja con las partes del personaje (`tools/pandi/pandi-partes.png`). Se recortaron 20 piezas sin fondo y sin halo (`tools/pandi/cut.cjs`), se quitaron los brazos del torso y se redujeron al 40 % (`export.cjs`, 151 KB en `icons/pandi/`). `pandiRig` arma a Pandi y cada parte se anima: parpadea, mueve la cabeza, abre la boca, mueve los brazos y las piernas; sostiene el mundo, la pelota, el libro o el globo en la mano levantada; se lleva el bambú a la boca; duerme con los ojos cerrados. Reemplaza al Pandi dibujado en SVG.
+- **Pruebas:** los 9 Pandis se mueven y cargan todas las piezas; en los 4 niveles a 390 y 320 px no tapan lecciones ni se salen.
+
 ## 2026-10-21 (7) · Arreglos de la revisión de seguridad
 - Se corrigieron en el código 3 de los 5 puntos por validar (los otros 2 dependen de la configuración de Supabase y del dominio).
 - **Ranking:** `class_ranking()` revisa cada campo del progreso antes de usarlo; un `xp` que no es número entero (o es enorme) cuenta como 0 en vez de romper el ranking de todo el grupo. Si el ranking falla igual, el estudiante puede entrar (solo no ve a sus compañeros). Pruebas RLS nuevas 4c y 4d.
