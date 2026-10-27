@@ -852,6 +852,382 @@ const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0
 const dayKey = (back = 0) => { const d = new Date(); d.setDate(d.getDate() - back); return ymd(d); };
 const today = () => dayKey(0);
 const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + 's')}`;
+/* ---------- idioma de la interfaz: español o inglés (lo escoge el profe para toda su escuela) ---------- */
+// La app se escribe en español y, si la escuela pidió inglés, cada texto que se pinta se cambia por su versión en inglés:
+// EN tiene los textos fijos y EN_RE los que llevan números o nombres. Lo que escriben profes y estudiantes no se toca.
+// Se guarda en el curso de la escuela (DB.course.lang) y en este dispositivo (pandi-lang) para la pantalla de entrada.
+let LANG = (() => { try { return localStorage.getItem('pandi-lang') === 'en' ? 'en' : 'es'; } catch (e) { return 'es'; } })();
+const LEAGUE_EN = {Bronce:'Bronze', Plata:'Silver', Oro:'Gold', Zafiro:'Sapphire', Diamante:'Diamond'};
+const EN = {
+  // Entrada, barra de abajo y encabezado
+  'Usuario':'Username', 'Contraseña':'Password', 'Tu usuario':'Your username', 'Tu contraseña':'Your password', 'Iniciar sesión':'Log in', 'Entrando…':'Logging in…',
+  'Al entrar aceptas los':'By logging in you accept the', 'y el':'and the', 'Términos y condiciones':'Terms and conditions', 'Aviso de privacidad':'Privacy notice',
+  '¿No se oye? Probar audio y micrófono':"Can't hear? Test audio and microphone", 'Cuentas de prueba · toca una para llenar los datos':'Test accounts · tap one to fill in the form',
+  'usuario: estudiante · clave: 1234':'username: estudiante · password: 1234', 'usuario: admin · clave: admin123':'username: admin · password: admin123',
+  'VISTA PREVIA DEL PROFE · NO SE GUARDA PROGRESO':"TEACHER PREVIEW · PROGRESS IS NOT SAVED", 'ESTUDIANTE':'STUDENT', 'ADMIN':'TEACHER',
+  'Aprender':'Learn', 'Tareas':'Homework', 'Ranking':'Ranking', 'Perfil':'Profile', 'Resumen':'Summary', 'Estudiantes':'Students', 'Contenido':'Content',
+  'Cerrar sesión':'Log out', 'Secciones':'Sections', 'Secciones del admin':'Teacher sections', 'Salir de la lección':'Leave the lesson', 'Días seguidos':'Days in a row', 'Gemas':'Gems', 'Puntos XP':'XP points', 'Comprobar':'Check',
+  'Escribe tu usuario y tu contraseña.':'Type your username and password.', 'El usuario o la contraseña no coinciden. Revisa y prueba otra vez.':"The username or password doesn't match. Check and try again.",
+  '¿Cerrar sesión?':'Log out?', 'Volverás a la pantalla de inicio de sesión.':"You'll go back to the login screen.", 'Cancelar':'Cancel', 'Salir':'Leave', 'Sí':'Yes', 'No':'No',
+  'No se pudo cargar':"Couldn't load", 'No hay conexión con el servidor. Revisa tu internet y recarga la página.':'No connection to the server. Check your internet and reload the page.',
+  'No se pudo iniciar sesión:':"Couldn't log in:", 'Entraste, pero no se pudo cargar tu cuenta. Pide a tu profe que revise que exista tu perfil.':"You logged in, but your account couldn't load. Ask your teacher to check your profile.",
+  'No se pudo guardar en el servidor. Revisa tu internet; lo intentaré de nuevo.':"Couldn't save to the server. Check your internet; I'll try again.", 'No se pudo conectar con el servidor.':"Couldn't connect to the server.",
+  'No se pudo guardar. Revisa tu internet y prueba otra vez.':"Couldn't save. Check your internet and try again.", 'Mi primer grupo':'My first group', 'Sin grupo':'No group',
+  'No hay más espacio en este dispositivo. Usa imágenes más pequeñas o emojis.':'There is no more space on this device. Use smaller images or emojis.',
+  // Personaje y tienda
+  'Corto':'Short', 'Parado':'Spiky', 'Rizado':'Curly', 'Chongos':'Buns', 'Largo':'Long', 'Trenzas':'Braids', 'Melena':'Bob', 'Rapado':'Buzz cut',
+  'Normales':'Normal', 'Felices':'Happy', 'Brillantes':'Sparkly', 'Guiño':'Wink', 'Sonrisa':'Smile', 'Risa':'Laugh', 'Dientes':'Grin', 'Tranquila':'Calm',
+  'Camiseta':'T-shirt', 'Sudadera':'Sweatshirt', 'Camisa':'Shirt', 'Camiseta de fútbol':'Soccer jersey', 'Camisa de explorador':'Explorer shirt', 'Sudadera de panda':'Panda sweatshirt', 'Sudadera de oso':'Bear sweatshirt', 'Sudadera de conejo':'Bunny sweatshirt',
+  'Nada':'Nothing', 'Diadema con flor':'Flower headband', 'Gorra':'Cap', 'Gorra al revés':'Backward cap', 'Gorro de lana':'Beanie', 'Pañoleta':'Bandana', 'Audífonos':'Headphones', 'Birrete':'Graduation cap', 'Corona':'Crown',
+  'Capucha de panda':'Panda hood', 'Capucha de oso':'Bear hood', 'Capucha de conejo':'Bunny hood', 'Lentes redondos':'Round glasses', 'Lentes cuadrados':'Square glasses', 'Lentes de sol':'Sunglasses', 'Lentes de estrella':'Star glasses',
+  'Traje de panda':'Panda costume', 'Traje de oso':'Bear costume', 'Traje de conejo':'Bunny costume', 'Piel':'Skin', 'Pelo':'Hair', 'Ojos':'Eyes', 'Boca':'Mouth', 'Ropa':'Clothes', 'Cabeza':'Head', 'Cara':'Face', 'Fondo':'Background', 'Lentes':'Glasses',
+  'Color de pelo':'Hair color', 'Color de ropa':'Clothes color', 'Esta sudadera tiene su propio color. Elige otra ropa para cambiar el color.':'This sweatshirt has its own color. Choose other clothes to change the color.',
+  '¡Personaje guardado!':'Character saved!', 'Guardar personaje':'Save character', '¡Crea tu personaje! 🐼':'Create your character! 🐼',
+  'Elige uno listo o personalízalo a tu gusto. En la 💎 Tienda puedes comprarle trajes, gorras y más.':'Pick a ready one or make it your own. In the 💎 Shop you can buy costumes, caps and more.',
+  '¡Listo! Ese es tu personaje.':"Done! That's your character.", 'Ahora no':'Not now', '¡Te lo pusiste!':'You put it on!', 'Ponérmelo':'Put it on', 'Mi personaje':'My character', 'Editar personaje':'Edit character',
+  'Ganas gemas al terminar lecciones (más con 3 estrellas), al enviar tareas, al subir de liga y al ganar desafíos a tus amigos.':'You earn gems by finishing lessons (more with 3 stars), sending homework, moving up a league and winning challenges with your friends.',
+  '🧢 Ropa y accesorios':'🧢 Clothes and accessories', '🧊 Protector de racha':'🧊 Streak freeze', 'Protector de racha':'Streak freeze', 'un protector de racha':'a streak freeze', '🧊 Protector de racha listo':'🧊 Streak freeze ready', '💎 Tienda':'💎 Shop', 'Tienda':'Shop', 'Comprar':'Buy', 'Tuyo':'Yours', 'Puesto':'Wearing',
+  // Mapa, niveles y lecciones
+  '¡Tú puedes!':'You can do it!', '¡Sigue así!':'Keep it up!', '¡Me encanta el inglés!':'I love English!', '¡Una lección más!':'One more lesson!', '¡Qué bien lo haces!':"You're doing great!", '¡Vamos!':"Let's go!",
+  'Tu nivel':'Your level', 'Para repasar':'To review', '¡COMPLETADO!':'COMPLETED!', 'CONTINUAR':'CONTINUE', 'REPASAR':'REVIEW', 'EMPEZAR':'START', 'Ver los niveles':'See the levels', '📚 Niveles':'📚 Levels', 'Niveles':'Levels',
+  '🐼 ¡Hoy todavía no has practicado!':"🐼 You haven't practiced today!", 'Con una lección es suficiente.':'One lesson is enough.', '¡Pandi te espera! 🐼':'Pandi is waiting for you! 🐼', 'Hoy todavía no has practicado. ¡Con una lección basta!':"You haven't practiced today. One lesson is enough!",
+  'Lección en preparación':'Lesson coming soon', 'Esta unidad está cerrada. Tu profe la abrirá cuando lleguen a ese tema.':'This unit is closed. Your teacher will open it when you get to that topic.',
+  'Tu profe todavía está preparando esta lección.':'Your teacher is still preparing this lesson.', 'Termina la lección anterior para desbloquear esta.':'Finish the previous lesson to unlock this one.', '¡Empieza aquí!':'Start here!', 'Próximamente':'Coming soon',
+  'Bienvenida':'Welcome', 'Repaso':'Review', 'Despedida':'Goodbye', 'Festivales':'Festivals', 'Alfabeto':'Alphabet', 'Wider World':'Wider World',
+  'Vocabulario':'Vocabulary', 'Gramática':'Grammar', 'Juego':'Game', 'Canto':'Chant', 'Canción':'Song', 'Cuento':'Story', 'Valores':'Values', 'Quiz':'Quiz', 'Fonética':'Phonics', 'Lectura':'Reading', 'Ciencias':'Science',
+  'Escritura':'Writing', 'Matemática':'Math', 'Arte':'Art', 'Salud':'Health', 'Tecnología':'Technology', 'Música':'Music', 'Historia':'History', 'Geografía':'Geography', 'Mini clase':'Mini class',
+  // Tareas del estudiante
+  'Vence hoy':'Due today', 'Mis tareas':'My homework', 'No tienes tareas por ahora. ¡Practica en el mapa para ganar XP!':'You have no homework right now. Practice on the map to earn XP!',
+  'Escribe aquí en inglés…':'Write here in English…', 'Tu respuesta':'Your answer', 'Escribe al menos una oración completa en inglés.':'Write at least one complete sentence in English.',
+  '¡Enviada! Ganaste la medalla “Tarea lista” y 10 💎.':'Sent! You won the “Homework done” medal and 10 💎.', '¡Tarea enviada a tu profe! +10 💎':'Homework sent to your teacher! +10 💎',
+  'Enviada a tu profe':'Sent to your teacher', 'Enviar a mi profe':'Send to my teacher', 'Tu profe la revisará y te dejará una nota aquí.':'Your teacher will check it and leave you a note here.', 'Nota de tu profe':'Your teacher’s note', 'Escritura (workbook)':'Writing (workbook)',
+  // Ranking, ligas y amigos
+  'Esta semana':'This week', 'Desde el inicio':'All time', 'Tú':'You', 'Ranking de la clase':'Class ranking', '¡Vas en primer lugar! Sigue así.':"You're in first place! Keep it up.", '1 día seguido':'1 day in a row', '· Liga':'· League', 'TU LIGA':'YOUR LEAGUE', 'Tu liga':'Your league',
+  'En esta demo, Sofía, Diego, Valeria y los demás compañeros son cuentas de muestra.':'In this demo, Sofía, Diego, Valeria and the other classmates are sample accounts.',
+  'Repaso inteligente':'Smart review', 'Practica las palabras que más te cuestan:':'Practice the words that are hardest for you:', 'Repasar ahora':'Review now', 'Tus palabras difíciles':'Your hard words',
+  '¡Ahora son amigos! (en la demo aceptan solos)':"You're friends now! (in the demo they accept automatically)", '¡Ahora son amigos!':"You're friends now!", 'Solicitud enviada':'Request sent', 'Solicitud rechazada':'Request declined', 'Amigo quitado':'Friend removed',
+  'Compañero':'Classmate', '👫 Mis amigos':'👫 My friends', 'Practiquen los dos el mismo día para mantener su racha 🔥. Quien gane más XP en la semana gana 10 💎 el lunes.':'Both practice on the same day to keep your streak 🔥. Whoever earns more XP in the week wins 10 💎 on Monday.',
+  'Quiere ser tu amigo':'Wants to be your friend', 'Aceptar':'Accept', 'Rechazar':'Decline', 'Quitar':'Remove', '+ Agregar':'+ Add', '¡Los dos practicaron hoy!':'You both practiced today!', 'Te toca practicar hoy':"It's your turn to practice today", 'Practiquen hoy para seguir':'Practice today to keep going',
+  'Dejarán de ser amigos y se pierde su racha juntos.':"You won't be friends anymore and you'll lose your streak together.", 'Todavía no tienes amigos. Toca “+ Agregar” para invitar a un compañero de tu grupo.':'You have no friends yet. Tap “+ Add” to invite a classmate from your group.',
+  'Solo puedes agregar compañeros de tu grupo. Ellos tienen que aceptar.':'You can only add classmates from your group. They have to accept.', 'Ya eres amigo de todos tus compañeros de grupo. 🎉':"You're already friends with all your classmates. 🎉", 'Agregar amigo':'Add a friend', 'Enviar solicitud':'Send request',
+  // Perfil, medallas, recordatorio y voz
+  'Termina tu primera lección':'Finish your first lesson', 'Completa la Unidad 1':'Complete Unit 1', '¡A la escuela!':'To school!', 'Completa la Unidad 2':'Complete Unit 2', 'Una lección sin errores':'A lesson with no mistakes', 'Voz de oro':'Golden voice',
+  'Racha de 3':'3-day streak', 'Practica 3 días seguidos':'Practice 3 days in a row', 'Tarea lista':'Homework done', 'Envía tu tarea escrita':'Send your written homework', 'Termina una lectura':'Finish a reading', '¡Hello!':'Hello!', 'Lector':'Reader', 'Perfecto':'Perfect',
+  'Medallas':'Medals', 'Mis medallas':'My medals', 'Recordatorio diario':'Daily reminder', 'Hora del recordatorio':'Reminder time', 'Activar':'Turn on', 'Desactivar':'Turn off', 'Probar':'Test',
+  'Este navegador no puede mostrar avisos. Instala la app en tu pantalla de inicio.':"This browser can't show notifications. Install the app on your home screen.", 'Permite las notificaciones de Pandi English en los ajustes del teléfono.':'Allow Pandi English notifications in your phone settings.',
+  '¡Listo! 🐼':'Done! 🐼', 'Así se verá tu recordatorio de Pandi English.':'This is how your Pandi English reminder will look.',
+  'Pandi te avisa a esta hora si ese día todavía no has practicado. Funciona con la app instalada en tu pantalla de inicio; si el teléfono la cierra, el aviso sale al volver a abrirla.':"Pandi reminds you at this time if you haven't practiced that day. It works with the app installed on your home screen; if the phone closes it, the reminder shows when you open it again.",
+  'Este teléfono no puede reproducir voz. Pide ayuda a tu profe.':"This phone can't play voice. Ask your teacher for help.", 'No se oyó la voz. Sube el volumen o quita el modo silencio.':"The voice wasn't heard. Turn up the volume or turn off silent mode.",
+  'El micrófono está bloqueado. Permítelo en los ajustes del navegador.':'The microphone is blocked. Allow it in the browser settings.', 'No te escuché. Acércate al teléfono e inténtalo otra vez.':"I didn't hear you. Get closer to the phone and try again.",
+  'Sin internet no puedo escuchar.':"I can't listen without internet.", 'No encuentro el micrófono de este teléfono.':"I can't find this phone's microphone.", 'No pude usar el micrófono aquí.':"I couldn't use the microphone here.", 'Este teléfono no puede reproducir voz.':"This phone can't play voice.", 'Voz en inglés:':'English voice:',
+  'No encontré una voz en inglés. En Android instala “Texto a voz de Google” y descarga inglés (EE. UU.).':"I couldn't find an English voice. On Android, install “Google Text-to-speech” and download English (US).",
+  'Toca “Probar micrófono” y di: Hello':'Tap “Test microphone” and say: Hello', 'Este navegador no escucha la voz. En las lecciones de hablar usarás el botón “Ya lo dije”. Para mejor resultado usa Chrome en Android.':"This browser can't listen to your voice. In speaking lessons you'll use the “I said it” button. For best results use Chrome on Android.",
+  'No escuché nada. Revisa que el navegador tenga permiso para usar el micrófono y que haya internet.':"I didn't hear anything. Check that the browser can use the microphone and that there is internet.", 'Probar audio y micrófono':'Test audio and microphone', 'Escoge la voz que más te guste':'Choose the voice you like best',
+  'Si no oyes nada: sube el volumen y quita el modo silencio (en iPhone, el interruptor al lado del teléfono).':"If you can't hear anything: turn up the volume and turn off silent mode (on iPhone, the switch on the side).", 'Probar micrófono':'Test microphone', 'Probar sonido':'Test sound', 'Ya lo dije':'I said it',
+  'Aviso de privacidad · Términos y condiciones':'Privacy notice · Terms and conditions', '¿Reiniciar la demo?':'Reset the demo?', 'Se borran todas las cuentas creadas y el progreso guardado en este dispositivo.':'All accounts and progress saved on this device will be deleted.', 'Reiniciar la demo':'Reset the demo', 'Reiniciar':'Reset',
+  // Panel del profe: resumen y estudiantes
+  'Así va tu grupo esta semana.':"Here's how your group is doing this week.", 'Practicaron esta semana':'Practiced this week', 'Tareas por revisar':'Homework to check', 'Ranking de la semana':"This week's ranking", 'Última práctica:':'Last practice:',
+  'Necesitan un empujón':'Need a little push', 'Estudiantes que no han practicado en los últimos 7 días.':"Students who haven't practiced in the last 7 days.", 'Todos practicaron esta semana.':'Everyone practiced this week.', 'Palabras que más se fallan':'Most missed words',
+  'Para repasar en clase. Cuenta los errores de todos los estudiantes del grupo.':"To review in class. It counts all the group's mistakes.", 'Todavía no hay errores registrados. Aparecerán cuando los estudiantes practiquen.':'No mistakes yet. They will appear when students practice.',
+  'Estos estudiantes fallan esta palabra. El número baja cuando la aciertan en su Repaso inteligente.':'These students miss this word. The number goes down when they get it right in their Smart review.', 'Ya nadie tiene errores pendientes con esta palabra.':'Nobody has pending mistakes with this word anymore.',
+  'Nunca':'Never', 'Hoy':'Today', 'Ayer':'Yesterday', 'Este grupo todavía no tiene estudiantes.':'This group has no students yet.', 'Toca un estudiante para ver su avance o cambiarlo de grupo. Las cuentas nuevas pueden iniciar sesión de inmediato.':'Tap a student to see their progress or change their group. New accounts can log in right away.',
+  '+ Nuevo grupo':'+ New group', 'Nuevo grupo':'New group', 'Editar grupo':'Edit group', 'Nombre del grupo':'Group name', 'Ej. Lunes 3 pm · Nivel 2':'E.g. Monday 3 pm · Level 2', 'Nivel del grupo':'Group level', 'Se abre la primera unidad de ese nivel. Las demás las abres en Contenido.':'The first unit of that level opens. You open the others in Content.',
+  'Escribe el nombre del grupo.':'Type the group name.', 'Grupo creado. Ya puedes agregarle estudiantes.':'Group created. You can add students now.', 'Grupo guardado':'Group saved', 'Crear grupo':'Create group', 'Mueve o elimina a sus estudiantes antes de borrar el grupo.':'Move or delete its students before deleting the group.',
+  'Debe quedar al menos un grupo.':'There must be at least one group.', 'El grupo no tiene estudiantes.':'The group has no students.', 'Eliminar grupo':'Delete group', 'Grupo':'Group', 'Grupos':'Groups', 'Nombre':'Name', 'Guardar':'Save', 'Eliminar':'Delete', 'Editar':'Edit', 'Cerrar':'Close',
+  'Mínimo 8 caracteres':'At least 8 characters', 'Mínimo 4 caracteres':'At least 4 characters', 'Agregar estudiante':'Add student', 'Nombre y apellido':'First and last name', 'Usuario (sin espacios)':'Username (no spaces)', 'Crear cuenta':'Create account',
+  'Tengo la autorización del papá, la mamá o el tutor para crear esta cuenta (':'I have permission from the parent or guardian to create this account (', 'Escribe el nombre del estudiante.':"Type the student's name.", 'El usuario debe tener de 3 a 16 letras o números, sin espacios.':'The username must have 3 to 16 letters or numbers, with no spaces.',
+  'Ese usuario ya existe. Prueba con otro.':'That username already exists. Try another one.', 'Marca la casilla de autorización del papá, la mamá o el tutor.':"Check the parent or guardian's permission box.",
+  'Puedes editar el mensaje antes de enviarlo.':'You can edit the message before sending it.', 'WhatsApp del papá o la mamá':"Parent's WhatsApp", 'Enviar por WhatsApp':'Send by WhatsApp', 'Selecciona el texto y cópialo':'Select the text and copy it', 'Copiar':'Copy', 'Compartir':'Share',
+  'El número se guarda solo en este teléfono o computadora. Si lo dejas vacío, WhatsApp te deja elegir el contacto.':'The number is saved only on this phone or computer. If you leave it empty, WhatsApp lets you choose the contact.', 'Reporte para padres':'Report for parents', 'Recordarle por WhatsApp':'Remind by WhatsApp',
+  'XP semana':'XP this week', 'Racha':'Streak', 'Avance por unidad':'Progress by unit', 'Todavía no tiene medallas':'No medals yet', 'Le cuesta':'Hard words', 'Cambiar contraseña':'Change password', 'Se borra la cuenta y todo su progreso. No se puede deshacer.':'The account and all its progress will be deleted. This cannot be undone.',
+  'Eliminar estudiante':'Delete student', 'Estudiante eliminado':'Student deleted', 'Nueva contraseña':'New password', 'La contraseña debe tener al menos 8 caracteres.':'The password must have at least 8 characters.', 'Guardar contraseña':'Save password',
+  'XP esta semana':'XP this week', 'Racha (días)':'Streak (days)', 'Lecciones completadas':'Lessons completed', 'Última práctica':'Last practice', 'Promedio de notas':'Grade average', 'Fecha de entrega':'Due date', 'Lecciones hechas':'Lessons done', 'Lecciones de la tarea':'Homework lessons',
+  'Comentario del profe':"Teacher's comment", 'Cambios de nota':'Grade changes', 'No aplica':'N/A', 'Entregada, por revisar':'Sent, to check', 'Sin entregar':'Not sent', 'Revisada':'Checked', 'No se pudo crear el archivo de Excel. Prueba otra vez.':"Couldn't create the Excel file. Try again.",
+  'Estudiante':'Student', 'Tarea':'Homework', 'Nota':'Grade', 'Estado':'Status', 'Comentario':'Comment', 'Escrito':'Written',
+  // Panel del profe: tareas y calificaciones
+  '+ Nueva tarea':'+ New homework', '⬇️ Descargar notas del grupo (Excel)':"⬇️ Download the group's grades (Excel)", 'Este grupo no tiene tareas. Crea la primera.':'This group has no homework. Create the first one.', 'Editar tarea':'Edit homework', 'Sin lecciones':'No lessons',
+  'Avance de cada estudiante':"Each student's progress", 'Este grupo no tiene estudiantes.':'This group has no students.', 'Entregada hoy':'Sent today', 'REVISADA':'CHECKED', 'POR REVISAR':'TO CHECK', 'Todavía nadie ha entregado.':'Nobody has sent it yet.', 'Escrituras entregadas':'Writings sent',
+  'Los estudiantes dejarán de verla. Sus lecciones completadas no se borran.':"Students won't see it anymore. Their completed lessons are not deleted.", 'Eliminar tarea':'Delete homework', 'Tarea eliminada':'Homework deleted',
+  'Ej. ¡Muy bien! Revisa la mayúscula en “Nicaragua”.':'E.g. Great job! Check the capital letter in “Nicaragua”.', 'Comentario para el estudiante':'Comment for the student', 'Nota (0 a 100)':'Grade (0 to 100)', 'La nota debe ser un número entero de 0 a 100.':'The grade must be a whole number from 0 to 100.',
+  '¡Buen trabajo!':'Good job!', 'Calificar y enviar':'Grade and send', 'Calificación enviada':'Grade sent', 'Editar nota':'Edit grade', 'Ej. Volví a revisar y estaba mejor de lo que pensé.':'E.g. I checked again and it was better than I thought.', 'Motivo del cambio (obligatorio)':'Reason for the change (required)',
+  'Escribe el motivo del cambio (al menos 5 letras).':'Write the reason for the change (at least 5 letters).', 'No cambiaste la nota ni el comentario.':"You didn't change the grade or the comment.", 'Guardar cambio':'Save change', 'Historial de la nota':'Grade history', 'sin nota':'no grade',
+  'Título de la escritura':'Writing title', 'Ej. Escribe 3 oraciones sobre tu familia…':'E.g. Write 3 sentences about your family…', 'Instrucciones':'Instructions', 'Nueva tarea':'New homework', 'Título':'Title', 'Ej. Semana 3 · My School':'E.g. Week 3 · My School', 'Fecha de entrega (vence)':'Due date',
+  'Lecciones que deben completar':'Lessons they must complete', 'Incluir una escritura (workbook)':'Include a writing (workbook)', 'Asignar a los grupos':'Assign to groups', 'Escribe el título de la tarea.':'Type the homework title.', 'Elige la fecha de entrega.':'Choose the due date.',
+  'Elige al menos una lección o incluye una escritura.':'Choose at least one lesson or include a writing.', 'Escribe el título y las instrucciones de la escritura.':'Type the writing title and instructions.', 'Elige al menos un grupo.':'Choose at least one group.',
+  'Tarea asignada. Los estudiantes ya la ven.':'Homework assigned. Students can see it now.', 'Tarea guardada':'Homework saved', 'Asignar tarea':'Assign homework', 'Guardar cambios':'Save changes',
+  // Panel del profe: contenido, unidades, lecciones y banco de palabras
+  'Palabra nueva':'New word', 'Presenta una palabra nueva con imagen y audio':'Shows a new word with picture and audio', 'Elegir la palabra':'Choose the word', 'Ve la imagen y elige la palabra correcta':'Look at the picture and choose the right word', 'Escuchar y elegir':'Listen and choose',
+  'Oye la palabra y toca la imagen':'Hear the word and tap the picture', 'Unir':'Match', 'Une palabras con sus imágenes':'Match words with their pictures', 'Escribir':'Write', 'Escribe la palabra en inglés':'Write the word in English', 'Hablar':'Speak', 'Repite una frase en voz alta':'Say a sentence out loud',
+  'Ordenar oración':'Order the sentence', 'Arma la oración con palabras':'Build the sentence with words', 'Completar':'Complete', 'Elige la palabra que falta':'Choose the missing word', 'Memoria':'Memory', 'Juego de voltear cartas':'Card flipping game', 'Explica una regla con ejemplos':'Explains a rule with examples',
+  'Texto corto con una pregunta':'Short text with a question', 'Escena del libro':'Book scene', 'Actividad dibujada del libro':'Drawn activity from the book', 'Buscar palabra…':'Search word…', 'Buscar palabra':'Search word', 'Tipo de imagen':'Picture type', 'Imagen de:':'Picture of:',
+  'Pega un emoji, ej. 🐶':'Paste an emoji, e.g. 🐶', 'Pega un emoji, ej. 🍎':'Paste an emoji, e.g. 🍎', 'Emoji':'Emoji', 'Color':'Color', 'Número':'Number', 'Foto':'Photo', 'Otra palabra':'Another word',
+  'Contenido del curso':'Course content', 'Con el interruptor abres la unidad para el grupo elegido; toca una unidad para editar sus lecciones.':'Use the switch to open the unit for the chosen group; tap a unit to edit its lessons.', 'Nivel de':'Level of',
+  'Los estudiantes ven hasta este nivel. Los niveles anteriores quedan abiertos para repasar y los siguientes no se ven. Si un estudiante ya avanzó en un nivel, ese nivel no se le cierra.':"Students see up to this level. Earlier levels stay open to review and later ones are hidden. If a student already advanced in a level, that level doesn't close for them.",
+  '+ Nueva unidad':'+ New unit', 'Banco de palabras':'Word bank', 'Nueva unidad':'New unit', 'Título en inglés':'Title in English', 'Descripción':'Description', 'Ej. Las partes del cuerpo':'E.g. Parts of the body', 'Escribe el título de la unidad.':'Type the unit title.',
+  'Unidad creada. Agrega su primera lección.':'Unit created. Add its first lesson.', 'Crear unidad':'Create unit', 'Sin título':'Untitled', 'Los estudiantes las ven en este orden':'Students see them in this order', 'Toca una lección (o el lápiz) para editarla: título, tipo y ejercicios.':'Tap a lesson (or the pencil) to edit it: title, type and exercises.',
+  '· no visible aún':'· not visible yet', 'Editar lección':'Edit lesson', 'Esta unidad todavía no tiene lecciones.':'This unit has no lessons yet.', '+ Nueva lección':'+ New lesson', 'La unidad está vacía.':'The unit is empty.', 'No se puede deshacer.':'This cannot be undone.', 'Eliminar unidad':'Delete unit', 'Unidad eliminada':'Unit deleted',
+  'Nueva lección':'New lesson', 'Ej. La familia':'E.g. The family', 'Tipo de lección':'Lesson type', 'Atajo:':'Shortcut:',
+  'elige palabras del banco y Pandi arma los ejercicios automáticamente (flashcards, elegir, escuchar, unir, escribir y memoria). Luego puedes editarlos. Si no eliges ninguna, la lección empieza vacía.':'choose words from the bank and Pandi builds the exercises automatically (flashcards, choose, listen, match, write and memory). Then you can edit them. If you choose none, the lesson starts empty.',
+  'Palabras para ejercicios automáticos':'Words for automatic exercises', 'Escribe el título de la lección.':'Type the lesson title.', 'Lección creada. Agrega ejercicios.':'Lesson created. Add exercises.', 'Crear lección':'Create lesson', 'Título de la lección':'Lesson title', 'Los cambios se guardan solos.':'Changes are saved automatically.',
+  'Mezclar el orden':'Shuffle the order', 'Útil para repasos y quizzes':'Useful for reviews and quizzes', 'Probar lección':'Try the lesson', 'Las escenas del libro vienen listas: se pueden mover o quitar, pero no editar.':"Book scenes come ready: you can move or remove them, but not edit them.", 'Mover a otra unidad':'Move to another unit',
+  'Sin ejercicios. Agrega el primero.':'No exercises. Add the first one.', '+ Ejercicios automáticos':'+ Automatic exercises', '+ Ejercicio':'+ Exercise', 'Se borran todos sus ejercicios. No se puede deshacer.':'All its exercises will be deleted. This cannot be undone.', 'Eliminar lección':'Delete lesson', 'Lección eliminada':'Lesson deleted',
+  'Ejercicios automáticos':'Automatic exercises', 'Elige palabras del banco y Pandi agrega flashcards, elegir, escuchar, unir, escribir y memoria al final de esta lección.':'Choose words from the bank and Pandi adds flashcards, choose, listen, match, write and memory at the end of this lesson.',
+  'Elige al menos una palabra.':'Choose at least one word.', 'Agregar a la lección':'Add to the lesson', '¿Qué tipo de ejercicio?':'What kind of exercise?', '+ Agregar una palabra nueva al banco':'+ Add a new word to the bank', 'Palabras (una flashcard por cada una)':'Words (one flashcard each)', 'Palabra correcta':'Correct word',
+  'El estudiante ve la imagen y escribe la palabra.':'The student sees the picture and writes the word.', 'Las otras opciones se eligen solas con palabras de la misma lección.':'The other options are chosen automatically from words in the same lesson.', 'Palabras a unir (2 a 5)':'Words to match (2 to 5)', 'Palabras del juego (2 a 6)':'Game words (2 to 6)',
+  'Frase en inglés':'Sentence in English', 'Oración correcta (sin punto final)':'Correct sentence (no final period)', 'Palabras extra para confundir (separadas por coma)':'Extra words to confuse (separated by commas)', 'Así se verá':"This is how it'll look", 'Texto antes del espacio':'Text before the blank',
+  'Palabra correcta (va en el espacio)':'Correct word (goes in the blank)', 'Texto después del espacio':'Text after the blank', 'Opciones incorrectas (separadas por coma)':'Wrong options (separated by commas)', 'Inglés':'English', 'Ejemplo en inglés':'Example in English', 'Español':'Spanish', 'Traducción':'Translation',
+  'Título de la regla':'Rule title', 'Máximo 5 ejemplos':'Up to 5 examples', 'Título de la lectura':'Reading title', 'Texto en inglés':'Text in English', 'Traducción al español (opcional)':'Spanish translation (optional)', 'Pregunta':'Question', 'Respuesta correcta':'Correct answer', 'Respuestas incorrectas (separadas por coma)':'Wrong answers (separated by commas)', 'Ej. No':'E.g. No',
+  'Elige al menos 2 palabras.':'Choose at least 2 words.', 'Escribe la frase en inglés.':'Type the sentence in English.', 'La oración necesita al menos 2 palabras.':'The sentence needs at least 2 words.', 'Escribe la palabra correcta.':'Type the correct word.', 'Agrega al menos una opción incorrecta.':'Add at least one wrong option.',
+  'Agrega al menos un ejemplo en inglés.':'Add at least one example in English.', 'Escribe el texto de la lectura.':'Type the reading text.', 'Escribe la pregunta y la respuesta correcta.':'Type the question and the correct answer.', 'Agrega al menos una respuesta incorrecta.':'Add at least one wrong answer.', 'Nuevo:':'New:', 'Editar:':'Edit:',
+  'No hay palabras con ese nombre.':'No words with that name.', '+ Nueva':'+ New', 'Cada palabra tiene su imagen y traducción. Úsalas en flashcards, juegos y ejercicios.':'Each word has its picture and translation. Use them in flashcards, games and exercises.', 'No pude leer esa imagen. Prueba con otra.':"I couldn't read that picture. Try another one.",
+  'Palabra en inglés':'Word in English', 'Nueva palabra':'New word', 'Editar palabra':'Edit word', 'Para cambiar la palabra en inglés, crea una nueva.':'To change the English word, create a new one.', 'Traducción al español':'Spanish translation', 'Subir una foto o dibujo':'Upload a photo or drawing', 'Así suena la palabra':'This is how the word sounds',
+  'Escribe la palabra en inglés.':'Type the word in English.', 'Esa palabra ya está en el banco.':'That word is already in the bank.', 'Escribe la traducción al español.':'Type the Spanish translation.', 'Agrega un emoji o sube una imagen.':'Add an emoji or upload a picture.', 'Palabra guardada':'Word saved', 'Agregar palabra':'Add word',
+  'No se usa en ninguna lección.':"It isn't used in any lesson.", 'Eliminar palabra':'Delete word', 'Palabra eliminada':'Word deleted', 'Idioma de la app':'App language',
+  'Los estudiantes y el profe ven toda la app en este idioma. Las palabras y frases de las lecciones siempre están en inglés.':'Students and the teacher see the whole app in this language. Words and sentences in the lessons are always in English.',
+  // Motor de lecciones
+  'Primero toca una palabra de abajo.':'First tap a word below.', 'Opción':'Option', 'Primero toca la bocina para escuchar.':'First tap the speaker to listen.', '¡Muy bien!':'Great job!', '▶ Escuchar el canto completo':'▶ Listen to the whole chant', '▶ Escuchar todo':'▶ Listen to everything', 'Escuchar todo':'Listen to everything', 'Escuchar':'Listen',
+  '¡Desfile! Los dibujos pasan de un lado al otro. Toca la bocina y atrapa el que escuchaste.':'Parade! The pictures go from side to side. Tap the speaker and catch the one you heard.', '¡Lluvia de dibujos! Caen en paracaídas. Toca la bocina y atrapa el que escuchaste.':'Picture rain! They fall with parachutes. Tap the speaker and catch the one you heard.',
+  '¡Topos! Los dibujos salen de los hoyos y se esconden. Toca la bocina y atrapa el que escuchaste.':'Moles! The pictures pop out of the holes and hide. Tap the speaker and catch the one you heard.', 'Toca solo uno.':'Tap only one.', 'Toca todos los que van.':'Tap all the right ones.', 'Siguiente ▶':'Next ▶', 'Siguiente':'Next', '¡Fin!':'The end!',
+  '¿Quién dijo esto?':'Who said this?', '¿Qué cantaron? Toca la bocina del globo.':'What did they sing? Tap the speaker on the bubble.', 'Completa el canto:':'Complete the chant:', 'Siguiente línea ▶':'Next line ▶', 'Palabras nuevas':'New words', '¿Cuál frase escuchas?':'Which sentence do you hear?',
+  '¿Quién lo dijo en el cuento?':'Who said it in the story?', 'Encuentra el error':'Find the mistake', 'Responde a tu amigo':'Answer your friend', '¿Verdadero o falso?':'True or false?', 'Ordena el cuento':'Put the story in order', 'Arma la palabra':'Build the word', 'Atrapa la burbuja':'Catch the bubble',
+  '¿Cómo se dice en inglés?':'How do you say it in English?', 'Escucha y toca la imagen correcta':'Listen and tap the right picture', 'Une cada palabra con su imagen':'Match each word with its picture', 'Escribe en inglés':'Write in English', 'Escucha y repite en voz alta':'Listen and repeat out loud', 'Ordena la oración':'Put the sentence in order',
+  'Completa la oración':'Complete the sentence', 'Memoria: encuentra las parejas':'Memory: find the pairs', 'Lee y responde':'Read and answer', '¡Excelente!':'Excellent!', '¡Genial!':'Awesome!', '¡Perfecto!':'Perfect!', '¡Así se hace!':"That's the way!", '¡Súper!':'Super!',
+  'Esta lección todavía no tiene ejercicios.':'This lesson has no exercises yet.', '⭐ ¡Reto de Pandi! Lo que viene es un extra para practicar más':"⭐ Pandi's challenge! What's next is an extra to practice more", '⭐ Reto de Pandi':"⭐ Pandi's challenge", 'Completa el canto':'Complete the chant', 'Completa lo que dijeron en el cuento':'Complete what they said in the story',
+  'Casi… ¡tú puedes!':'Almost… you can do it!', 'La repetiremos al final.':"We'll repeat it at the end.", 'La respuesta es:':'The answer is:', 'Continuar':'Continue', '¡Lección completada!':'Lesson complete!', 'Precisión':'Accuracy', '(¡bonus por 3 estrellas!)':'(3-star bonus!)', '¡Racha encendida!':'Streak on!', 'Nueva medalla':'New medal',
+  '¿Salir de la lección?':'Leave the lesson?', 'Si sales ahora, perderás el avance de esta lección.':"If you leave now, you'll lose your progress in this lesson.", 'Seguir':'Keep going', 'XP (no se guarda)':'XP (not saved)', 'Toca Escuchar para oír la palabra.':'Tap Listen to hear the word.', '¡Muy bien! Mírala bien…':'Great! Look at it closely…',
+  '¡Las volteaste todas! Ahora a jugar…':"You flipped them all! Now let's play…", 'Las encontraste, pero fallaste varias. ¡Las repetiremos al final!':"You found them, but you missed some. We'll repeat them at the end!", '¡Las encontraste todas!':'You found them all!',
+  '¡Muy bien! Ahora demuestra lo que aprendiste.':'Great! Now show what you learned.', 'Ahora tú: completa la frase':'Now you: complete the sentence', 'Ahora tú: ¿cuál frase escuchas?':'Now you: which sentence do you hear?', 'Ahora tú: ordena la frase':'Now you: put the sentence in order',
+  'Toca el micrófono y di la frase':'Tap the microphone and say the sentence', 'Repite la frase en voz alta y luego toca el botón.':'Say the sentence out loud and then tap the button.', 'No te escuché. Si ya lo dijiste en voz alta, toca el botón.':"I didn't hear you. If you already said it out loud, tap the button.",
+  'Escuché algo diferente. Si ya lo dijiste bien, toca el botón.':'I heard something different. If you already said it right, tap the button.', 'Si ya lo dijiste, toca el botón.':'If you already said it, tap the button.', 'Repite la frase en voz alta y toca el botón.':'Say the sentence out loud and tap the button.',
+  'No pude usar el micrófono aquí. Repite la frase en voz alta y toca el botón.':"I couldn't use the microphone here. Say the sentence out loud and tap the button.", '¡Arma el tren! Toca las palabras en orden y se enganchan como vagones.':'Build the train! Tap the words in order and they hook up like train cars.', 'Tu oración':'Your sentence', 'Borrar':'Delete',
+  'Cada palabra tiene su imagen. Voltea dos cartas a la vez.':'Each word has its picture. Flip two cards at a time.', 'Toca la bocina para empezar. Mueve la canasta para atrapar lo que escuchaste.':'Tap the speaker to start. Move the basket to catch what you heard.', 'Mover a la izquierda':'Move left', 'Mover a la derecha':'Move right',
+  'Mueve la canasta debajo de lo que escuchaste.':'Move the basket under what you heard.', '¡Canasta! Los dibujos caen del cielo.':'Basket! The pictures fall from the sky.', 'Mira bien dónde está cada dibujo.':'Look closely at where each picture is.', '¡Tapar y revolver!':'Cover and shuffle!',
+  'Toca la bocina y busca debajo de qué vaso está lo que escuchaste.':'Tap the speaker and find which cup hides what you heard.', '¡Los vasos mágicos! Sigue con la vista el dibujo.':'The magic cups! Follow the picture with your eyes.', '¡GOOOL!':'GOOOAL!', '¡Atajada!':'Saved!',
+  '¡Penal! Patea la pelota a la palabra en inglés que va con el dibujo.':'Penalty! Kick the ball to the English word that goes with the picture.', '¡Cofres del tesoro! Abre el cofre con la palabra que va con el dibujo.':'Treasure chests! Open the chest with the word that goes with the picture.',
+  'Con I, you, we y they se usa «have»; con he, she e it se usa «has».':'With I, you, we and they we use «have»; with he, she and it we use «has».', 'En preguntas con he, she o it se usa «Does»; con I, you, we y they, «Do».':'In questions with he, she or it we use «Does»; with I, you, we and they, «Do».',
+  "Con he, she e it se dice «doesn't»; con I, you, we y they, «don't».":"With he, she and it we say «doesn't»; with I, you, we and they, «don't».", 'Para una sola cosa se usa «is»; para varias, «are».':'For one thing we use «is»; for many, «are».', "Para una sola cosa se usa «isn't»; para varias, «aren't».":"For one thing we use «isn't»; for many, «aren't».",
+  'Con I, he, she e it se usa «was»; con you, we y they, «were».':'With I, he, she and it we use «was»; with you, we and they, «were».', 'Para una cosa se dice «this»; para varias cosas, «these».':'For one thing we say «this»; for many things, «these».',
+  'Con he, she e it el verbo lleva -s: «likes». Con I, you, we y they, «like».':'With he, she and it the verb takes -s: «likes». With I, you, we and they, «like».', 'Con I se usa «am»: I am. Con he, she e it, «is».':'With I we use «am»: I am. With he, she and it, «is».',
+  'Esta oración tiene una palabra equivocada. Tócala.':'This sentence has a wrong word. Tap it.', 'Piensa en el cuento de la unidad. ¿Pasó así?':"Think about the unit's story. Did it happen like this?", 'True: sí pasó en el cuento.':'True: it happened in the story.', 'False: eso es de otro cuento.':"False: that's from another story.",
+  'Toca las partes del cuento en el orden en que pasaron.':'Tap the parts of the story in the order they happened.', 'Toca las letras en orden. Para borrar, toca los espacios.':'Tap the letters in order. To delete, tap the spaces.', '¡Atrapaste todas!':'You caught them all!', 'Escribe la palabra':'Write the word', 'Pista':'Hint',
+  // Instrucciones de las escenas del libro (niveles 1 a 5)
+  'Toca la bocina y luego toca lo que escuchaste.':'Tap the speaker and then tap what you heard.', 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.':'Tap the speaker and then tap what you heard. It gets its number.', 'Toca una palabra y ponla debajo de su dibujo.':'Tap a word and put it under its picture.',
+  'Toca una palabra y ponla en su canasta.':'Tap a word and put it in its basket.', 'Escucha el cuento viñeta por viñeta. Toca la bocina de cada una.':'Listen to the story picture by picture. Tap the speaker on each one.', 'Escucha cada palabra y ponla en su canasta.':'Listen to each word and put it in its basket.',
+  'Escucha y canta el abecedario.':'Listen and sing the alphabet.', 'Toca un nombre y ponlo debajo de su amigo.':'Tap a name and put it under its friend.', 'Toca la bocina y luego toca el color que escuchaste.':'Tap the speaker and then tap the color you heard.', 'Escucha el canto y dilo.':'Listen to the chant and say it.', 'Cuenta con tus dedos.':'Count with your fingers.',
+  'Toca el dibujo de alguien que llega: ¿Hello?':'Tap the picture of someone arriving: Hello?', 'Escucha la canción y cántala.':'Listen to the song and sing it.', 'Pon debajo de cada amigo su premio.':'Put each prize under its friend.', 'Toca lo que es compartir.':'Tap what sharing is.', 'Toca lo que había en el clóset.':'Tap what was in the closet.',
+  'Toca lo que se hace en la escuela.':'Tap what you do at school.', 'Lee y toca: «In picture 1, the pencil case is pink, the board is black and the eraser is green.»':'Read and tap: «In picture 1, the pencil case is pink, the board is black and the eraser is green.»', 'Toca lo que es verdad en el cuento.':'Tap what is true in the story.',
+  'Pon el oficio debajo de cada familiar.':'Put the job under each family member.', 'Toca cuándo hay que lavarse las manos.':'Tap when you have to wash your hands.', 'Pon cada frase en su canasta.':'Put each sentence in its basket.', 'Pon debajo de cada mascota su casa.':'Put each pet’s home under it.', 'Pon el nombre del bebé debajo de su mamá.':'Put the baby’s name under its mom.',
+  'Pon cada palabra debajo de su dibujo.':'Put each word under its picture.', 'Toca lo que hace un niño ordenado.':'Tap what a tidy child does.', 'Toca lo que hay en una cocina.':'Tap what there is in a kitchen.', 'Pon la palabra amable debajo de su dibujo.':'Put the polite word under its picture.', 'Pon cada comida en su canasta.':'Put each food in its basket.',
+  'Pon el sentimiento debajo de su dibujo.':'Put the feeling under its picture.', 'Toca lo que pasó en el cuento.':'Tap what happened in the story.', 'Pon cada lugar o animal en su canasta.':'Put each place or animal in its basket.', 'Lee y toca lo que le gusta: «Max likes cheese, meat and bread.»':'Read and tap what he likes: «Max likes cheese, meat and bread.»',
+  'Toca lo que pasa en el dibujo 1.':'Tap what happens in picture 1.', 'Toca lo que hay en la lonchera de la primera niña.':"Tap what is in the first girl's lunch box.", 'Toca un nombre para escucharlo y ponlo debajo de su amigo.':'Tap a name to hear it and put it under its friend.', 'Toca la bocina y luego toca al amigo que escuchaste.':'Tap the speaker and then tap the friend you heard.',
+  'Pon cada color en la parte del loro que tiene ese color.':'Put each color on the part of the parrot that has that color.', 'Escucha el canto y dilo con Ola y el tío Dan.':'Listen to the chant and say it with Ola and Uncle Dan.', 'Toca la bocina y luego toca el color que escuchaste. Se le pone su número.':'Tap the speaker and then tap the color you heard. It gets its number.',
+  'Toca la bocina y luego toca el reloj que escuchaste.':'Tap the speaker and then tap the clock you heard.', 'Toca la bocina y luego toca lo que haces a esa hora.':'Tap the speaker and then tap what you do at that time.', 'Toca lo que hacen los buenos amigos.':'Tap what good friends do.', 'Toca las formas de pasar tiempo con tu familia.':'Tap the ways to spend time with your family.',
+  'Pon las palabras con th en su canasta.':'Put the words with th in their basket.', 'Pon cada actividad en su canasta: ejercicio o no es ejercicio.':'Put each activity in its basket: exercise or not exercise.', 'Pon cada palabra en la parte de la cara que le toca.':'Put each word on its part of the face.', 'Toca lo que muestra respeto.':'Tap what shows respect.',
+  'Pon debajo de cada animal lo que nos da.':'Put what each animal gives us under it.', 'Pon cada animal donde está despierto: de día o de noche.':'Put each animal where it is awake: day or night.', 'Toca el animal que no vive en la granja.':"Tap the animal that doesn't live on the farm.", 'Toca el animal que no es de la noche.':"Tap the animal that isn't a night animal.",
+  'Toca la comida sana.':'Tap the healthy food.', 'Escucha cada palabra: ¿suena “u” larga como zoo, o corta como book?':'Listen to each word: does it have a long “u” like zoo, or a short one like book?', 'Pon la palabra amable que va con cada dibujo.':'Put the polite word that goes with each picture.', 'Toca la bocina y luego toca el día que escuchaste.':'Tap the speaker and then tap the day you heard.',
+  'Toca lo que puedes compartir.':'Tap what you can share.', 'Toca un nombre y ponlo debajo de su personaje.':'Tap a name and put it under its character.', 'Toca las formas seguras de jugar afuera.':'Tap the safe ways to play outside.', 'Escucha cada palabra y ponla en su canasta: air o ear.':'Listen to each word and put it in its basket: air or ear.',
+  "Lee y toca lo que sí hay: «In picture B, there are flowers, birds and trees. There isn't a rainbow and there aren't any spiders.»":"Read and tap what there is: «In picture B, there are flowers, birds and trees. There isn't a rainbow and there aren't any spiders.»", '¿Qué le gusta a Yoon-ji? Tócalo.':'What does Yoon-ji like? Tap it.', 'Toca los buenos hábitos.':'Tap the good habits.',
+  'Pon cada animal debajo de su dibujo.':'Put each animal under its picture.', 'Escucha cada palabra y ponla en su canasta: ay o er.':'Listen to each word and put it in its basket: ay or er.', 'Lee y toca: «Grandpa has glasses, a mustache and a beard.»':'Read and tap: «Grandpa has glasses, a mustache and a beard.»', 'Toca la bocina y luego toca la tarjeta que escuchaste.':'Tap the speaker and then tap the card you heard.',
+  'Toca una mascota y ponla debajo de su dibujo.':'Tap a pet and put it under its picture.', 'Toca cómo se cuida a una mascota.':'Tap how to take care of a pet.', 'Pon cada etapa en la canasta de su animal.':"Put each stage in its animal's basket.", 'Escucha cada palabra y ponla en su canasta: ea u oi.':'Listen to each word and put it in its basket: ea or oi.',
+  'Pon cada mascota en su canasta: tiene patas o no tiene patas.':"Put each pet in its basket: it has legs or it doesn't have legs.", 'Pon cada mascota debajo de su dibujo.':'Put each pet under its picture.', 'Toca las formas de ayudar en casa.':'Tap the ways to help at home.', 'Pon cada palabra en su canasta: forma o material.':'Put each word in its basket: shape or material.',
+  "Lee y toca lo que sí está: «In the camper, there's a plant, a shower and blankets.»":"Read and tap what is there: «In the camper, there's a plant, a shower and blankets.»", 'Pon cada palabra debajo del dibujo que la muestra.':'Put each word under the picture that shows it.', 'Pon la frase amable que va con cada dibujo.':'Put the polite sentence that goes with each picture.',
+  'Es verano: toca la ropa que usarías.':"It's summer: tap the clothes you would wear.", 'Toca a quien lleva uniforme.':'Tap who is wearing a uniform.', 'Toca las formas de estar activo.':'Tap the ways to be active.', 'Toca las actividades sanas.':'Tap the healthy activities.', 'Toca lo que hace una persona activa.':'Tap what an active person does.',
+  'Toca lo que Lisa come en el espacio.':'Tap what Lisa eats in space.', 'Toca la comida más sana.':'Tap the healthiest food.', 'Pon cada comida en su canasta: sana, o no comer mucho.':"Put each food in its basket: healthy, or don't eat a lot.", 'Toca lo que hay en el carrito B.':'Tap what is in cart B.', 'Toca lo que le gusta a Berta.':'Tap what Berta likes.',
+  'Toca todos los talentos que puedes aprender.':'Tap all the talents you can learn.', 'Toca la comida que no es proteína.':"Tap the food that isn't protein.", 'Toca la palabra que no es una acción.':"Tap the word that isn't an action.", 'Toca la bocina y luego toca lo que está haciendo Tim.':'Tap the speaker and then tap what Tim is doing.',
+  'Toca la bocina y luego toca al personaje que escuchaste.':'Tap the speaker and then tap the character you heard.', 'Pon cada actividad en su canasta: les gusta o no les gusta a Timmy y Anna.':"Put each activity in its basket: Timmy and Anna like it or don't like it.", 'Toca las buenas metas.':'Tap the good goals.', 'Pon cada pasatiempo con quien le gusta.':'Put each hobby with who likes it.',
+  'Pon debajo de cada animal lo que come.':'Put what each animal eats under it.', 'Pon debajo de cada animal el lugar donde vive.':'Put where each animal lives under it.', 'Toca cómo proteger a los animales.':'Tap how to protect animals.', 'Pon cada dato con su animal.':'Put each fact with its animal.', 'Pon debajo de cada estación lo que hace.':'Put what he does under each season.',
+  'Toca lo que hace un buen amigo.':'Tap what a good friend does.', 'Toca lo que trae un huracán.':'Tap what a hurricane brings.', 'Pon cada hora debajo de su reloj.':'Put each time under its clock.', 'Toca las cosas nuevas que puedes probar.':'Tap the new things you can try.', 'Toca cómo van a la escuela los niños del texto.':'Tap how the children in the text go to school.',
+  'Pon cada nombre debajo del trabajo que quiere.':'Put each name under the job they want.', 'Pon cada actividad en su canasta.':'Put each activity in its basket.', 'Toca lo que hacen los niños para lograr su sueño.':'Tap what the children do to reach their dream.', 'Toca lo que sí pudieron hacer.':'Tap what they could do.', 'Toca lo que llevas para una excursión.':'Tap what you take on a hike.',
+  'Toca lo que relaja a Ricky.':'Tap what relaxes Ricky.', 'Pon el nombre de cada película debajo de su dibujo.':'Put the name of each movie under its picture.', 'Pon cada sentimiento debajo de su dibujo.':'Put each feeling under its picture.', 'Toca todas las actividades que disfrutas en la escuela.':'Tap all the activities you enjoy at school.', 'Toca lo que ayuda a los arrecifes.':'Tap what helps the reefs.',
+  'Pon cada frase en su canasta: verdadero o falso.':'Put each sentence in its basket: true or false.', 'Escucha la despedida y dila.':'Listen to the goodbye and say it.', 'Toca las buenas maneras de ayudar.':'Tap the good ways to help.', 'Pon cada color en su canasta: cálido o frío.':'Put each color in its basket: warm or cool.', 'Toca lo que es verdad de las familias del texto.':'Tap what is true about the families in the text.',
+  'Pon cada consejo debajo de su dibujo.':'Put each piece of advice under its picture.', 'Toca las cosas que puedes dar o compartir.':'Tap the things you can give or share.', 'Pon cada comida en su canasta: sana o no tan sana.':'Put each food in its basket: healthy or not so healthy.', 'Pon cada idea debajo de su dibujo.':'Put each idea under its picture.', 'Pon cada deporte debajo de su dibujo.':'Put each sport under its picture.',
+  'Toca las cosas que se hacen en equipo.':'Tap the things you do as a team.', 'Pon cada cosa en su canasta: verano o invierno.':'Put each thing in its basket: summer or winter.', 'Pon la ropa correcta debajo de cada ocasión.':'Put the right clothes under each occasion.', 'Pon cada zapato debajo de su actividad.':'Put each shoe under its activity.', 'Pon cada lugar debajo de su dibujo.':'Put each place under its picture.',
+  'Pon cada solución debajo de su problema.':'Put each solution under its problem.', 'Toca lo que pasó en la historia.':'Tap what happened in the story.', 'Toca las buenas preguntas para tu familia.':'Tap the good questions for your family.', 'Pon cada niño debajo de su escuela.':'Put each child under their school.', 'Toca lo que hace un buen ejemplo.':'Tap what a good role model does.',
+  'Pon cada año debajo de su videojuego.':'Put each year under its video game.', 'Pon cada frase debajo de quien la dijo.':'Put each sentence under who said it.', 'Pon cada regla en su canasta: en casa o en la escuela.':'Put each rule in its basket: at home or at school.',
+  // Descripciones de las unidades (se ven en el panel del profe)
+  'El abecedario con dibujos':'The alphabet with pictures', 'Los amigos, colores y números':'Friends, colors and numbers', 'Colores, nombre, edad y números':'Colors, name, age and numbers', 'Útiles, el salón y What’s this?':'School supplies, the classroom and What’s this?', 'Repaso de las unidades 1 y 2':'Review of units 1 and 2',
+  'La familia y los oficios':'Family and jobs', 'El cuerpo y I have…':'The body and I have…', 'Repaso de las unidades 3 y 4':'Review of units 3 and 4', 'La casa, Where’s…? y There’s…':'The house, Where’s…? and There’s…', 'Repaso de las unidades 5 y 6':'Review of units 5 and 6', 'Repaso de las unidades 7 y 8':'Review of units 7 and 8',
+  'Despedida: los objetos de la búsqueda':'Goodbye: the objects of the search', 'Halloween, Navidad, Día de la Madre y del Padre':"Halloween, Christmas, Mother's and Father's Day", 'Niños y costumbres del mundo':'Children and customs around the world', 'Los amigos, colores, la hora y la rutina':'Friends, colors, time and routine',
+  'Juguetes, What’s this? y números hasta 50':'Toys, What’s this? and numbers to 50', 'La familia, Who’s he? y los lugares del barrio':'Family, Who’s he? and places in the neighborhood', 'Acciones, Can you…? y ejercicio':'Actions, Can you…? and exercise', 'La cara, el pelo y I have / He has':'The face, hair and I have / He has',
+  'Animales de la granja y animales silvestres':'Farm animals and wild animals', 'La ropa, I’m wearing… y I want…':'Clothes, I’m wearing… and I want…', 'El tiempo, los días y actividades':'Weather, days and activities', 'Space Island, números, días y meses':'Space Island, numbers, days and months',
+  'La naturaleza, There is / There are y lugares':'Nature, There is / There are and places', 'Cumpleaños en el mundo':'Birthdays around the world', 'Cómo es la gente: pelo, ojos, barba':'What people look like: hair, eyes, beard', 'Mascotas y partes de los animales':'Pets and animal parts', 'Mascotas de niños del mundo':'Pets of children around the world',
+  'La casa y dónde están las cosas':'The house and where things are', 'La ropa, What are you wearing?':'Clothes, What are you wearing?', 'Uniformes escolares del mundo':'School uniforms around the world', 'Deportes, can / can\'t y was / wasn\'t':"Sports, can / can't and was / wasn't",
+  'Frutas y verduras, Do you like…? Is there any…?':'Fruits and vegetables, Do you like…? Is there any…?', 'Comidas de niños del mundo':'Meals of children around the world', 'Qué estamos haciendo y cómo lo hacemos':"What we're doing and how we do it", 'Despedida de Space Island':'Goodbye to Space Island',
+  "Halloween, April Fools' Day y Earth Day":"Halloween, April Fools' Day and Earth Day", 'Discovery Studios y comparaciones':'Discovery Studios and comparisons', 'Pasatiempos y What do you like doing?':'Hobbies and What do you like doing?', 'Qué hacen niños del mundo el fin de semana':'What children around the world do on the weekend',
+  'Animales salvajes, qué comen y dónde viven':'Wild animals, what they eat and where they live', 'El tiempo, la temperatura y las estaciones':'Weather, temperature and seasons', 'Actividades, la hora y cuándo':'Activities, time and when', 'Trabajos y What do you want to be?':'Jobs and What do you want to be?', 'Los héroes de niños del mundo':'Heroes of children around the world',
+  'Lugares de la selva, preposiciones y could':'Rain forest places, prepositions and could', 'Cómo nos hace sentir la música':'How music makes us feel', 'Actividades en el mar, Let’s go…! y fond of':'Activities by the sea, Let’s go…! and fond of', 'Despedida: el gran estreno':'Goodbye: the big premiere', 'Halloween y el Día de la Madre':"Halloween and Mother's Day",
+  'Ice Island, la hora y el pasado':'Ice Island, time and the past', 'Cómo son por fuera y por dentro':'What people are like outside and inside', 'Familias grandes y pequeñas':'Big and small families', 'Rutinas, must y should, ¿qué tan seguido?':'Routines, must and should, how often?', 'Para qué eres bueno y qué estabas haciendo':'What you are good at and what you were doing',
+  'Deportes curiosos del mundo':'Funny sports around the world', 'Países, lugares, there is / there are':'Countries, places, there is / there are', 'Ropa, precios y de quién es':'Clothes, prices and whose it is', 'Dónde compran comida en el mundo':'Where people buy food around the world', 'El pasado de verbos irregulares y las fechas':'The past of irregular verbs and dates',
+  'Materias y cómo fue: Was it…? Did you…?':'School subjects and how it was: Was it…? Did you…?', 'Escuelas especiales del mundo':'Special schools around the world', 'Nacionalidades, trabajos de película, who / that':'Nationalities, movie jobs, who / that', 'Despedida: los Ice Detectives':'Goodbye: the Ice Detectives',
+  // Pistas 💡 de las mini clases
+  '“I’m” es la forma corta de “I am”.':'“I’m” is the short form of “I am”.', '“What’s” es la forma corta de “What is”.':'“What’s” is the short form of “What is”.', 'La a suena como la “a” de “casa”, corta.':'The a sounds short, like the “a” in “cat”.', 'La s suena como una serpiente: sss.':'The s sounds like a snake: sss.',
+  'Se dice “a” antes de consonante y “an” antes de vocal.':'We say “a” before a consonant and “an” before a vowel.', 'La m se dice con la boca cerrada: mmm.':'Say the m with your mouth closed: mmm.', 'La n suena por la nariz.':'The n sounds through your nose.', '“He’s” es la forma corta de “He is”.':'“He’s” is the short form of “He is”.',
+  'La c suena como “k”.':'The c sounds like “k”.', 'La g suena como en “gato”.':'The g sounds like in “go”.', 'ck suena como “k” al final.':'ck sounds like “k” at the end.', 'La k suena como en “kilo”.':'The k sounds like in “kite”.', 'La b se dice con los labios juntos.':'Say the b with your lips together.',
+  'La h suena como un soplido: “jot”.':'The h sounds like a soft breath: “hot”.', 'La u corta suena parecida a “a”.':'The short u sounds like in “up”.', '“Where’s” es la forma corta de “Where is”.':'“Where’s” is the short form of “Where is”.', '“There’s” es la forma corta de “There is”.':'“There’s” is the short form of “There is”.',
+  'La f suena como un soplido entre los dientes.':'The f sounds like air between your teeth.', 'La l y la ll suenan como “l”.':'The l and ll sound like “l”.', 'La j suena como “y” fuerte: “yam”.':'The j sounds like in “jam”.', 'ss suena como una s larga.':'ss sounds like a long s.', 'La v se dice con los dientes en el labio.':'Say the v with your teeth on your lip.',
+  'La w suena como “u”.':'The w sounds like in “we”.', 'qu suena como “kw”.':'qu sounds like “kw”.', 'La x suena como “ks”.':'The x sounds like “ks”.', 'La y suena como en “yo”.':'The y sounds like in “yes”.', 'ch suena como en “chocolate”.':'ch sounds like in “chocolate”.', 'sh suena como cuando pides silencio: “shhh”.':'sh sounds like when you ask for quiet: “shhh”.',
+  '“Who’s” es la forma corta de “Who is”.':'“Who’s” is the short form of “Who is”.', 'th suave, como en “this” y “that”.':'Soft th, like in “this” and “that”.', 'th soplado: pon la lengua entre los dientes.':'Blown th: put your tongue between your teeth.', 'ng suena por la nariz, como en “tengo”.':'ng sounds through your nose, like in “sing”.',
+  'ai suena como “ei”.':'ai sounds like in “rain”.', 'ee suena como una “i” larga.':'ee sounds like a long “e”, like in “see”.', 'igh suena como “ai”.':'igh sounds like in “night”.', 'oa suena como “ou”.':'oa sounds like in “boat”.', 'oo larga, como una “u” larga.':'Long oo, like in “moon”.', 'oo corta, como una “u” rápida.':'Short oo, like in “book”.',
+  'ar se dice con la boca bien abierta.':'Say ar with your mouth wide open, like in “car”.', 'ir suena parecido a “er”.':'ir sounds like in “bird”.', 'or suena como “or”.':'or sounds like in “fork”.', 'ur suena parecido a “er”.':'ur sounds like in “turn”.', 'ow suena como “au”.':'ow sounds like in “cow”.', 'oy suena como “oi”.':'oy sounds like in “boy”.',
+  'air suena como “er”.':'air sounds like in “chair”.', 'ear suena como “ir”.':'ear sounds like in “ear”.', 'ay suena como “ei”.':'ay sounds like in “day”.', 'er suena suave al final.':'er sounds soft at the end, like in “sister”.', 'ea suena como una “i” larga.':'ea sounds like a long “e”, like in “eat”.', 'oi suena como “oi”.':'oi sounds like in “coin”.',
+  'La e del final no suena y la a dice “ei”.':'The final e is silent and the a says its name, like in “cake”.', 'La i dice “ai”.':'The i says its name, like in “bike”.', 'La o dice “ou”.':'The o says its name, like in “home”.', 'Se usa “an” antes de vocal':'We use “an” before a vowel',
+  // Más textos del panel y de las tarjetas
+  'Lecciones':'Lessons', 'Escucha':'Listen', 'Unidad':'Unit', 'TAREA':'HOMEWORK', 'Lección':'Lesson', 'Ejercicios':'Exercises', 'Tipo':'Type', 'Mover':'Move', 'Subir':'Move up', 'Bajar':'Move down', 'Quitar de la lección':'Remove from the lesson', 'Abierta':'Open', 'Cerrada':'Closed', 'Oculta':'Hidden',
+  'Primer paso':'First step', 'Di 5 frases en voz alta':'Say 5 sentences out loud', 'Junta 100 puntos':'Collect 100 points', 'Mi familia':'My family', 'Mi clase':'My class', 'Hora guardada':'Time saved', 'Recordatorio apagado':'Reminder off', 'Recordatorio activado':'Reminder on',
+  'Apagar recordatorio':'Turn off reminder', 'Activar recordatorio':'Turn on reminder', '⏰ Recordatorio diario':'⏰ Daily reminder', 'Te escucho… di: Hello':"I'm listening… say: Hello", 'Te escucho…':"I'm listening…", 'Probar efectos':'Test sound effects', 'Escuchar lento':'Listen slowly', 'Ya lo empezaste':'You already started it',
+  'WORKBOOK · ESCRITURA':'WORKBOOK · WRITING', 'Usar este personaje':'Use this character', 'Lo llevas puesto':"You're wearing it", '🧸 Trajes':'🧸 Costumes', 'Ya tienes 2':'You already have 2', 'Nota (0-100)':'Grade (0-100)', 'Rechazar a':'Decline', 'Quitar amigo':'Remove friend', '🎨 Mi avatar':'🎨 My avatar', 'Mi avatar':'My avatar',
+  'Reiniciar demo':'Reset demo', 'Ej. Carlos P.':'E.g. Carlos P.', 'Ej. carlos':'E.g. carlos', 'Creando cuenta…':'Creating account…', 'Ej. 8888 8888 (opcional)':'E.g. 8888 8888 (optional)', 'Compartir…':'Share…', 'Mensaje copiado':'Message copied', 'Copiar mensaje':'Copy message',
+  'escritura revisada':'writing checked', 'escritura entregada':'writing sent', 'sin escritura':'no writing', '· 1 escritura':'· 1 writing', 'Ej. 95':'E.g. 95', 'Nota (0 a 100, opcional)':'Grade (0 to 100, optional)', 'Nota actualizada':'Grade updated', 'Ej. Mi familia':'E.g. My family', 'Unir parejas':'Match pairs', 'Pandi (mascota)':'Pandi (mascot)',
+  'Mezclar ejercicios':'Shuffle exercises', 'Ejercicio duplicado':'Exercise duplicated', 'Ejercicio eliminado':'Exercise deleted', '+ Agregar ejercicio':'+ Add exercise', 'Ej. dad, sad':'E.g. dad, sad', 'Ej. dog':'E.g. dog', 'Quitar ejemplo':'Remove example', '+ Agregar ejemplo':'+ Add example', 'Ej. Yes':'E.g. Yes',
+  'Ejercicio agregado':'Exercise added', 'Cambios guardados':'Changes saved', 'Ej. apple':'E.g. apple', 'Ej. manzana':'E.g. manzana', 'Respuesta correcta:':'Correct answer:', 'Vista previa terminada':'Preview finished', 'Volver al editor':'Back to the editor', 'Ya lo dije en voz alta':'I said it out loud', 'Duplicar':'Duplicate',
+  // Datos de la demo (cuentas y tareas de muestra)
+  'Profe Admin':'Teacher Admin', 'Mi cumpleaños':'My birthday', 'Escribe 3 oraciones en inglés sobre ti. Usa “My name’s…”, “I’m… (tu edad)” y tu color favorito.':'Write 3 sentences in English about you. Use “My name’s…”, “I’m… (your age)” and your favorite color.',
+  'Escribe 3 oraciones sobre tu familia. Usa “This is my…” y “I have a…”.':'Write 3 sentences about your family. Use “This is my…” and “I have a…”.', 'Sábados 9 am':'Saturdays 9 am', 'Martes 4 pm':'Tuesdays 4 pm'
+};
+// Textos con números o nombres adentro: [patrón, cómo queda en inglés]
+const EN_RE = [
+  [/^Hace (\d+) días$/, (m, n) => `${n} days ago`],
+  [/^Nivel (\d+), (.+)$/, (m, n, u) => `Level ${n}, ${tr(u)}`],
+  [/^Nivel (\d+)$/, (m, n) => `Level ${n}`],
+  [/^NIVEL (\d+)$/, (m, n) => `LEVEL ${n}`],
+  [/^Unidad (\d+)$/, (m, n) => `Unit ${n}`],
+  [/^Unidad (\d+) · (.+)$/, (m, n, t) => `Unit ${n} · ${t}`],
+  [/^N(\d+) · Unidad (\d+) · (.+)$/, (m, l, n, t) => `L${l} · Unit ${n} · ${t}`],
+  [/^Cuento: (.+)$/, (m, t) => `Story: ${t}`], [/^Canto: (.+)$/, (m, t) => `Chant: ${t}`], [/^Canción: (.+)$/, (m, t) => `Song: ${t}`],
+  [/^Lecciones: (\d+) de (\d+)$/, (m, a, b) => `Lessons: ${a} of ${b}`],
+  [/^Lecciones (\d+)\/(\d+)$/, (m, a, b) => `Lessons ${a}/${b}`],
+  [/^(\d+) lecciones?$/, (m, n) => n === '1' ? '1 lesson' : `${n} lessons`],
+  [/^(\d+) días? seguidos?$/, (m, n) => n === '1' ? '1 day in a row' : `${n} days in a row`],
+  [/^Vas en el lugar (\d+)\. Termina lecciones para ganar XP y subir\.$/, (m, n) => `You're in place ${n}. Finish lessons to earn XP and move up.`],
+  [/^(.+) \(tú\)$/, (m, n) => `${n} (you)`],
+  [/^(\d+) días? seguidos? · Liga (\S+)$/, (m, n, l) => `${n === '1' ? '1 day' : n + ' days'} in a row · ${LEAGUE_EN[l] || l} League`],
+  [/^Liga (\S+)$/, (m, l) => `${LEAGUE_EN[l] || l} League`],
+  [/^(Bronce|Plata|Oro|Zafiro|Diamante)$/, (m, l) => LEAGUE_EN[l]],
+  [/^Te faltan (\d+) 💎\. Gana gemas practicando\.$/, (m, n) => `You need ${n} more 💎. Earn gems by practicing.`],
+  [/^¿Comprar (.+)\?$/, (m, x) => `Buy ${tr(x)}?`],
+  [/^Comprar por (\d+) 💎$/, (m, n) => `Buy for ${n} 💎`],
+  [/^¡(.+) es tuyo!$/, (m, x) => `${tr(x)} is yours!`],
+  [/^(.+), cuesta (\d+) gemas$/, (m, x, n) => `${tr(x)}, costs ${n} gems`],
+  [/^Si un día no practicas, salva tu racha\. Puedes tener hasta 2\. Tienes (\d+)\.$/, (m, n) => `If you miss a day, it saves your streak. You can have up to 2. You have ${n}.`],
+  [/^🏆 ¡Subiste a la liga (\S+)! \+20 💎$/, (m, l) => `🏆 You moved up to the ${LEAGUE_EN[l] || l} League! +20 💎`],
+  [/^¡Listo! El lunes subes a la liga (\S+) (.+)$/, (m, l, g) => `Done! On Monday you move up to the ${LEAGUE_EN[l] || l} League ${g}`],
+  [/^Esta semana: (\d+) de (\d+) XP para subir a (\S+) (.+)$/, (m, w, u, l, g) => `This week: ${w} of ${u} XP to move up to ${LEAGUE_EN[l] || l} ${g}`],
+  [/^¡Estás en la liga más alta! Gana (\d+) XP por semana para quedarte\.$/, (m, n) => `You're in the top league! Earn ${n} XP a week to stay.`],
+  [/^Si haces menos de (\d+) XP en la semana, bajas una liga\. Se decide cada domingo a medianoche\.$/, (m, n) => `If you earn less than ${n} XP in the week, you move down a league. It's decided every Sunday at midnight.`],
+  [/^Liga (\S+) (.+)$/, (m, l, g) => `${LEAGUE_EN[l] || l} League ${g}`],
+  [/^Falta que (.+) practique hoy$/, (m, n) => `${n} still has to practice today`],
+  [/^⚔️ Desafío de la semana: tú (\d+) · (.+) (\d+) XP( 🏆)?$/, (m, a, n, b, t) => `⚔️ Challenge of the week: you ${a} · ${n} ${b} XP${t || ''}`],
+  [/^¿Quitar a (.+)\?$/, (m, n) => `Remove ${n}?`],
+  [/^Racha de (\d+) días juntos$/, (m, n) => `${n}-day streak together`],
+  [/^¡Hola, (.+)!$/, (m, n) => `Hi, ${n}!`],
+  [/^Ver quién falla (.+)$/, (m, w) => `See who misses ${w}`],
+  [/^Última práctica: (.+)$/, (m, x) => `Last practice: ${tr(x)}`],
+  [/^(.+) ahora está en el Nivel (\d+)$/, (m, g, n) => `${g} is now on Level ${n}`],
+  [/^(.+) ahora está en (.+)$/, (m, u, g) => `${u} is now in ${g}`],
+  [/^¿Eliminar la unidad “(.+)”\?$/, (m, x) => `Delete the unit “${x}”?`],
+  [/^¿Eliminar la lección “(.+)”\?$/, (m, x) => `Delete the lesson “${x}”?`],
+  [/^¿Eliminar “(.+)”\?$/, (m, x) => `Delete “${x}”?`],
+  [/^¿Eliminar a (.+)\?$/, (m, x) => `Delete ${x}?`],
+  [/^Cuenta creada: (.+) \/ (.+)\. Anótala, no se vuelve a mostrar\.$/, (m, u, p) => `Account created: ${u} / ${p}. Write it down, it won't be shown again.`],
+  [/^La contraseña debe tener al menos (\d+) caracteres\.$/, (m, n) => `The password must have at least ${n} characters.`],
+  [/^(\d+) POR REVISAR$/, (m, n) => `${n} TO CHECK`],
+  [/^Entregada el (.+)$/, (m, d) => `Sent on ${d}`], [/^Venció el (.+)$/, (m, d) => `Was due on ${d}`], [/^Para el (.+)$/, (m, d) => `Due on ${d}`],
+  [/^Calificación enviada a (.+)$/, (m, n) => `Grade sent to ${n}`],
+  [/^Nota actual: (.*)\. El estudiante verá el cambio y el motivo\.$/, (m, g) => `Current grade: ${g === 'sin nota' ? 'no grade' : g}. The student will see the change and the reason.`],
+  [/^También se abrió: (.+)\.$/, (m, x) => `Also opened: ${x}.`],
+  [/^· (nivel del grupo|abierto para repasar|oculto para este grupo)$/, (m, x) => '· ' + ({'nivel del grupo':"group's level", 'abierto para repasar':'open to review', 'oculto para este grupo':'hidden for this group'})[x]],
+  [/^💡 (.+)$/, (m, x) => '💡 ' + tr(x)],
+  [/^Tu racha de (\d+) días? está en peligro\. ¡Practica un ratito!$/, (m, n) => `Your ${n}-day streak is in danger. Practice for a little while!`],
+  [/^🔥 ¡Tu racha de (\d+) días? está en peligro!$/, (m, n) => `🔥 Your ${n}-day streak is in danger!`],
+  [/^Cuesta (\d+) 💎\. Tienes (\d+) 💎\.$/, (m, a, b) => `It costs ${a} 💎. You have ${b} 💎.`],
+  [/^🧊 Tu protector salvó tu racha \((\d+) días?\)$/, (m, n) => `🧊 Your streak freeze saved your streak (${n} day${n === '1' ? '' : 's'})`],
+  [/^@(\S+) · clave: (.+)$/, (m, u, p) => `@${u} · password: ${p}`],
+  [/^✏️ (.+): (.+) → (.+)\. Motivo: (.+)$/, (m, d, a, b, r) => `✏️ ${d}: ${a} → ${b}. Reason: ${r}`],
+  [/^Escrituras entregadas \((\d+)\)$/, (m, n) => `Writings sent (${n})`],
+  [/^Ejercicios \((\d+)\)$/, (m, n) => `Exercises (${n})`],
+  [/^Se agregaron (\d+) ejercicios$/, (m, n) => `${n} exercises added`],
+  [/^“(.+)” agregada al banco$/, (m, w) => `“${w}” added to the bank`],
+  [/^Se usa en (\d+) ejercicios?; esos ejercicios dejarán de mostrarse hasta que los edites\.$/, (m, n) => `It's used in ${n} exercise${n === '1' ? '' : 's'}; those exercises won't show until you edit them.`],
+  [/^Rechazar a (.+)$/, (m, n) => `Decline ${n}`],
+  [/^(d+) error(?:es)? · (d+) estudiantes? · toca para ver quién$/, (m, n, k) => `${n} mistake${n === '1' ? '' : 's'} · ${k} student${k === '1' ? '' : 's'} · tap to see who`],
+  [/^Abrir (.+)$/, (m, x) => `Open ${tr(x)}`],
+  [/^🔒 (.+)$/, (m, x) => '🔒 ' + tr(x)],
+  [/^N(\d+) · (.+?) · (.+)$/, (m, l, u, t) => `L${l} · ${tr(u)} · ${t}`],
+  [/^(Unidad \d+|Repaso|Bienvenida|Despedida|Festivales|Alfabeto|Wider World) · (.+)$/, (m, u, t) => `${tr(u)} · ${tr(t)}`],
+  [/^(.+), (Vocabulario|Gramática|Juego|Canto|Canción|Cuento|Valores|Quiz|Fonética|Lectura|Ciencias|Escritura|Matemática|Arte|Salud|Tecnología|Música|Historia|Geografía|Repaso)$/, (m, t, k) => `${t}, ${tr(k)}`],
+  [/^(.+) · (\d+) ejercicios?$/, (m, k, n) => `${tr(k)} · ${n} exercise${n === '1' ? '' : 's'}`],
+  [/^(@\S+ · \d+ XP · )(.+)$/, (m, a, x) => a + tr(x)],
+  [/^(\d+) estudiantes? · Nivel (\d+) · (\d+) unidades? abiertas?$/, (m, s, l, u) => `${s} student${s === '1' ? '' : 's'} · Level ${l} · ${u} unit${u === '1' ? '' : 's'} open`],
+  [/^Revisar (\d+) tareas?$/, (m, n) => `Check ${n} homework`],
+  [/^Nivel de (.+)$/, (m, g) => `Level for ${g}`],
+  [/^(\d+) lecciones? · (\d+) escrituras?$/, (m, a, b) => `${a} lesson${a === '1' ? '' : 's'} · ${b} writing${b === '1' ? '' : 's'}`],
+  [/^(\d+) lecciones?$/, (m, a) => `${a} lesson${a === '1' ? '' : 's'}`],
+  [/^Lecciones (\d+)\/(\d+) · (sin escritura|escritura entregada|escritura revisada|escritura sin entregar)$/, (m, a, b, w) => `Lessons ${a}/${b} · ${({'sin escritura':'no writing', 'escritura entregada':'writing sent', 'escritura revisada':'writing checked', 'escritura sin entregar':'writing not sent'})[w]}`],
+  [/^(.+) \((.+)\) (abierta|cerrada) para (.+)$/, (m, u, t, s, g) => `${tr(u)} (${t}) ${s === 'abierta' ? 'open' : 'closed'} for ${g}`],
+  [/^(?:(.+) · )?(\d+) (lección|lecciones) · (Para repasar|Oculta|Abierta|Cerrada)$/, (m, tag, n, l, s) => `${tag ? tr(tag) + ' · ' : ''}${n} ${n === '1' ? 'lesson' : 'lessons'} · ${({'Para repasar':'To review', Oculta:'Hidden', Abierta:'Open', Cerrada:'Closed'})[s]}`],
+  [/^(\d+) palabras con imagen y traducción$/, (m, n) => `${n} words with picture and translation`],
+  [/^Máximo (\d+) palabras$/, (m, n) => `Up to ${n} words`], [/^\(máx\. (\d+)\)$/, (m, n) => `(max. ${n})`],
+  [/^Se borran sus (\d+) (lección|lecciones)\.$/, (m, n) => `Its ${n} ${n === '1' ? 'lesson' : 'lessons'} will be deleted.`],
+  [/^Lección creada con (\d+) ejercicios$/, (m, n) => `Lesson created with ${n} exercises`],
+  [/^Lección movida a (.+)$/, (m, x) => `Lesson moved to ${x}`],
+  [/^Nueva contraseña para (.+) \(@(.+)\)\.$/, (m, n, u) => `New password for ${n} (@${u}).`],
+  [/^Contraseña cambiada: (.+) \/ (.+)$/, (m, u, p) => `Password changed: ${u} / ${p}`],
+  [/^Toca la bocina y luego toca lo que escuchaste \((\d+) de (\d+)\)$/, (m, a, b) => `Tap the speaker and then tap what you heard (${a} of ${b})`],
+  [/^Toca la bocina y atrapa lo que escuchaste \((\d+) de (\d+)\)$/, (m, a, b) => `Tap the speaker and catch what you heard (${a} of ${b})`],
+  [/^¿Qué dijo( .+)?\? Toca la bocina del globo\.$/, (m, n) => `What did${n || ''} say? Tap the speaker on the bubble.`],
+  [/^Completa lo que dice( .+)?:$/, (m, n) => `Complete what${n || ''} says:`],
+  [/^\+(\d+) 💎 gemas$/, (m, n) => `+${n} 💎 gems`],
+  [/^Toca cada carta para voltearla y escucha la palabra \(faltan (\d+)\)\. Después tendrás que encontrarlas\.$/, (m, n) => `Tap each card to flip it and hear the word (${n} left). Then you'll have to find them.`],
+  [/^¡Muy bien! Faltan (\d+)\.$/, (m, n) => `Great! ${n} left.`],
+  [/^\((\d+)\/(\d+)\) Toca la carta de:$/, (m, a, b) => `(${a}/${b}) Tap the card for:`],
+  [/^Toca la bocina de cada frase para escucharla \(faltan (\d+)\)\.$/, (m, n) => `Tap the speaker on each sentence to hear it (${n} left).`],
+  [/^Pista: empieza con “(.+)” y tiene (\d+) letras$/, (m, l, n) => `Hint: it starts with “${l}” and has ${n} letters`],
+  [/^Ayuda a (.+): ¿qué respuesta va con la pregunta\?$/, (m, n) => `Help ${n}: which answer goes with the question?`],
+  [/^Ronda (\d+) de (\d+): toca la bocina y atrapa la burbuja que escuchaste$/, (m, a, b) => `Round ${a} of ${b}: tap the speaker and catch the bubble you heard`],
+  [/^Ahora tú: toca el dibujo de «(.+)»$/, (m, w) => `Now you: tap the picture of «${w}»`],
+  [/^Escuché: “(.+)”\. ¡El micrófono funciona!$/, (m, w) => `I heard: “${w}”. The microphone works!`],
+  [/^Escuché: “(.+)”\. ¡Intenta otra vez!$/, (m, w) => `I heard: “${w}”. Try again!`],
+  [/^(\d+) error(es)? · (\d+) estudiantes?$/, (m, n, s, k) => `${n} mistake${n === '1' ? '' : 's'} · ${k} student${k === '1' ? '' : 's'}`],
+  [/^(.+) · (\d+) error(es)? · (\d+) estudiantes?$/, (m, es, n, s, k) => `${es} · ${n} mistake${n === '1' ? '' : 's'} · ${k} student${k === '1' ? '' : 's'}`],
+  [/^Semana (\d+) · (.+)$/, (m, n, t) => `Week ${n} · ${t}`],
+  [/^Recordar a (.+)$/, (m, n) => `Remind ${n}`],
+  [/^Lecciones (\d+) de (\d+)$/, (m, a, b) => `Lessons ${a} of ${b}`],
+  [/^(\d+) de (\d+) lecciones$/, (m, a, b) => `${a} of ${b} lessons`],
+  [/^(\d+) estudiantes?$/, (m, n) => n === '1' ? '1 student' : `${n} students`],
+  [/^(\d+) tareas?$/, (m, n) => n === '1' ? '1 homework' : `${n} homework`],
+  [/^(\d+) ejercicios?$/, (m, n) => n === '1' ? '1 exercise' : `${n} exercises`],
+  [/^(\d+) palabras?$/, (m, n) => n === '1' ? '1 word' : `${n} words`]
+];
+function tr(s){
+  if (LANG !== 'en' || typeof s !== 'string' || !s) return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/), core = m[2];
+  if (!core) return s;
+  let t = Object.hasOwn(EN, core) ? EN[core] : undefined;
+  if (t === undefined) for (const [re, f] of EN_RE){ const r = core.match(re); if (r){ t = f(...r); break; } }
+  return t === undefined ? s : m[1] + t + m[3];
+}
+// Cambia los textos de un pedazo de la pantalla. No toca lo que escribe la gente (inputs, textarea) ni los dibujos SVG.
+const TR_ATTRS = ['placeholder', 'aria-label', 'title'];
+function trNode(n){
+  if (n.nodeType === 3){ const p = n.parentNode; if (!p || p.closest?.('svg,textarea,script,style,[data-notr]')) return; const t = tr(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; return; }
+  if (n.nodeType !== 1 || n.closest('svg,script,style,[data-notr]')) return;
+  for (const a of TR_ATTRS){ const v = n.getAttribute(a); if (v){ const t = tr(v); if (t !== v) n.setAttribute(a, t); } }
+  if (n.tagName === 'INPUT' && (n.type === 'button' || n.type === 'submit') && n.value){ const t = tr(n.value); if (t !== n.value) n.value = t; }
+}
+function trTree(root){
+  if (LANG !== 'en' || !root) return;
+  trNode(root);
+  const it = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+  for (let n = it.nextNode(); n; n = it.nextNode()) trNode(n);
+}
+const trObserver = new MutationObserver(list => { if (LANG !== 'en') return; for (const r of list){ if (r.type === 'characterData') trNode(r.target); else if (r.type === 'attributes') trNode(r.target); else r.addedNodes.forEach(trTree); } });
+function setLang(l){
+  const was = LANG; LANG = l === 'en' ? 'en' : 'es';
+  try { localStorage.setItem('pandi-lang', LANG); } catch (e) {}
+  document.documentElement.lang = LANG;
+  if (LANG === 'en') trTree(document.body);
+  return was !== LANG;
+}
 const endMark = t => /[.?!]$/.test(t) ? t : t + (/^(what|where|who|how|is|are|do|does|can|have|has)\b/i.test(t) ? '?' : '.');
 const AV_COLORS = ['#1E6FD9','#2FA84F','#E8352E','#8E44C9','#FF8A1F','#0FA3A3','#D63384'];
 /* ---------- avatar: personaje dibujado en SVG por capas ---------- */
@@ -1076,17 +1452,18 @@ function courseSeed(){
   const fi = (before, answer, after, options, img) => ({t:'fill', before, answer, after, options, img}), me = words => ({t:'memory', words});
   const tp = (title, lines) => ({t:'tip', title, lines}), rd = (q, answer, options) => ({t:'read', story:{...STORY}, q, answer, options}), rs = (story, q, answer, options) => ({t:'read', story:{...story}, q, answer, options});
   return {
-    vocab: JSON.parse(JSON.stringify({...V4_SEED, ...V_SEED, ...V2_SEED, ...V3_SEED, ...V1_SEED})), ver:COURSE_VER,
+    vocab: JSON.parse(JSON.stringify({...V5_SEED, ...V4_SEED, ...V_SEED, ...V2_SEED, ...V3_SEED, ...V1_SEED})), ver:COURSE_VER,
     units: [
       ...level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
       ...level2Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
       ...level3Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
-      ...level4Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs})
+      ...level4Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
+      ...level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs})
     ]
   };
 }
 /* ---------- course: Level 2 (sigue el libro de Nivel 2: Welcome, 8 unidades de 10 lecciones y 4 repasos; textos, cantos y cuentos propios) ---------- */
-const COURSE_VER = 7;
+const COURSE_VER = 8; // 8: llega el Nivel 5 a las escuelas que ya tenían el curso
 const svgPic = body => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">${body}</svg>`);
 const V2_SEED = Object.fromEntries(Object.entries({
   // Welcome
@@ -2297,6 +2674,285 @@ function level4Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   U.forEach(u => u.lessons.forEach(l => { if (PRE4[l.id]) l.items.unshift(...PRE4[l.id]); }));
   return U;
 }
+/* ---------- course: Level 5 (sigue el libro de Nivel 5: los Ice Detectives de Ice Island; textos, cantos y cuentos propios) ---------- */
+// Banderas dibujadas (Windows no muestra los emojis de banderas)
+const flagP = b => svgP(`<clipPath id="fc"><rect x="4" y="13" width="56" height="38" rx="3"/></clipPath><g clip-path="url(#fc)"><rect x="4" y="13" width="56" height="38" fill="#FFFFFF"/>${b}</g><rect x="4" y="13" width="56" height="38" rx="3" fill="none" $O/>`);
+const hBands = cs => cs.map((c, i) => `<rect x="4" y="${13 + i * 38 / cs.length}" width="56" height="${38 / cs.length + .5}" fill="${c}"/>`).join('');
+const vBands = cs => cs.map((c, i) => `<rect x="${4 + i * 56 / cs.length}" y="13" width="${56 / cs.length + .5}" height="38" fill="${c}"/>`).join('');
+const FLAG = {
+  China:flagP('<rect x="4" y="13" width="56" height="38" fill="#DE2910"/><path d="M17 18 l2.6 5.4 5.9 .7 -4.4 4 1.2 5.8 -5.3 -3 -5.3 3 1.2 -5.8 -4.4 -4 5.9 -.7z" fill="#FFDE00"/>'),
+  Korea:flagP('<circle cx="32" cy="32" r="9.5" fill="#C60C30"/><path d="M22.5 32 a9.5 9.5 0 0 0 19 0 a4.75 4.75 0 0 0 -9.5 0 a4.75 4.75 0 0 1 -9.5 0z" fill="#003478"/><path d="M10 18 l5 5 M12 16 l5 5 M47 41 l5 5 M49 39 l5 5 M47 23 l5 -5 M10 46 l5 -5" stroke="#2A2230" stroke-width="2"/>'),
+  Japan:flagP('<circle cx="32" cy="32" r="10" fill="#BC002D"/>'),
+  Australia:flagP('<rect x="4" y="13" width="56" height="38" fill="#00247D"/><rect x="4" y="13" width="24" height="17" fill="#00247D"/><path d="M4 13 L28 30 M28 13 L4 30" stroke="#FFFFFF" stroke-width="3"/><path d="M16 13 V30 M4 21.5 H28" stroke="#FFFFFF" stroke-width="5"/><path d="M16 13 V30 M4 21.5 H28" stroke="#CF142B" stroke-width="2.5"/>' + [[16, 42], [44, 20], [50, 30], [42, 40], [52, 44]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2" fill="#FFFFFF"/>`).join('')),
+  'the United States':flagP(hBands(['#B22234', '#FFFFFF', '#B22234', '#FFFFFF', '#B22234', '#FFFFFF', '#B22234']) + '<rect x="4" y="13" width="24" height="20" fill="#3C3B6E"/>' + [[9, 18], [16, 18], [23, 18], [12, 23], [19, 23], [9, 28], [16, 28], [23, 28]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.4" fill="#FFFFFF"/>`).join('')),
+  Mexico:flagP(vBands(['#006847', '#FFFFFF', '#CE1126']) + '<circle cx="32" cy="32" r="4.5" fill="#8B5A2B"/>'),
+  Colombia:flagP('<rect x="4" y="13" width="56" height="19" fill="#FCD116"/><rect x="4" y="32" width="56" height="10" fill="#003893"/><rect x="4" y="42" width="56" height="9" fill="#CE1126"/>'),
+  Brazil:flagP('<rect x="4" y="13" width="56" height="38" fill="#009C3B"/><path d="M32 16 L56 32 L32 48 L8 32 Z" fill="#FFDF00"/><circle cx="32" cy="32" r="8" fill="#002776"/>'),
+  Argentina:flagP(hBands(['#74ACDF', '#FFFFFF', '#74ACDF']) + '<circle cx="32" cy="32" r="4" fill="#F6B40E"/>'),
+  'the United Kingdom':flagP('<rect x="4" y="13" width="56" height="38" fill="#012169"/><path d="M4 13 L60 51 M60 13 L4 51" stroke="#FFFFFF" stroke-width="7"/><path d="M4 13 L60 51 M60 13 L4 51" stroke="#C8102E" stroke-width="2.5"/><path d="M32 13 V51 M4 32 H60" stroke="#FFFFFF" stroke-width="11"/><path d="M32 13 V51 M4 32 H60" stroke="#C8102E" stroke-width="6"/>'),
+  Spain:flagP('<rect x="4" y="13" width="56" height="10" fill="#AA151B"/><rect x="4" y="23" width="56" height="19" fill="#F1BF00"/><rect x="4" y="42" width="56" height="9" fill="#AA151B"/>'),
+  Italy:flagP(vBands(['#009246', '#FFFFFF', '#CE2B37'])),
+  Egypt:flagP(hBands(['#CE1126', '#FFFFFF', '#2A2230']) + '<circle cx="32" cy="32" r="3.5" fill="#C09300"/>'),
+  India:flagP(hBands(['#FF9933', '#FFFFFF', '#138808']) + '<circle cx="32" cy="32" r="5" fill="none" stroke="#000080" stroke-width="1.6"/>')
+};
+const V5_SEED = Object.fromEntries(Object.entries({
+  // Personajes y Bienvenida
+  'Polly':['👧🏻','Polly'], 'Mike':['👦🏻','Mike'], 'Gizmo':['🐕','Gizmo, el perro'], 'Hector Frost':['🦹','Hector Frost'], 'Smith':['🧑‍🦲','Smith'], 'The Queen':['👸','la Reina de Ice Island'],
+  'Police Chief':['👮‍♀️','la jefa de policía'], 'Mrs. Jones':['👩','la señora Jones, mamá de Polly'], 'Maddy':['👱‍♀️','Maddy'], 'Emma':['👓','Emma'], 'Robbie':['👦🏼','Robbie'], 'Dan':['👦🏾','Dan'],
+  'two days ago':['n:-2','hace dos días'], yesterday:['n:-1','ayer'], today:['📅','hoy'], now:['⏱️','ahora'], tomorrow:['n:+1','mañana'],
+  'played tennis':['🎾','jugó tenis'], 'cleaned her room':['🧹','limpió su cuarto'], 'watched TV':['📺','vio televisión'], 'walked to school':['🚶','caminó a la escuela'], 'listened to music':['🎧','escuchó música'], danced:['💃','bailó'], skidoo:['🛷','moto de nieve'],
+  // Unidad 1
+  'dark hair':['👨🏻','pelo oscuro'], 'light hair':['👱','pelo claro'], 'spiky hair':['🦔','pelo parado'], bald:['👨‍🦲','calvo'], handsome:['🤵','guapo'], beautiful:['🌸','hermosa'], 'good-looking':['😎','bien parecido'], cute:['👶','tierno'],
+  bossy:['☝️','mandón'], creative:['💡','creativo'], sporty:['⚽','deportista'], lazy:['🛋️','perezoso'], patient:['⏳','paciente'], talkative:['💬','hablador'], helpful:['🤝','servicial'], friendly:['😊','amigable'], 'hard-working':['💪','trabajador'],
+  // Unidad 2
+  'brush my teeth':['🪥','cepillarme los dientes'], 'make my bed':['🛏️','tender mi cama'], 'wash my face':['🧼','lavarme la cara'], 'clean my room':['🧹','limpiar mi cuarto'], 'do my homework':['📝','hacer mi tarea'],
+  'meet my friends':['👫','juntarme con mis amigos'], 'study before a test':['📚','estudiar antes de un examen'], 'take notes in class':['✍️','tomar apuntes en clase'], 'take out the trash':['🗑️','sacar la basura'], 'be on time':['⏰','llegar a tiempo'],
+  always:['n:100%','siempre'], usually:['n:80%','casi siempre'], often:['n:60%','a menudo'], sometimes:['n:30%','a veces'], never:['n:0%','nunca'],
+  // Unidad 3
+  hitting:['🏏','golpear'], kicking:['🦵','patear'], throwing:['🤾','lanzar'], catching:['🥎','atrapar'], diving:['🏊','clavarse'], 'going shopping':['🛍️','ir de compras'], 'telling jokes':['🤣','contar chistes'], 'reading poetry':['📜','leer poesía'], 'jumping on the trampoline':['🤸','saltar en el trampolín'],
+  trumpet:['🎺','trompeta'], 'in-line skating':['🛼','patinar en línea'], 'playing chess':['♟️','jugar ajedrez'], 'playing the drums':['🥁','tocar la batería'], acting:['🎭','actuar'], 'singing karaoke':['🎤','cantar karaoke'], 'running races':['🏃','hacer carreras'], 'singing in a choir':['🎶','cantar en un coro'],
+  // Unidad 4
+  ...Object.fromEntries(Object.entries(FLAG).map(([k, v]) => [k, [v, {China:'China', Korea:'Corea', Japan:'Japón', Australia:'Australia', 'the United States':'Estados Unidos', Mexico:'México', Colombia:'Colombia', Brazil:'Brasil', Argentina:'Argentina', 'the United Kingdom':'el Reino Unido', Spain:'España', Italy:'Italia', Egypt:'Egipto', India:'India'}[k]]])),
+  pyramid:[svgP('<path d="M32 10 L60 54 L4 54 Z" fill="#F6D98B" $O/><path d="M32 10 L40 54" stroke="#2A2230" stroke-width="2"/>'),'pirámide'], statue:['🗽','estatua'], volcano:['🌋','volcán'], city:['🏙️','ciudad'], town:['🏘️','pueblo'], farm:['🚜','granja'], factory:['🏭','fábrica'], castle:['🏰','castillo'],
+  penguins:['🐧','pingüinos'], snakes:['🐍','serpientes'], desert:['🏜️','desierto'], beach:['🏖️','playa'],
+  // Unidad 5
+  jacket:['🧥','chaqueta'], swimsuit:['🩱','traje de baño'], watch:['⌚','reloj'], bracelet:['📿','pulsera'], wallet:['👛','billetera'], handbag:['👜','bolso'], umbrella:['☂️','paraguas'], gloves:['🧤','guantes'], sunglasses:['🕶️','lentes de sol'],
+  hoodie:[svgP('<path d="M20 22 Q32 6 44 22 L56 30 L52 42 L46 38 L46 58 L18 58 L18 38 L12 42 L8 30 Z" fill="#9AA0A6" $O/><path d="M24 22 Q32 14 40 22 Q32 30 24 22 Z" fill="#5E6472" $O/>'),'sudadera con capucha'],
+  belt:[svgP('<rect x="2" y="26" width="60" height="12" rx="3" fill="#8B5A2B" $O/><rect x="24" y="22" width="16" height="20" rx="3" fill="none" stroke="#C9A227" stroke-width="4"/>'),'cinturón'],
+  tight:['🤏','apretado'], baggy:['↔️','flojo, ancho'], cheap:['🪙','barato'], expensive:['💎','caro'], 'old-fashioned':['📻','pasado de moda'], modern:['📱','moderno'], dollars:['💵','dólares'],
+  // Unidad 6
+  made:['🎂','hizo'], had:['🎉','tuvo'], came:['🚪','vino'], gave:['🎁','dio'], got:['📦','recibió'], sang:['🎙️','cantó'], brought:['🧺','trajo'], met:['👋','conoció'], ate:['😋','comió'], saw:['🔭','vio'],
+  ...Object.fromEntries(['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth','eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth']
+    .map((w, i) => [w, ['n:' + (i + 1) + (i === 0 ? 'st' : i === 1 ? 'nd' : i === 2 ? 'rd' : 'th'), ['primero','segundo','tercero','cuarto','quinto','sexto','séptimo','octavo','noveno','décimo','undécimo','duodécimo','decimotercero','decimocuarto','decimoquinto','decimosexto','decimoséptimo','decimoctavo','decimonoveno','vigésimo'][i]]])),
+  thirtieth:['n:30th','trigésimo'],
+  // Unidad 7
+  interesting:['🤔','interesante'], boring:['🥱','aburrido'], exciting:['🎢','emocionante'], scary:['👻','de miedo'], difficult:['🧩','difícil'], easy:['👌','fácil'], romantic:['💕','romántico'], relaxing:['🛀','relajante'],
+  'computer science':['💻','computación'], geography:['🌍','geografía'], science:['🔬','ciencias'], history:['🏛️','historia'], art:['🖌️','arte'], music:['🎼','música'], 'P.E.':['🏋️','educación física'],
+  // Unidad 8
+  ...Object.fromEntries([['Chinese','China','chino'], ['Korean','Korea','coreano'], ['Japanese','Japan','japonés'], ['Australian','Australia','australiano'], ['American','the United States','estadounidense'], ['Mexican','Mexico','mexicano'], ['Colombian','Colombia','colombiano'],
+    ['Brazilian','Brazil','brasileño'], ['Argentinian','Argentina','argentino'], ['British','the United Kingdom','británico'], ['Spanish','Spain','español'], ['Italian','Italy','italiano'], ['Egyptian','Egypt','egipcio'], ['Indian','India','indio']].map(([n, c, es]) => [n, ['w:' + c, es]])),
+  king:['🤴','rey'], queen:['👑','reina'], scientist:['🧑‍🔬','científico'], spy:['🕵️','espía'], soldier:['💂','soldado'], sailor:['⚓','marinero'], waiter:['🛎️','mesero'], actor:['🎬','actor'], musician:['🎷','músico']
+}).map(([k, [img, es]]) => [k, {img, es}]));
+function level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
+  const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
+  const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
+  const SO = (bins, words, title, es) => sc('sort', title, es || 'Escucha cada palabra y ponla en su canasta.', {bins, words});
+  const CH = (bg, who, title, es, lines) => sc('chant', title, es, {bg, who, lines: lines.map(l => [l, ''])});
+  const pn = (bg, who, text) => ({bg, who, text, es:''});
+  const tale = (title, panels) => ({scene:sc('story', 'Talk about the pictures. Then listen and read.', 'Escucha el cuento viñeta por viñeta. Toca la bocina de cada una.', {panels}),
+    st:{title, en:panels.map(p => p.text).join(' '), es:''}});
+  const rd = (title, en, q, a, opts) => rs({title, en, es:''}, q, a, opts);
+  const look = lines => tp('Look!', lines.map(l => [l, '']));
+  const L5 = (id, title, desc, c, lessons, tag) => ({id, title, desc, c, level:5, ...(tag ? {tag} : {}), lessons:lessons.map((l, i) => ({id:id + 'l' + (i + 1), ...l}))});
+  const TOOK = 'Escucha la canción y cántala.', SAY = 'Escucha el canto y dilo.';
+  const HA = ['dark hair','light hair','spiky hair','bald','handsome','beautiful','good-looking','cute'], PE = ['bossy','creative','sporty','lazy','smart','patient','talkative','helpful','friendly','hard-working'];
+  const DA = ['brush my teeth','make my bed','wash my face','clean my room','do my homework','meet my friends','study before a test','take notes in class','take out the trash','be on time'], FQ = ['always','usually','often','sometimes','never'];
+  const AC = ['hitting','kicking','throwing','catching','diving','going shopping','telling jokes','reading poetry','jumping on the trampoline'], HB = ['playing video games','in-line skating','playing chess','playing the drums','acting','singing karaoke','running races','singing in a choir'];
+  const CO = ['China','Korea','Japan','Australia','the United States','Mexico','Colombia','Brazil','Argentina','the United Kingdom','Spain','Italy','Egypt','India'], PL = ['pyramid','statue','cave','volcano','city','town','farm','factory','castle'];
+  const CL = ['jacket','swimsuit','watch','bracelet','wallet','handbag','umbrella','gloves','sunglasses'], CA = ['hoodie','belt','tight','baggy','cheap','expensive','old-fashioned','modern'];
+  const VB = ['made','had','came','gave','got','sang','brought','met','ate','saw'], ORD = ['first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth'];
+  const AD = ['interesting','boring','exciting','scary','funny','difficult','easy','romantic','relaxing'], SU = ['computer science','math','geography','science','history','art','music','P.E.'];
+  const NA = ['Chinese','Korean','Japanese','Australian','American','Mexican','Colombian','Brazilian','Argentinian','British','Spanish','Italian','Egyptian','Indian'], JO = ['cowboy','king','queen','scientist','spy','soldier','sailor','waiter','actor','musician'];
+
+  // Cuentos propios con los Ice Detectives (mismos temas y vocabulario que el libro, otras palabras)
+  const T0 = tale('The Missing Diamonds', [pn('night', ['Hector Frost', 'Smith'], "It's night on Ice Island. Hector Frost loves diamonds. \"I want the Queen's diamonds, Smith!\""),
+    pn('night', ['Smith'], 'Smith goes to town on his skidoo. He takes the diamonds. "Good job, Smith!"'), pn('night', ['Polly'], 'BANG! Polly wakes up. "What was that?"'),
+    pn('snow', ['Polly', 'Mike', 'Gizmo'], 'The next day, Polly and Mike read the newspaper: "Who has the diamonds?" — "This is a job for the Ice Detectives!"'),
+    pn('snow', ['Gizmo', 'Mike'], 'Gizmo finds a red ribbon in the snow. Then they see the skidoo. "Quick! Follow it!"')]);
+  const T1 = tale('At the Ice Palace', [pn('snow', ['Polly', 'Mike'], "We can't see the skidoo now. Let's have some ice cream and make a plan."), pn('room', ['Mike', 'Gizmo'], 'I love strawberry ice cream! — Poor Gizmo! He wants some, too.'),
+    pn('room', ['Polly', 'Mike'], 'What do the thieves look like? — One thief has dark hair. The other has light hair.'), pn('room', ['Mike', 'Polly'], "Is he tall or short? Does he have a beard? — I don't know."),
+    pn('snow', ['Gizmo', 'Polly'], "Woof! It's the man from the skidoo! He's bald! He has no hair! Follow him!")]);
+  const T2 = tale('The Training Camp', [pn('snow', ['Mike', 'Polly'], "What's this place? — It's a training camp. We should hide."), pn('snow', ['Polly', 'Gizmo'], 'We can build an igloo! It is nice and warm in here.'),
+    pn('snow', ['Smith'], 'Smith is working out. He is very strong!'), pn('night', ['Mike', 'Polly'], 'We must stay awake, Polly. — Yawn! I am sleepy...'),
+    pn('night', ['Polly', 'Mike'], "Oh no, he isn't here! Look, his shopping bag. These ribbons are like the ribbon in the newspaper!")]);
+  const T3 = tale('Wolf Tracks', [pn('kitchen', ['Polly', 'Mrs. Jones'], 'On Thursday at two in the morning I was sleeping. Then the skidoo passed by. — Eat your breakfast, guys!'),
+    pn('kitchen', ['Mike', 'Polly'], 'It was going toward the mountains. Why don\'t we go and look? — But it\'s Saturday. I play soccer on Saturdays!'),
+    pn('snow', ['Polly', 'Mike'], "Come on! We must find the thieves. You're good at soccer and you're good at finding thieves, too!"), pn('snow', ['Gizmo', 'Mike'], 'Look at those tracks! Is that the thief? — No, those are wolf tracks.'),
+    pn('snow', ['Polly', 'Gizmo'], 'Look! A red ribbon on the tree! This is the right way!')]);
+  const T4 = tale('Bollington Hall', [pn('snow', ['Mike', 'Polly'], "Phew! What a climb! The tracks are going north. Let's look at the map."), pn('snow', ['Polly'], "There's a big house on the map. It's called Bollington Hall. Who lives there?"),
+    pn('night', ['Hector Frost', 'Smith'], 'There are some children in the forest. — Yes, boss. I think they know something.'), pn('night', ['Hector Frost'], 'You must stop those kids! They can\'t have my diamonds!'),
+    pn('snow', ['Smith'], 'Smith gets on his skidoo. "Here I come!"')]);
+  const T5 = tale('The Frozen Lake', [pn('shop', ['Mrs. Jones'], 'Some explorers are in the store. "How much is that jacket?" — "It\'s five hundred Ice dollars."'), pn('shop', ['Polly', 'Mike'], 'Can you show us the way to the lake? — Sure!'),
+    pn('snow', ['Mike'], "Wow! There are a lot of fish in this lake!"), pn('snow', ['Polly'], 'Smith pushes Polly into a hole in the ice. "Help!" — "Are you OK?" — "Ye-e-s!"'),
+    pn('snow', ['Gizmo', 'Smith'], 'Gizmo chases Smith. "Ouch! Get away from me!" Gizmo has a piece of his pants!')]);
+  const T6 = tale('At the Police Station', [pn('night', ['Smith', 'Hector Frost'], 'What happened? — I got the kids. Then a wolf came. Then a polar bear came!'), pn('night', ['Hector Frost'], 'Really? A polar bear?'),
+    pn('room', ['Polly', 'Police Chief'], 'We saw this ribbon and we followed the man. He pushed Polly into the lake! — I see.'), pn('room', ['Mike', 'Police Chief'], "Hector Frost's dog has ribbons like this. And this is Hector Frost's logo!"),
+    pn('snow', ['Police Chief', 'Polly'], "Hector Frost lives at Bollington Hall. Come on, let's go!")]);
+  const T7 = tale('The Tunnel', [pn('snow', ['Police Chief', 'Mike'], "There's a tunnel in the caves. It goes to Bollington Hall. — Cool!"), pn('night', ['Polly'], "Look! A paper. It's a school schedule. How strange!"),
+    pn('night', ['Mike', 'Polly'], "There's a door with a code. — The code is on the schedule! Science is at nine o'clock."), pn('night', ['Polly', 'Mike'], "Math's at ten-thirty and art's at twelve-forty. — Phew! We did it!"),
+    pn('night', ['Police Chief', 'Gizmo'], 'Great job, kids! Look at all the lights. Are they having a party?')]);
+  const T8 = tale('The Costume Party', [pn('stage', ['The Queen'], 'The Queen of Ice Island is at the party. "A dog costume! How funny!"'), pn('stage', ['Mike', 'Polly'], 'Look! Do you see what I see? — Oh! The diamonds! They are around the dog\'s neck!'),
+    pn('stage', ['The Queen', 'Hector Frost'], 'My diamonds! How amazing! — Argh!'), pn('stage', ['Police Chief', 'Smith'], 'Quick! Catch them! — Help!'),
+    pn('stage', ['The Queen', 'Polly'], 'You are brave and smart children. Thank you! — Just call the Ice Detectives!')]);
+
+  return [
+    L5('n5w', 'Welcome', 'Ice Island, la hora y el pasado', 'purple', [
+      {title:'The missing diamonds', kind:'Cuento', items:[T0.scene, rs(T0.st, 'What does Hector Frost love?', 'Diamonds', ['Ice cream','Soccer']), rs(T0.st, 'What does Gizmo find?', 'A red ribbon', ['A newspaper','A diamond']), sp('This is a job for the Ice Detectives!', 'w:Polly')]},
+      {title:'Meet the characters', kind:'Vocabulario', items:[NM('snow', ['Hector Frost','Smith','Polly','Mike','Gizmo','The Queen']), ...['Polly','Mike','Gizmo','Hector Frost','Smith','The Queen'].map(f), fi('Polly likes to', 'think', 'and solve problems.', ['sleep','cook'], 'w:Polly'), fi('Gizmo is very', 'helpful', '.', ['lazy','bossy'], 'w:Gizmo')]},
+      {title:'What is he doing now?', kind:'Gramática', items:[look(["He gets up at seven o'clock.", 'She eats lunch at twelve.', "Now it's three o'clock. She's reading in the park."]), fi('Now he', 'is', 'playing soccer.', ['are','am'], '⚽'), fi('She is', 'swimming', 'in the lake.', ['swim','swims'], '🏊'), fi('He', 'cleans', 'his room on Saturdays.', ['clean','cleaning'], '🧹'), sp('He is playing the violin now.', '🎻')]},
+      {title:'I played tennis on Monday', kind:'Gramática', items:[look(['I played tennis on Monday morning.', 'We cleaned our rooms on Sunday morning.', 'She danced at the party on Friday evening.', 'They went to the movies on Saturday afternoon.']), NM('park', ['played tennis','cleaned her room','watched TV','walked to school','listened to music','danced']),
+        fi('She', 'played', 'video games on Tuesday.', ['play','playing'], '🎮'), fi('They', 'went', 'to the movies.', ['go','goed'], '🎬'), fi('I', 'studied', 'with Dylan on Thursday.', ['studyed','study'], '📚'), od('We watched TV on Friday evening', ['watch'], '📺')]},
+      {title:'Yesterday and today', kind:'Vocabulario', items:[DP('paper', ['two days ago','yesterday','today','tomorrow']), ...['two days ago','yesterday','today','now','tomorrow'].map(f), fi("Today is Monday. Yesterday", 'was', 'Sunday.', ['is','were'], 'w:yesterday'), fi('Tomorrow', 'is', 'Tuesday.', ['was','were'], 'w:tomorrow'), sp('I walked to school yesterday.', 'w:walked to school')]}
+    ], 'Bienvenida'),
+    L5('n5u1', 'Friends', 'Cómo son por fuera y por dentro', 'blue', [
+      {title:'What do they look like?', kind:'Vocabulario', items:[FD('street', HA), ...HA.map(f), ma(['bald','spiky hair','cute','light hair'])]},
+      {title:'She has straight, dark hair', kind:'Gramática', items:[look(['What does she look like? She has straight, dark hair and brown eyes.', "What do they look like? They're tall and good-looking.", "He doesn't have light hair. They don't have light hair."]),
+        fi('He', 'has', 'spiky hair and brown eyes.', ['have','having'], 'w:spiky hair'), fi('They', 'have', 'short, light hair.', ['has','is'], 'w:light hair'), fi('She', "doesn't", 'have glasses.', ["don't",'isn\'t'], 'w:glasses'), od('What does your brother look like', ['do'], '❓'), sp('My dad is tall and bald.', 'w:bald')]},
+      {title:'What are they like?', kind:'Vocabulario', items:[NM('classroom', PE), ...PE.filter(w => w !== 'smart').map(f), CH('classroom', ['Maddy', 'Dan'], "We're friends.", TOOK, ['You have me and I have you. We talk, we listen, we help, too.', "Ben is funny, Jim is smart. We're friends, we're friends with all our heart!", "Sometimes he is lazy, but that's OK. He's always helpful in every way."])]},
+      {title:"She's bossy but hard-working", kind:'Gramática', items:[look(["What's he like? He's sporty and he's smart.", "She's bossy but hard-working.", "I like him because he's patient."]), fi("He's sporty", 'and', 'smart. A great mix!', ['but','because'], 'w:sporty'), fi("She's lazy at home", 'but', "she's hard-working at school.", ['and','because'], 'w:lazy'), fi('I like my teacher', 'because', "she's patient.", ['but','and'], 'w:patient'), sp('I like her because she is friendly.', 'w:friendly')]},
+      {title:'Cuento: At the Ice Palace', kind:'Cuento', items:[T1.scene, rs(T1.st, 'What do Polly and Mike eat?', 'Ice cream', ['Pizza','Cake']), rs(T1.st, 'What does one thief look like?', 'He has dark hair', ['He has a beard','He is very short']), rs(T1.st, 'Why do they follow the man?', "He's bald like the man from the skidoo", ['He has ice cream','He is their friend']), sp('What do the thieves look like?', 'w:bald')]},
+      {title:'Help your friends', kind:'Valores', items:[PK('classroom', [['👂', true, 'Listen when your friends speak.'], ['✏️', true, 'Share your things.'], ['🙋', true, 'Let others speak.'], ['🤝', true, 'Say "Can I help you?"'], ['😠', false, 'Laugh at a friend.']], 'Help your friends in class.', 'Toca las buenas maneras de ayudar.'), sp('Can I help you?', 'w:helpful')]},
+      {title:'An email from Spain', kind:'Lectura', items:[rd('An Email from Spain', "Hi Matt! I'm having a great summer in Spain with the Torres family. Carlos is twelve. He's creative and very smart, and he's patient, too. His sister Nerea is eighteen. She has long, black hair and she's very sporty. Lucia is nine. She's funny but she's very bossy!", "What's Carlos like?", 'Creative, smart and patient', ['Bossy and lazy','Sporty and funny']),
+        rd('An Email from Spain', "Hi Matt! I'm having a great summer in Spain with the Torres family. Carlos is twelve. He's creative and very smart, and he's patient, too. His sister Nerea is eighteen. She has long, black hair and she's very sporty. Lucia is nine. She's funny but she's very bossy!", 'What does Nerea look like?', 'She has long, black hair', ['She has short, light hair','She is bald']), sp("I'm having a great time!", '☀️')]},
+      {title:'Warm and cool colors', kind:'Arte', items:[SO(['WARM 🔥', 'COOL ❄️'], [['red', 0], ['orange', 0], ['yellow', 0], ['blue', 1], ['green', 1], ['purple', 1]], 'Warm and cool colors', 'Pon cada color en su canasta: cálido o frío.'),
+        rd('Two Paintings', 'This painting has warm colors. There is a lot of red and yellow. It makes me feel happy. That painting has cool colors. There is a lot of blue and green. It makes me feel calm.', 'How does the warm painting make you feel?', 'Happy', ['Calm','Sad']), sp('This picture has cool colors.', '🎨')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('street', ['bald','spiky hair','handsome','cute','light hair','dark hair']), fi('What does she look', 'like', '? She has curly hair.', ['likes','liking'], 'w:curly'), fi("What's he like? He's creative and", 'helpful', '.', ['bald','tall'], 'w:helpful'), wr('lazy')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['bald','cute','handsome','spiky hair']), me(['bossy','lazy','sporty','talkative']), fi("My new character is tall and handsome. He's bossy", 'but', 'helpful.', ['because','and'], 'w:handsome'), sp('My new character has short, dark hair and green eyes.', '🦸')]}
+    ]),
+    L5('n5x1', 'Families of the world', 'Familias grandes y pequeñas', 'yellow', [
+      {title:'Families of the world', kind:'Lectura', items:[PK('room', [['👨‍👩‍👧‍👦', true, 'James: three sisters and three brothers'], ['👩‍👦', true, 'Lang: no brothers or sisters'], ['⚽', true, 'Kyle plays soccer with his brother'], ['🐉', false, 'They all live in a castle']], 'Big or small?', 'Toca lo que es verdad de las familias del texto.'),
+        rd('Three Blogs', "Kyle lives in the United Kingdom. His mom has a new husband, and now Kyle has a brother. They play soccer on Saturdays. Lang lives in China. She doesn't have brothers or sisters, but she has good friends and her grandparents play games with her. James lives in the United States. He has three sisters and three brothers. His big sister helps him with his homework.", 'Who has a big family?', 'James', ['Lang','Kyle']), sp('Is your family big or small?', '👨‍👩‍👧')]}
+    ], 'Wider World'),
+    L5('n5u2', 'My life', 'Rutinas, must y should, ¿qué tan seguido?', 'green', [
+      {title:'Daily activities', kind:'Vocabulario', items:[FD('room', DA.slice(0, 5)), FD('classroom', DA.slice(5)), ...DA.map(f), me(['brush my teeth','make my bed','wash my face','clean my room'])]},
+      {title:'You must, you should', kind:'Gramática', items:[look(['You must brush your teeth. (An order)', 'You should brush your teeth. (Advice)']), DP('classroom', [['⏰', 'be on time'], ['📚', 'study before a test'], ['✍️', 'take notes in class'], ['👫', 'meet my friends']], 'What advice can you give?', 'Pon cada consejo debajo de su dibujo.'),
+        fi('You', 'must', 'do your homework now!', ['musts','to'], 'w:do my homework'), fi("I'm late. You", 'should', 'be on time.', ['shoulds','to'], 'w:be on time'), od('You should clean your room every day', ['must'], 'w:clean my room'), sp('You must wash your face before bed.', 'w:wash my face')]},
+      {title:'How often?', kind:'Vocabulario', items:[DP('paper', FQ, 'Look and match.'), ...FQ.map(f), CH('room', ['Robbie', 'Emma'], 'I never clean my room!', TOOK, ['I always wash my face before school, and I brush my hair so I look cool.', 'I usually make my bed and I often help my mom.', 'But I never, never, never clean my room! Where is my sister\'s kite? Under the bed!'])]},
+      {title:'She often brushes her teeth', kind:'Gramática', items:[look(['I always brush my teeth.', 'He usually brushes his teeth.', 'She often brushes her teeth.', 'We never brush our teeth. (Oh no!)']), fi('He', 'usually', 'makes his bed.', ['usual','use'], 'w:make my bed'), fi('She often', 'brushes', 'her teeth.', ['brush','brushing'], 'w:brush my teeth'), fi('They', 'sometimes', 'take out the trash.', ['sometime','some'], 'w:take out the trash'), sp('I sometimes take out the trash.', 'w:sometimes')]},
+      {title:'Cuento: The Training Camp', kind:'Cuento', items:[T2.scene, rs(T2.st, 'Where is Smith?', 'At a training camp', ['At the Ice Palace','At school']), rs(T2.st, 'What do Polly and Mike build?', 'An igloo', ['A fire','A skidoo']), rs(T2.st, 'What is in the shopping bag?', 'Red ribbons', ['Diamonds','Ice cream']), sp('We must stay awake!', '🌙')]},
+      {title:'Giving is great', kind:'Valores', items:[PK('room', [['🎂', true, 'Give birthday cards.'], ['🎁', true, 'Give small presents.'], ['🎵', true, 'Share music.'], ['🎟️', true, 'Invite friends to play.'], ['🚫', false, 'Keep everything for you.']], 'Giving is great.', 'Toca las cosas que puedes dar o compartir.'), sp('I always give birthday cards.', '🎂')]},
+      {title:'Are you a morning person?', kind:'Lectura', items:[rd('Are You a Morning Person?', "Emma is a morning person. She always gets up on time and she always makes her bed. She usually has a big breakfast and she often helps in the kitchen. She likes talking with her family before school. She is never late!", 'Is Emma a morning person?', 'Yes, she is', ["No, she isn't"]),
+        rd('Are You a Morning Person?', "Emma is a morning person. She always gets up on time and she always makes her bed. She usually has a big breakfast and she often helps in the kitchen. She likes talking with her family before school. She is never late!", '', 'How often is Emma late?', 'Never', ['Always','Usually']), sp('I always get up on time in the morning.', '🌅')]},
+      {title:'Being healthy', kind:'Ciencias', items:[SO(['HEALTHY 💪', 'NOT HEALTHY 🍭'], [['milk', 0], ['vegetables', 0], ['fruit', 0], ['candy', 1], ['soda', 1], ['chocolate every day', 1]], 'Healthy food', 'Pon cada comida en su canasta: sana o no tan sana.'),
+        rd('Jonas', 'Jonas is a soccer player. He must practice every day. He eats meat, vegetables, cereal and fruit. He drinks milk, so his bones and teeth are strong. He always brushes his teeth after meals and before bed, and he goes to the dentist two times a year.', 'Why are his bones strong?', 'He drinks milk', ['He eats candy','He sleeps a lot']), sp('You should eat fruit and vegetables.', '🥕')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[NM('room', ['brush my teeth','take out the trash','do my homework','make my bed','wash my face','be on time']), fi('He', "shouldn't", 'eat chocolate every day.', ["doesn't",'never'], '🍫'), fi('Her train never comes on', 'time', '.', ['late','times'], '🚆'), wr('never')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['do my homework','take notes in class','be on time','meet my friends']), me(['always','usually','often','never']), fi('Alex is patient and hard-working. He always', 'brushes', 'his teeth after eating.', ['brush','brushing'], 'w:brush my teeth'), sp('She is never late for school.', '⏰')]}
+    ]),
+    L5('n5r1', 'Units 1 and 2', 'Repaso de las unidades 1 y 2', 'purple', [
+      {title:'Review: friends', kind:'Repaso', shuffle:true, items:[FD('street', ['bald','curly','glasses','spiky hair','light hair','dark hair']), fi('My teacher is a good teacher because she is', 'patient', '.', ['lazy','bossy'], 'w:patient'), fi('My brother is funny', 'but', "he's lazy.", ['because','and'], 'w:lazy'), sp('What does your mom look like?', '👩')]},
+      {title:'Review: my life', kind:'Repaso', shuffle:true, items:[NM('room', ['make my bed','clean my room','do my homework','wash my face','brush my teeth']), fi('Fergus and Ben always do', 'their', 'homework.', ['his','her'], 'w:do my homework'), fi('Mom often washes', 'her', 'hair.', ['his','their'], '🚿'), sp('You must make your bed in the morning.', 'w:make my bed')]}
+    ], 'Repaso'),
+    L5('n5u3', 'Free time', 'Para qué eres bueno y qué estabas haciendo', 'red', [
+      {title:'Activities and hobbies', kind:'Vocabulario', items:[FD('park', AC), ...AC.map(f), ma(['hitting','kicking','throwing','catching'])]},
+      {title:"She's good at diving", kind:'Gramática', items:[look(["What are you good at? I'm good at hitting.", "What's she good at? She's good at diving.", "They aren't good at catching.", 'What does he love doing? He loves going shopping.']), NM('gym', ['diving','throwing','jumping on the trampoline','telling jokes','catching']),
+        fi("He's good", 'at', 'kicking balls.', ['in','on'], 'w:kicking'), fi("She isn't good at", 'throwing', '.', ['throw','throws'], 'w:throwing'), fi('They love', 'going', 'shopping.', ['go','goes'], 'w:going shopping'), sp("I'm good at telling jokes.", 'w:telling jokes')]},
+      {title:'More hobbies', kind:'Vocabulario', items:[NM('room', HB), ...HB.filter(w => w !== 'playing video games').map(f), CH('stage', ['Maddy', 'Robbie'], 'The Fun Club', TOOK, ['Come and have fun at the Fun Club! Come and meet new friends!', 'Singing karaoke, drawing pictures, the fun never ends!', 'What are you good at? Are you good at playing chess? Yes! Yes! Yes!'])]},
+      {title:'What were you doing?', kind:'Gramática', items:[look(['What were you doing yesterday at seven? I was drawing pictures.', 'What was she doing? She was playing volleyball.', 'Were they acting? Yes, they were. / No, they weren\'t.']), fi('At 2:45 Robbie', 'was', 'studying English.', ['were','is'], '🔤'), fi('Maddy and Dan', 'were', 'doing their homework.', ['was','is'], 'w:do my homework'), fi('Was Emma playing chess? No, she', "wasn't", '.', ["weren't",'isn\'t'], 'w:playing chess'), od('What was he doing at seven', ['were'], '🕖')]},
+      {title:'Cuento: Wolf Tracks', kind:'Cuento', items:[T3.scene, rs(T3.st, 'What did Polly hear at two in the morning?', 'The skidoo', ['A wolf','The radio']), rs(T3.st, 'What is Mike good at?', 'Soccer and finding thieves', ['Cooking','Singing']), rs(T3.st, 'Whose tracks are they?', 'A wolf', ['The thief','Gizmo']), sp('This is the right way!', '🧭')]},
+      {title:'Try new things', kind:'Valores', items:[DP('paper', [['⚽', 'join a sports team'], ['🎨', 'take an art class'], ['🎸', 'start a band'], ['💻', 'build a website']], "It's good to try new things.", 'Pon cada idea debajo de su dibujo.'), sp("I'm good at technology. I should learn computer programming.", '💻')]},
+      {title:'Summer camps', kind:'Lectura', items:[rd('Summer Camps', 'At the sports camp, you can play soccer, swim and dive, and jump on the trampoline. At the theater camp, you can make costumes, sing, dance and act. There is a fantastic show every Friday!', 'Where can you make costumes?', 'At the theater camp', ['At the sports camp','At school']),
+        rd('Summer Camps', 'At the sports camp, you can play soccer, swim and dive, and jump on the trampoline. At the theater camp, you can make costumes, sing, dance and act. There is a fantastic show every Friday!', '', 'When is the show?', 'Every Friday', ['Every Monday','Every day']), sp('I like the sports camp because I love diving.', '🏕️')]},
+      {title:'Music for movies', kind:'Música', items:[NM('stage', ['violin','drum','piano','trumpet'], 'Listen to the music and number.'), rd('Music for Movies', "Ben writes music for movies and video games. He's good at playing the piano and he can play the drums. He's good at singing, too. He loves listening to violins and trumpets. Video games are OK, but they aren't his favorite thing.", 'What is Ben good at?', 'Playing the piano', ['Playing video games','Acting']), sp('What instruments can you play?', '🎹')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('park', ['in-line skating','playing chess','running races','acting','singing karaoke','diving']), fi('Mom and Dad', 'were', 'shopping.', ['was','is'], 'w:going shopping'), fi('Was Dan playing soccer? Yes, he', 'was', '.', ['were','is'], '⚽'), wr('acting')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['diving','telling jokes','reading poetry','going shopping']), me(['in-line skating','playing chess','playing the drums','singing in a choir']), fi('Robbie is good at acting. You should', 'try', 'singing, too!', ['tries','trying'], 'w:acting'), sp('Was Tom in-line skating yesterday?', 'w:in-line skating')]}
+    ]),
+    L5('n5x2', 'Funny sports', 'Deportes curiosos del mundo', 'yellow', [
+      {title:'Funny sports', kind:'Lectura', items:[DP('paper', [['🟤', 'mud racing'], ['🧀', 'cheese rolling'], ['🦌', 'reindeer racing'], ['🐘', 'elephant polo']], 'Read and match.', 'Pon cada deporte debajo de su dibujo.'),
+        rd('Funny Sports', 'In mud racing, children run, climb and swim in mud. In cheese rolling, people roll a big cheese down a hill and run to catch it. The winner can eat it! In reindeer racing, people on skis go very fast behind their reindeer. In elephant polo, people play polo on elephants!', 'What do people catch in cheese rolling?', 'A big cheese', ['A ball','A reindeer']), sp('I want to try cheese rolling because I love cheese!', '🧀')]}
+    ], 'Wider World'),
+    L5('n5u4', 'Around the world', 'Países, lugares, there is / there are', 'blue', [
+      {title:'Countries', kind:'Vocabulario', items:[FD('paper', CO.slice(0, 7)), FD('paper', CO.slice(7)), ...CO.map(f), look(['Africa, Asia, Australia, Europe, North America, South America — these are continents.'])]},
+      {title:'There are some penguins', kind:'Gramática', items:[look(["There's a rain forest in Brazil.", "There isn't a rain forest in Korea.", 'There are some penguins in Argentina.', "There aren't any penguins in Italy."]), SO(['THERE ARE ✔️', "THERE AREN'T ✖️"], [['penguins in Argentina', 0], ['pyramids in Egypt', 0], ['beaches in Australia', 0], ['penguins in Italy', 1], ['volcanoes in Egypt', 1]], 'Wild vacations', 'Pon cada frase en su canasta.'),
+        fi('There', 'are', 'some beautiful beaches in Brazil.', ['is','be'], 'w:beach'), fi("There", "isn't", 'a rain forest in Korea.', ["aren't",'not'], 'w:Korea'), fi("There aren't", 'any', 'penguins in Italy.', ['some','a'], 'w:penguins'), sp("There's a dog on the beach.", '🐕')]},
+      {title:'Places', kind:'Vocabulario', items:[NM('mountain', PL), ...PL.filter(w => w !== 'cave').map(f), CH('mountain', ['Dan', 'Maddy'], 'Tell me about your country!', TOOK, ['The drums are calling, my home is calling. I want to be there, in Mexico!', 'Is there a desert? Yes, there is! It\'s hot, hot, hot!', 'Are there any castles? Yes, there are! And big cities, too!'])]},
+      {title:'Is there a pyramid?', kind:'Gramática', items:[look(['Is there a pyramid in the city? Yes, there is. / No, there isn\'t.', 'Are there any beaches in Australia? Yes, there are.', 'Are there any volcanoes in the United Kingdom? No, there aren\'t.']), fi('Is there a volcano in the city? No, there', "isn't", '.', ["aren't",'is'], 'w:volcano'), fi('Are there any deserts in Mexico? Yes, there', 'are', '.', ['is','was'], 'w:desert'), od('Are there any castles in Spain', ['is'], 'w:castle'), sp('Is there a big city in your country?', 'w:city')]},
+      {title:'Cuento: Bollington Hall', kind:'Cuento', items:[T4.scene, rs(T4.st, 'Where are the tracks going?', 'North', ['South','To the lake']), rs(T4.st, 'What is the name of the big house?', 'Bollington Hall', ['The Ice Palace','The training camp']), rs(T4.st, 'Who must stop the kids?', 'Smith', ['The Queen','Gizmo']), sp("Let's look at the map.", '🗺️')]},
+      {title:'Teamwork', kind:'Valores', items:[PK('park', [['⚽', true, 'Play on a soccer team.'], ['🚣', true, 'Go rafting together.'], ['📚', true, 'Study with a friend.'], ['🪢', true, 'Play tug of war.'], ['😴', false, 'Sleep alone all day.']], 'Teamwork is important.', 'Toca las cosas que se hacen en equipo.'), sp('Teamwork is important!', '🤝')]},
+      {title:'A postcard from Egypt', kind:'Lectura', items:[rd('A Postcard from Egypt', "Hello from Egypt! It's very hot, but it's fun. In the desert, there are some big pyramids and an old statue. It has a man's head and a lion's body! Our hotel is on an island in a river. There aren't any cars on the island. Everyone goes by boat.", "What does the statue have?", "A man's head and a lion's body", ["A lion's head and a man's body",'Two heads']),
+        rd('A Postcard from Egypt', "Hello from Egypt! It's very hot, but it's fun. In the desert, there are some big pyramids and an old statue. It has a man's head and a lion's body! Our hotel is on an island in a river. There aren't any cars on the island. Everyone goes by boat.", '', 'How do people go on the island?', 'By boat', ['By car','By bus']), sp('Are there any pyramids in your country?', 'w:pyramid')]},
+      {title:'Summer and winter', kind:'Geografía', items:[SO(['SUMMER ☀️', 'WINTER ❄️'], [['long sunny days', 0], ['kayaking and fishing', 0], ['one long night', 1], ['big snowstorms', 1], ['school by skidoo', 1]], 'Inuk lives in Greenland', 'Pon cada cosa en su canasta: verano o invierno.'),
+        rd('Inuk in Greenland', "Hi, I'm Inuk. I live in Greenland. In the winter, we don't see the sun very much and there are big snowstorms. It's very cold, and we go to school by skidoo. In the summer, there are long sunny days. I go kayaking and fishing every day. The summer is great, but it's very short.", 'How does Inuk go to school in the winter?', 'By skidoo', ['By boat','By car']), sp('I want to live in Greenland because I love the snow.', '❄️')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('mountain', ['volcano','pyramid','castle','statue','farm','city']), fi('Are there any towns in the desert? Yes, there are', 'some', 'towns.', ['any','a'], 'w:town'), fi('There are a lot of factories in the', 'city', '.', ['cave','beach'], 'w:factory'), wr('castle')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['Japan','Mexico','Brazil','Egypt']), me(['volcano','castle','statue','factory']), fi('There are pandas and snakes. It is', 'China', '!', ['Italy','Spain'], 'w:China'), sp('There is a very long river in Egypt.', 'w:Egypt')]}
+    ]),
+    L5('n5r2', 'Units 3 and 4', 'Repaso de las unidades 3 y 4', 'purple', [
+      {title:'Review: free time', kind:'Repaso', shuffle:true, items:[NM('park', ['hitting','catching','diving','telling jokes','playing chess','acting']), fi('Last weekend, I was', 'helping', 'at school.', ['help','helps'], '🏫'), fi('My mom is good', 'at', 'tennis.', ['in','on'], '🎾'), sp('What was your brother doing yesterday?', '❓')]},
+      {title:'Review: around the world', kind:'Repaso', shuffle:true, items:[FD('paper', ['Colombia','Spain','China','Japan','Mexico','Argentina']), fi('This country is in Europe. It has a red and yellow flag. It is', 'Spain', '.', ['Italy','Japan'], 'w:Spain'), fi('Are there any lakes in your town? Yes, there', 'are', '.', ['is','am'], '🏞️'), sp('In my country there are some beautiful beaches.', 'w:beach')]}
+    ], 'Repaso'),
+    L5('n5u5', 'Shopping', 'Ropa, precios y de quién es', 'green', [
+      {title:'Clothing and accessories', kind:'Vocabulario', items:[FD('shop', CL), ...CL.map(f), ma(['jacket','watch','gloves','umbrella'])]},
+      {title:'How much is it?', kind:'Gramática', items:[look(["How much is this jacket? It's ninety dollars and fifty cents.", "How much are those sunglasses? They're thirty dollars.", 'May I buy it, please?']), fi('How much', 'is', 'that handbag?', ['are','be'], 'w:handbag'), fi('How much are these gloves?', "They're", 'ten dollars.', ["It's",'Is'], 'w:gloves'), fi("It's six dollars and fifty", 'cents', '.', ['cent','dollar'], 'w:dollars'), od('How much are those sunglasses', ['is'], 'w:sunglasses'), sp('May I buy the jacket, please?', 'w:jacket')]},
+      {title:'Too tight, too big', kind:'Vocabulario', items:[NM('shop', CA), ...CA.map(f), CH('shop', ['Emma', 'Robbie'], 'Baggy pants!', TOOK, ["That jacket's too tight and the color's too bright.", "That hat's too big, and the size isn't right!", 'I only like wearing baggy pants. Baggy pants are cool! Baggy pants rule!'])]},
+      {title:'Whose watch is this?', kind:'Gramática', items:[look(["Whose watch is this? It's Maddy's. It's mine / yours / his / hers.", "Whose pens are these? They're Dan's. They're mine / yours / his / hers."]), fi("Whose sunglasses are these? They're", 'mine', '.', ['my','me'], 'w:sunglasses'), fi('The jacket is Dan\'s. It\'s', 'his', '.', ['her','hers'], 'w:jacket'), fi("The bracelet is Maddy's. It's", 'hers', '.', ['his','her'], 'w:bracelet'), sp('Whose umbrella is this?', 'w:umbrella')]},
+      {title:'Cuento: The Frozen Lake', kind:'Cuento', items:[T5.scene, rs(T5.st, 'How much is the jacket?', 'Five hundred Ice dollars', ['Five Ice dollars','Fifty Ice dollars']), rs(T5.st, 'Where do the explorers want to go?', 'To the lake', ['To the Ice Palace','To Bollington Hall']), rs(T5.st, 'Who chases Smith?', 'Gizmo', ['Polly','The explorers']), sp('Get away from me!', '🐕')]},
+      {title:'Dress for the occasion', kind:'Valores', items:[DP('paper', [['🏖️', 'shorts and flip-flops'], ['🍽️', 'a nice shirt and pants'], ['🎓', 'a jacket and shoes']], 'Dress correctly for each occasion.', 'Pon la ropa correcta debajo de cada ocasión.'), sp('I wear a jacket for the graduation.', '🎓')]},
+      {title:'Where should they go?', kind:'Lectura', items:[rd('Three Places to Shop', 'At Crazy Clothing, there are beach clothes, sports clothes and school clothes for boys and girls. Very Cool Sports has soccer shoes, sneakers, hoodies and swimsuits for men, women and children. At Riverside Market, you can buy clothes from around the world, cheese, fruit, toys and books on Saturdays and Sundays.', 'Where can you buy fruit?', 'At Riverside Market', ['At Crazy Clothing','At Very Cool Sports']),
+        rd('Three Places to Shop', 'At Crazy Clothing, there are beach clothes, sports clothes and school clothes for boys and girls. Very Cool Sports has soccer shoes, sneakers, hoodies and swimsuits for men, women and children. At Riverside Market, you can buy clothes from around the world, cheese, fruit, toys and books on Saturdays and Sundays.', '', 'Can a man buy sneakers at Very Cool Sports?', 'Yes, he can', ["No, he can't"]), sp('Where can you buy cheap sneakers?', '👟')]},
+      {title:'The right shoes', kind:'Ciencias', items:[DP('paper', [['🥾', 'walking in the mountains'], ['🩰', 'dancing'], ['🧗', 'rock climbing']], 'Choose the right shoes.', 'Pon cada zapato debajo de su actividad.'),
+        rd('The Right Shoes', 'Sneakers are great for walking in the city, but they are too soft for the mountains. For walking in the mountains, wear strong boots. Dancers move their feet a lot, so their shoes are soft in the middle. For rock climbing, shoes are small and tight.', 'What shoes are good for rock climbing?', 'Small and tight shoes', ['Big boots','Soft sneakers']), sp("I don't like rock climbing because it's too dangerous.", '🧗')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('shop', ['hoodie','belt','wallet','bracelet','swimsuit','sunglasses']), fi('How much are the yellow sunglasses? They\'re sixty-two', 'dollars', '.', ['dollar','cents dollar'], 'w:sunglasses'), fi("Whose pens are these? They're not", 'mine', '.', ['me','my'], '🖊️'), wr('wallet')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['jacket','handbag','umbrella','wallet']), me(['tight','baggy','cheap','expensive']), fi("Whose gold is it? It's", 'mine', '!', ['my','me'], '🪙'), sp('How much is that scarf? It is ten dollars.', '🧣')]}
+    ]),
+    L5('n5x3', 'Shopping for food', 'Dónde compran comida en el mundo', 'yellow', [
+      {title:'Shopping for food', kind:'Lectura', items:[DP('paper', [['🛶', 'a floating market'], ['🥐', 'a bakery'], ['🌳', 'a garden']], 'Where do they get their food?', 'Pon cada lugar debajo de su dibujo.'),
+        rd('Food Around the World', 'Bao lives in Vietnam. His family buys food at a floating market. There are a lot of boats, and you can buy fish, rice, coconuts and bananas. Silvia lives in Argentina. She often goes to a bakery after school. Pastries are her favorite food. Lily lives in the United Kingdom. Her family grows fruit in their yard, and their chickens give them eggs.', 'Where does Bao buy food?', 'At a floating market', ['At a bakery','In his yard']), sp('My favorite place to buy food is the market.', '🛒')]}
+    ], 'Wider World'),
+    L5('n5u6', 'Party time', 'El pasado de verbos irregulares y las fechas', 'red', [
+      {title:'Irregular verbs', kind:'Vocabulario', items:[FD('room', VB), ...VB.map(f), tp('Look!', [['make → made, have → had, come → came, give → gave, get → got', ''], ['sing → sang, bring → brought, meet → met, eat → ate, see → saw', '']])]},
+      {title:"I didn't make a cake", kind:'Gramática', items:[look(['I made a cake.', "I didn't make a cake.", 'The baby ate a lot of chocolate cake!']), fi('My aunts', 'brought', 'some food.', ['bringed','bring'], 'w:brought'), fi('We sang happy birthday, but we', "didn't", 'eat the cake.', ["don't",'not'], '🎂'), fi('The family', 'gave', 'Grandpa a lot of presents.', ['give','gived'], 'w:gave'), od('Her friends gave her a bicycle', ['give'], '🚲'), sp('My mom made a big cake.', 'w:made')]},
+      {title:'Dates', kind:'Vocabulario', items:[NM('paper', ORD), ...ORD.map(f), look(['twenty-first, twenty-second, twenty-third, thirty-first']), CH('night', ['Maddy', 'Dan'], 'Happy New Year!', TOOK, ['It was the thirty-first of December, snowy and white.', 'I went to a party that cold winter night. We danced, we sang, and we had fun!', 'Ten, nine, eight... three, two, one! Happy New Year, everyone!'])]},
+      {title:'Where did you go?', kind:'Gramática', items:[look(['Where did you go? I went to Ghana.', 'When did you go to Ghana? I went on August first.', 'What did you see? I saw giant butterflies.', 'Who did you meet? I met my relatives.']), fi('Where', 'did', 'you go?', ['do','does'], '✈️'), fi('I', 'saw', 'giant butterflies.', ['see','seed'], '🦋'), fi('She', 'met', 'her relatives for the first time.', ['meet','meeted'], 'w:met'), fi('I went on August', 'first', '.', ['one','once'], '📅'), sp('When did you go to the beach?', '🏖️')]},
+      {title:'Cuento: At the Police Station', kind:'Cuento', items:[T6.scene, rs(T6.st, 'What does Smith say came?', 'A wolf and a polar bear', ['A lion and a tiger','The police']), rs(T6.st, 'Whose logo is on the pants?', "Hector Frost's", ["The Queen's","Polly's"]), rs(T6.st, 'Where does Hector Frost live?', 'At Bollington Hall', ['At the Ice Palace','At the lake']), sp('We saw this ribbon and we followed the man.', '🎀')]},
+      {title:'Be a problem solver', kind:'Valores', items:[DP('paper', [['📖', 'look it up in a dictionary'], ['👕', 'say sorry and wash it'], ['👋', 'say hello and smile']], 'Be a creative problem solver.', 'Pon cada solución debajo de su problema.'), sp("I don't know this word. I can look it up in a dictionary.", '📖')]},
+      {title:'A welcome party', kind:'Lectura', items:[rd("Sally's Welcome Party", "Yesterday, we had a welcome party for Sally, a new student at school. Before the party, I went to my friend Mark's house for pizza. There was cool music, but the room was too hot. We talked and played games. Then there was a dancing competition. Mark and Sally got a prize!", 'Where did Harry go before the party?', "To Mark's house", ['To the store','To the beach']),
+        rd("Sally's Welcome Party", "Yesterday, we had a welcome party for Sally, a new student at school. Before the party, I went to my friend Mark's house for pizza. There was cool music, but the room was too hot. We talked and played games. Then there was a dancing competition. Mark and Sally got a prize!", '', 'Who got a prize?', 'Mark and Sally', ['Harry','The teacher']), sp('We had a lot of fun at the party.', '🎉')]},
+      {title:'The first Thanksgiving', kind:'Historia', items:[PK('farm', [['🚢', true, 'The settlers came on a ship.'], ['❄️', true, 'The first winter was very cold.'], ['🌱', true, 'Native Americans taught them to grow food.'], ['🏖️', false, 'They went to the beach every day.']], 'The first Thanksgiving', 'Toca lo que pasó en la historia.'),
+        rd('The First Thanksgiving', 'In 1620, some settlers went from England to North America on a ship. Their first winter was very cold and they were hungry. In the spring, Native Americans taught them to grow food. In the fall, there was a lot of food, so they had a big dinner to give thanks.', 'Who taught the settlers to grow food?', 'Native Americans', ['The ship captain','Their friends in England']), sp("Let's give thanks every year!", '🦃')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('room', ['made','gave','sang','ate','saw','met']), fi('Our team was', 'first', 'in the league!', ['one','once'], '🏆'), fi('Blue Ducks went up to', 'third', '.', ['three','threeth'], '🦆'), wr('brought')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['made','came','got','saw']), me(['first','second','third','tenth']), fi('The fourth letter is really the twenty-third. It is a', 'code', '!', ['cake','party'], '🔐'), sp('What did you eat at the party?', '🍕')]}
+    ]),
+    L5('n5r3', 'Units 5 and 6', 'Repaso de las unidades 5 y 6', 'purple', [
+      {title:'Review: shopping', kind:'Repaso', shuffle:true, items:[FD('shop', ['jacket','gloves','sunglasses','swimsuit','umbrella','handbag']), fi("Whose scarf is this? It's Uncle Andy's. It's", 'his', '.', ['hers','mine'], '🧣'), fi('How much are those baggy pants? They\'re eighteen dollars and fifty', 'cents', '.', ['cent','dollars'], '👖'), sp('May I buy the pants, please?', '👖')]},
+      {title:'Review: party time', kind:'Repaso', shuffle:true, items:[NM('paper', ['first','second','third','fourth','fifth']), fi('My sister', 'brought', 'my lunch to me yesterday.', ['bring','bringed'], '🥪'), fi('We', 'sang', 'karaoke at school two days ago.', ['sing','singed'], 'w:singing karaoke'), sp('Kathryn went to the United Kingdom on January tenth.', 'w:the United Kingdom')]}
+    ], 'Repaso'),
+    L5('n5u7', 'School', 'Materias y cómo fue: Was it…? Did you…?', 'blue', [
+      {title:'Was it interesting?', kind:'Vocabulario', items:[FD('classroom', AD), ...AD.filter(w => w !== 'funny').map(f), ma(['scary','easy','boring','exciting'])]},
+      {title:'Was there an alien in it?', kind:'Gramática', items:[look(["Was it interesting? Yes, it was. / No, it wasn't.", "Was there an alien in it? Yes, there was. / No, there wasn't.", "Were there any exciting stories? Yes, there were. / No, there weren't."]), fi("Was it exciting? Yes, it", 'was', '.', ['were','is'], 'w:exciting'), fi('Was there an alien in the story? No, there', "wasn't", '.', ["weren't",'isn\'t'], '👽'), fi('Were there any children in it? Yes, there', 'were', '.', ['was','are'], '🧒'), sp('Was the story scary?', 'w:scary')]},
+      {title:'School subjects', kind:'Vocabulario', items:[NM('classroom', SU), ...SU.filter(w => w !== 'math').map(f), CH('classroom', ['Emma', 'Robbie'], 'Is school boring? No way!', TOOK, ['Math, history, art and science — a lot of subjects every day!', "Last year, math wasn't easy, but now I can do my homework.", 'Last year, P.E. was boring, but now it\'s my favorite subject!'])]},
+      {title:'Did you have science?', kind:'Gramática', items:[look(["Did you have computer science on Tuesday? Yes, I did. / No, I didn't.", "Was P.E. relaxing? No, it wasn't. It was difficult."]), fi('Did Robbie have music on Tuesday? Yes, he', 'did', '.', ['was','do'], 'w:music'), fi('Was it easy? No, it', "wasn't", '. It was difficult.', ["didn't",'weren\'t'], 'w:difficult'), od('Did you have art on Friday', ['do'], 'w:art'), sp('Last year, math was not easy.', 'w:math')]},
+      {title:'Cuento: The Tunnel', kind:'Cuento', items:[T7.scene, rs(T7.st, 'Where does the tunnel go?', 'To Bollington Hall', ['To the lake','To school']), rs(T7.st, 'What does Polly find?', 'A school schedule', ['A diamond','A map']), rs(T7.st, 'When is science?', "At nine o'clock", ["At ten-thirty","At twelve-forty"]), sp('Great job, kids!', '⭐')]},
+      {title:'Your family when they were young', kind:'Valores', items:[PK('room', [['🏫', true, 'Ask Grandma about her school.'], ['🎬', true, 'Ask Dad about his favorite movie star.'], ['🎵', true, 'Ask Mom about her favorite band.'], ['🙉', false, 'Never ask them anything.']], 'Learn about your older family members.', 'Toca las buenas preguntas para tu familia.'), sp('For my mom, school was fun.', '👩')]},
+      {title:'School trips', kind:'Lectura', items:[rd('School Trips', 'Sam went on a science trip to a dark cave. There were lots of bats. It was exciting but scary! Luisa went on a history trip. They looked at old buildings and learned about life 400 years ago. Oliver went on a geography trip to a lake. There was a small but beautiful waterfall.', 'Where did Sam go?', 'To a dark cave', ['To a lake','To old buildings']),
+        rd('School Trips', 'Sam went on a science trip to a dark cave. There were lots of bats. It was exciting but scary! Luisa went on a history trip. They looked at old buildings and learned about life 400 years ago. Oliver went on a geography trip to a lake. There was a small but beautiful waterfall.', '', 'Was there a waterfall near the lake?', 'Yes, there was', ["No, there wasn't"]), sp("Luisa's trip was interesting. I like old places.", '🏛️')]},
+      {title:'A school on the radio', kind:'Ciencias', items:[rd('A Star Interview', 'When Tara was a child, her home was in the middle of the desert in Australia. It was far from other children, but it wasn\'t boring. There were horses on the farm and she had a pet kangaroo! She didn\'t go to a school building. Her teacher was on the radio in the city, and Tara was on the radio at home.', 'Where was her teacher?', 'On the radio in the city', ['In the desert','On the farm']),
+        rd('A Star Interview', 'When Tara was a child, her home was in the middle of the desert in Australia. It was far from other children, but it wasn\'t boring. There were horses on the farm and she had a pet kangaroo! She didn\'t go to a school building. Her teacher was on the radio in the city, and Tara was on the radio at home.', '', 'Were there any animals on her farm?', 'Yes, there were', ["No, there weren't"]), sp('Was your grandma\'s school different?', '👵')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('classroom', ['geography','science','history','art','music','computer science']), fi('Did you go into the cave? Yes, we', 'did', '. It was dark and wet.', ['was','were'], 'w:cave'), fi('Were there any bats? Yes, there', 'were', '.', ['was','are'], '🦇'), wr('science')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['geography','history','music','P.E.']), me(['scary','boring','easy','romantic']), fi('Alison went on a rollercoaster. Was it exciting? No! It was', 'scary', '!', ['easy','boring'], '🎢'), sp('Where did you go on your vacation?', '🧳')]}
+    ]),
+    L5('n5x4', 'Unusual schools', 'Escuelas especiales del mundo', 'yellow', [
+      {title:'Unusual schools', kind:'Lectura', items:[DP('paper', [['🌏', 'Kai: friends from 40 countries'], ['🏂', 'Abi: winter sports'], ['🛏️', 'Matu: lives at school']], 'Read and match.', 'Pon cada niño debajo de su escuela.'),
+        rd('Unusual Schools', 'Kai goes to an international school in Tokyo. He has friends from forty countries and he is learning Japanese. Abi goes to a special school in the mountains in Canada. After her classes, she does winter sports for three hours. Matu lives in his school in Kenya. He never feels lonely because his friends live there, too.', 'Who does winter sports?', 'Abi', ['Kai','Matu']), sp('A swimming pool is important for me because I like swimming.', '🏊')]}
+    ], 'Wider World'),
+    L5('n5u8', 'Entertainment', 'Nacionalidades, trabajos de película, who / that', 'green', [
+      {title:'Nationalities', kind:'Vocabulario', items:[FD('paper', NA.slice(0, 7)), FD('paper', NA.slice(7)), ...NA.map(f), fi('He is from Spain. He is', 'Spanish', '.', ['Spain','Spanishes'], 'w:Spain')]},
+      {title:'Where is he from?', kind:'Gramática', items:[look(['Is she from the United States? Yes, she is. / No, she isn\'t.', "Where's he from? He's from Argentina. He's Argentinian.", "Where are they from? They're from Australia. They're Australian."]), fi("Where's she from? She's from", 'Mexico', '.', ['Mexican','Mexicans'], 'w:Mexico'), fi("They're from Japan. They're", 'Japanese', '.', ['Japan','Japaneses'], 'w:Japan'), fi('Is he from Colombia? Yes, he', 'is', '.', ['are','does'], 'w:Colombia'), sp('The Colombian flag is yellow, blue, and red.', 'w:Colombia')]},
+      {title:'Movie jobs', kind:'Vocabulario', items:[NM('stage', JO), ...JO.filter(w => w !== 'cowboy').map(f), CH('stage', ['Robbie', 'Dan'], "Acting's the life for me!", TOOK, ['On Friday I was a cowboy, on Thursday a Spanish king.', 'In June I was a waiter, and a sailor in the spring.', "I'm an actor, yes, an actor! Acting's the life for me!"])]},
+      {title:'A cowboy who likes music', kind:'Gramática', items:[look(["He's a cowboy who likes playing the guitar.", "It's an American movie that's very famous.", 'in May, in the spring, on Thursday, at five o\'clock']), fi("She's a scientist", 'who', 'went to the moon.', ['that','what'], 'w:scientist'), fi('He made a cake', 'that', 'was very big.', ['who','what'], '🎂'), fi('He was a waiter', 'in', 'June.', ['on','at'], 'w:waiter'), fi('I get up', 'at', "five o'clock.", ['in','on'], '⏰'), sp("He's the king who's eating.", 'w:king')]},
+      {title:'Cuento: The Costume Party', kind:'Cuento', items:[T8.scene, rs(T8.st, 'Where are the diamonds?', "Around the dog's neck", ['In the tunnel','In the lake']), rs(T8.st, 'What does the Queen say about the children?', 'They are brave and smart', ['They are lazy','They are bossy']), rs(T8.st, 'Who says "Just call the Ice Detectives!"?', 'Polly', ['Smith','The Queen']), sp('Do you see what I see?', '💎')]},
+      {title:'Be a good role model', kind:'Valores', items:[PK('classroom', [['⏰', true, 'Arrive on time.'], ['👂', true, 'Listen more.'], ['🙏', true, 'Say "please" and "thank you".'], ['🏠', true, 'Help at home.'], ['🗯️', false, 'Act before thinking.']], 'Be a good role model for others.', 'Toca lo que hace un buen ejemplo.'), sp('Do you arrive on time? Yes, I do.', '⏰')]},
+      {title:'What is on TV?', kind:'Lectura', items:[rd('On TV This Week', 'In Big Kids, children do their parents\' jobs for a week. This week, a boy is a waiter in an expensive restaurant. It\'s very funny! The Finton Files is an exciting spy story about an American spy in Italy. In Dr. Glock, a scientist and his alien pet go to sea with some sailors. It\'s fantastic!', 'Who has an alien pet?', 'Dr. Glock', ['The waiter','The spy']),
+        rd('On TV This Week', 'In Big Kids, children do their parents\' jobs for a week. This week, a boy is a waiter in an expensive restaurant. It\'s very funny! The Finton Files is an exciting spy story about an American spy in Italy. In Dr. Glock, a scientist and his alien pet go to sea with some sailors. It\'s fantastic!', '', 'Where is the American spy?', 'In Italy', ['In Australia','At sea']), sp('I want to watch Dr. Glock. It is exciting.', '📺')]},
+      {title:'Old video games', kind:'Tecnología', items:[DP('paper', [['🏓', '1972: a computer tennis game'], ['🎮', '1989: a small game machine'], ['🕹️', '2004: play with your whole body']], 'Read and match.', 'Pon cada año debajo de su videojuego.'),
+        rd('Old Video Games', 'The first video games were American. In 1972, there was a tennis game with two white lines and a small white square. In 1989, there was a small Japanese game machine with black and white games. In 2004, there was a game where you play with your whole body. Some sports games are very good exercise!', 'Were the first video games Japanese?', "No, they weren't", ['Yes, they were']), sp('Do you play video games? Yes, I do. They are exciting!', '🎮')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('stage', ['scientist','cowboy','soldier','spy','sailor','musician']), fi('The man', 'who', 'loves running is Australian.', ['that','what'], 'w:Australian'), fi('China is a country', 'that', 'makes many things.', ['who','what'], 'w:China'), wr('soldier')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['king','queen','spy','sailor']), me(['Chinese','Mexican','British','Egyptian']), fi('My movie is about a teacher', 'who', 'loves reading poetry.', ['that','what'], 'w:reading poetry'), sp('My movie is exciting. It is about a spy who is British.', '🎬')]}
+    ]),
+    L5('n5r4', 'Units 7 and 8', 'Repaso de las unidades 7 y 8', 'purple', [
+      {title:'Review: school', kind:'Repaso', shuffle:true, items:[NM('classroom', ['math','geography','history','science','music','P.E.']), fi('When Amy\'s grandma was young, there', "weren't", 'any computers in schools.', ["wasn't",'were'], '💻'), fi('Was there a queen in the drama? No, there', "wasn't", '.', ["weren't",'was'], 'w:queen'), sp('Was school fun for your grandpa?', '👴')]},
+      {title:'Review: entertainment', kind:'Repaso', shuffle:true, items:[FD('stage', ['king','queen','spy','scientist','sailor','soldier']), fi("He's from Argentina. He's", 'Argentinian', '.', ['Argentina','Argentinians'], 'w:Argentina'), fi("This is a soldier", 'who', 'is from the United States.', ['that','what'], 'w:soldier'), sp("He's an American soldier who wears a uniform.", 'w:soldier')]}
+    ], 'Repaso'),
+    L5('n5g', 'Goodbye', 'Despedida: los Ice Detectives', 'red', [
+      {title:'Story quiz', kind:'Juego', items:[FD('snow', ['Polly','Mike','Gizmo','Hector Frost','Smith','The Queen'], 'Listen and find.'), fi('The big house in the story is', 'Bollington Hall', '.', ['the Ice Palace','the school'], '🏚️'), fi('The bald thief is', 'Smith', '.', ['Mike','Hector Frost'], 'w:Smith'), fi('The thief who loves diamonds is', 'Hector Frost', '.', ['Smith','Gizmo'], 'w:Hector Frost')]},
+      {title:'Who said it?', kind:'Juego', items:[DP('snow', [['Hector Frost', '"I want those diamonds!"'], ['Mrs. Jones', '"Eat your breakfast, guys!"'], ['Smith', '"The bear almost ate me!"'], ['The Queen', '"How amazing!"']], 'Who said it?', 'Pon cada frase debajo de quien la dijo.'),
+        fi('At two in the morning, Polly heard the', 'skidoo', '.', ['wolf','bear'], 'w:skidoo'), fi('The code in the tunnel was a school', 'schedule', '.', ['map','book'], '📋'), sp('Just call the Ice Detectives!', '🕵️')]},
+      {title:'What I learned', kind:'Escritura', items:[fi('What does she look', 'like', '?', ['likes','liking'], '👀'), fi('You', 'should', 'study before a test.', ['shoulds','to'], 'w:study before a test'), fi('What were you', 'doing', 'yesterday at seven?', ['do','did'], '🕖'), fi('Is there a volcano in your country? Yes, there', 'is', '.', ['are','am'], 'w:volcano'), fi('Whose watch is this? It is', 'mine', '.', ['my','me'], 'w:watch'), od('Where did you go on your vacation', ['do'], '🧳'), sp('My favorite unit is Unit 3 because I love sports.', '⭐')]},
+      {title:'My rules', kind:'Escritura', items:[SO(['AT HOME 🏠', 'AT SCHOOL 🏫'], [['make my bed', 0], ['take out the trash', 0], ['clean my room', 0], ['take notes in class', 1], ['be on time', 1], ['study before a test', 1]], 'Rules for home and school', 'Pon cada regla en su canasta: en casa o en la escuela.'), sp('I must make my bed and I should be on time.', '📝')]}
+    ], 'Despedida')
+  ];
+}
 // Escuelas que ya tenían el curso: agrega las palabras y unidades nuevas (cerradas) sin tocar lo que el profe editó
 function upgradeCourse(c){
   if ((c.ver || 2) >= COURSE_VER) return false;
@@ -2464,7 +3120,7 @@ const playLessons = u => u.lessons.filter(playable);
 const allLessons = () => units().flatMap(playLessons);
 const lessonTitle = id => { for (const u of units()) for (const l of u.lessons) if (l.id === id) return `${u.title} · ${l.title}`; return null; };
 const fridayKey = (weeks = 0) => { const d = new Date(); const add = (5 - d.getDay() + 7) % 7 || 7; d.setDate(d.getDate() + add + 7 * weeks); return ymd(d); };
-const fmtDay = k => new Date(k + 'T12:00').toLocaleDateString('es-NI', {weekday:'long', day:'numeric', month:'long'});
+const fmtDay = k => new Date(k + 'T12:00').toLocaleDateString(LANG === 'en' ? 'en-US' : 'es-NI', {weekday:'long', day:'numeric', month:'long'});
 const A1_DEFAULT = () => ({id:'a1', title:'Semana 1 · My birthday', due:fridayKey(0), lessons:['n1u1l1','n1u1l2','n1u1l3','n1u1l5'], writing:{title:'Mi cumpleaños', prompt:'Escribe 3 oraciones en inglés sobre ti. Usa “My name’s…”, “I’m… (tu edad)” y tu color favorito.'}});
 
 const MEDALS = [
@@ -2841,6 +3497,7 @@ $('#admLogout').addEventListener('click', () => confirmSheet('¿Cerrar sesión?'
 function route(){
   fillPandas();
   V = DB.course.vocab;
+  if (DB.session) setLang(DB.course.lang || 'es'); // el idioma lo escoge el profe para toda la escuela
   U = DB.users.find(u => u.id === DB.session) || null;
   if (!U){ show('login'); return; }
   if (U.role === 'admin'){ S = null; show('admin'); setATab('sum'); }
@@ -3265,7 +3922,8 @@ function gradesWorkbook(){
   const tareas = [['Estudiante', 'Tarea', 'Fecha de entrega', 'Lecciones hechas', 'Lecciones de la tarea', 'Escritura', 'Nota (0-100)', 'Comentario del profe', 'Cambios de nota']];
   asg.forEach(a => st.forEach(u => { const p = prog(u.id), x = hwOf(p, a.id) || {}, ls = a.lessons.filter(lessonTitle);
     tareas.push([u.name, a.title, a.due, ls.filter(id => p.done[id]).length, ls.length, !a.writing ? 'No aplica' : x.reviewed ? 'Revisada' : x.sentAt ? 'Entregada, por revisar' : 'Sin entregar', typeof x.grade === 'number' ? x.grade : '', x.reviewed ? (x.note || '') : '', (x.history || []).map(c => `${c.at}: ${c.from.grade ?? '-'}→${c.to.grade ?? '-'} (${c.reason})`).join(' | ')]); }));
-  return buildXlsx([{name:'Resumen', rows:resumen, widths:[24, 14, 18, 10, 9, 14, 12, 20, 16, 18]}, {name:'Tareas', rows:tareas, widths:[24, 26, 15, 15, 18, 22, 12, 36, 40]}]);
+  [resumen[0], tareas[0]].forEach(r => r.forEach((x, i) => { r[i] = tr(x); })); resumen.slice(1).forEach(r => { r[3] = tr(r[3]); r[8] = tr(r[8]); }); tareas.slice(1).forEach(r => { r[5] = tr(r[5]); });
+  return buildXlsx([{name:tr('Resumen'), rows:resumen, widths:[24, 14, 18, 10, 9, 14, 12, 20, 16, 18]}, {name:tr('Tareas'), rows:tareas, widths:[24, 26, 15, 15, 18, 22, 12, 36, 40]}]);
 }
 function downloadGrades(){
   try {
@@ -3410,7 +4068,7 @@ function missedCard(st){
     h('h3', {style:'font-size:19px;margin-bottom:4px'}, 'Palabras que más se fallan'),
     h('p', {class:'muted', style:'margin:0 0 6px;font-size:14px'}, 'Para repasar en clase. Cuenta los errores de todos los estudiantes del grupo.'),
     ...(top.length ? top.map(t => h('div', {class:'stu', role:'button', tabindex:'0', style:'cursor:pointer', 'aria-label':`Ver quién falla ${t.w}`, onclick:() => whoMissedSheet(t.w, st), onkeydown:e => { if (e.key === 'Enter') whoMissedSheet(t.w, st); }}, V[t.w] ? pic(V[t.w].img) : null,
-      h('div', {class:'nm'}, t.w, h('small', {}, (V[t.w] ? V[t.w].es + ' · ' : '') + `${t.n} error${t.n > 1 ? 'es' : ''} · ${t.who} estudiante${t.who > 1 ? 's' : ''} · toca para ver quién`)),
+      h('div', {class:'nm'}, t.w, h('small', {}, (V[t.w] && LANG !== 'en' ? V[t.w].es + ' · ' : '') + `${t.n} error${t.n > 1 ? 'es' : ''} · ${t.who} estudiante${t.who > 1 ? 's' : ''} · toca para ver quién`)),
       h('button', {class:'btn blue small', type:'button', style:'width:48px;padding:8px;flex:none', 'aria-label':'Escuchar ' + t.w, html:'<span style="display:inline-block;width:22px;height:22px">' + ICON.speaker + '</span>', onclick:e => { e.stopPropagation(); say(t.w); }}))) : [h('p', {style:'margin:0'}, 'Todavía no hay errores registrados. Aparecerán cuando los estudiantes practiquen.')]));
 }
 // Quién falla una palabra: para saber a quién ayudar
@@ -3530,7 +4188,7 @@ function shareSheet(title, text, userId){
     userId ? h('p', {class:'muted', style:'margin:0;font-size:13px'}, 'El número se guarda solo en este teléfono o computadora. Si lo dejas vacío, WhatsApp te deja elegir el contacto.') : null,
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
 }
-function weekRange(){ const a = new Date(); a.setDate(a.getDate() - 6); const f = d => d.toLocaleDateString('es-NI', {day:'numeric', month:'short'}); return f(a) + ' al ' + f(new Date()); }
+function weekRange(){ const a = new Date(); a.setDate(a.getDate() - 6); const f = d => d.toLocaleDateString(LANG === 'en' ? 'en-US' : 'es-NI', {day:'numeric', month:'short'}); return f(a) + (LANG === 'en' ? ' to ' : ' al ') + f(new Date()); }
 function reportText(u){
   const p = prog(u.id), first = u.name.trim().split(/\s+/)[0];
   const days = new Set((p.days || []).filter(d => d >= dayKey(6))).size;
@@ -3801,13 +4459,23 @@ function summary(it){
   return '';
 }
 
+// Idioma de toda la app para la escuela: se guarda en el curso, así los estudiantes lo reciben al entrar
+function langCard(){
+  const cur = DB.course.lang === 'en' ? 'en' : 'es';
+  const pick = l => () => { if (l === cur) return; DB.course.lang = l; save(); setLang(l); renderContent(); toast(l === 'en' ? 'The app is now in English for your school.' : 'La app ahora está en español para tu escuela.'); };
+  const b = (l, label) => h('button', {class:'btn small' + (l === cur ? '' : ' ghost'), type:'button', 'aria-pressed':String(l === cur), style:'width:auto;flex:1', 'data-notr':'', onclick:pick(l)}, label);
+  return h('div', {class:'card', style:'padding:14px 16px;margin-bottom:16px'},
+    h('b', {}, '🌐 ', 'Idioma de la app'),
+    h('div', {style:'display:flex;gap:8px;margin:10px 0 6px'}, b('es', 'Español'), b('en', 'English')),
+    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Los estudiantes y el profe ven toda la app en este idioma. Las palabras y frases de las lecciones siempre están en inglés.'));
+}
 function renderContent(){
   const root = $('#atab-content'); root.innerHTML = '';
   if (ED.view === 'unit' && curUnit()) return renderUnitEd(root);
   if (ED.view === 'lesson' && curLesson()) return renderLessonEd(root);
   if (ED.view === 'words') return renderWordsEd(root);
   ED.view = 'root';
-  root.append(h('h2', {class:'section-title', style:'margin-bottom:4px'}, 'Contenido del curso'),
+  root.append(langCard(), h('h2', {class:'section-title', style:'margin-bottom:4px'}, 'Contenido del curso'),
     h('p', {class:'muted', style:'margin:0 0 12px'}, 'Con el interruptor abres la unidad para el grupo elegido; toca una unidad para editar sus lecciones.'), groupBar(),
     levels().length > 1 ? (() => { const g = curGroup(), sel = levelSelect('grpLevel', groupLevel(g));
       sel.addEventListener('change', () => { setGroupLevel(g, +sel.value); save(); toast(`${g.name} ahora está en el Nivel ${sel.value}`); renderContent(); });
@@ -4052,7 +4720,7 @@ function renderWordsEd(root){
     list.innerHTML = '';
     const f = norm(q.value);
     const keys = vocabKeys().filter(w => !f || w.includes(f) || norm(V[w].es).includes(f));
-    keys.forEach(w => list.append(h('button', {class:'row', type:'button', style:'width:100%', onclick:() => wordSheet(w, () => renderContent())}, h('div', {class:'wprev'}, pic(V[w].img, 'sm')), h('div', {class:'main'}, w, h('small', {}, V[w].es)), h('span', {class:'chev', html:ICON.chev, style:'width:20px;color:var(--ink-2)'}))));
+    keys.forEach(w => list.append(h('button', {class:'row', type:'button', style:'width:100%', onclick:() => wordSheet(w, () => renderContent())}, h('div', {class:'wprev'}, pic(V[w].img, 'sm')), h('div', {class:'main'}, w, h('small', {'data-notr':''}, V[w].es)), h('span', {class:'chev', html:ICON.chev, style:'width:20px;color:var(--ink-2)'}))));
     if (!keys.length) list.append(h('p', {class:'muted'}, 'No hay palabras con ese nombre.'));
   };
   q.addEventListener('input', draw);
@@ -4264,8 +4932,30 @@ const FRIENDS = {
   Oliver:{v:2, skin:1, hair:'short', hc:4, eyes:'happy', mouth:'grin', top:'hoodie', tc:2, head:'none', face:'none', bg:0},
   Sophie:{v:2, skin:3, hair:'buns', hc:0, eyes:'big', mouth:'smile', top:'tee', tc:8, head:'none', face:'none', bg:5},
   'Uncle James':{v:2, skin:1, hair:'short', hc:1, eyes:'normal', mouth:'smile', top:'collar', tc:6, head:'none', face:'square', bg:2},
-  'Finley Keen':{v:2, skin:2, hair:'spiky', hc:2, eyes:'normal', mouth:'grin', top:'jersey', tc:0, head:'none', face:'sun', bg:4}
+  'Finley Keen':{v:2, skin:2, hair:'spiky', hc:2, eyes:'normal', mouth:'grin', top:'jersey', tc:0, head:'none', face:'sun', bg:4},
+  // Nivel 5: los Ice Detectives de Ice Island y los chicos que abren cada unidad
+  Polly:{v:2, skin:0, hair:'long', hc:0, eyes:'big', mouth:'smile', top:'hoodie', tc:1, head:'none', face:'none', bg:0},
+  Mike:{v:2, skin:1, hair:'spiky', hc:0, eyes:'happy', mouth:'grin', top:'hoodie', tc:3, head:'beanie', face:'none', bg:1},
+  'Hector Frost':{v:2, skin:0, hair:'short', hc:0, eyes:'normal', mouth:'soft', top:'collar', tc:1, head:'none', face:'none', bg:3},
+  Smith:{v:2, skin:1, hair:'buzz', hc:0, eyes:'normal', mouth:'soft', top:'tee', tc:8, head:'none', face:'none', bg:2},
+  'The Queen':{v:2, skin:0, hair:'curly', hc:4, eyes:'big', mouth:'smile', top:'collar', tc:2, head:'crown', face:'none', bg:4},
+  'Police Chief':{v:2, skin:3, hair:'bob', hc:0, eyes:'normal', mouth:'smile', top:'collar', tc:4, head:'cap', face:'none', bg:0},
+  'Mrs. Jones':{v:2, skin:0, hair:'bob', hc:1, eyes:'normal', mouth:'smile', top:'tee', tc:2, head:'none', face:'round', bg:2},
+  Maddy:{v:2, skin:0, hair:'curly', hc:4, eyes:'big', mouth:'laugh', top:'tee', tc:0, head:'none', face:'none', bg:5},
+  Emma:{v:2, skin:1, hair:'long', hc:2, eyes:'normal', mouth:'smile', top:'collar', tc:6, head:'none', face:'round', bg:5},
+  Robbie:{v:2, skin:1, hair:'short', hc:2, eyes:'happy', mouth:'grin', top:'hoodie', tc:4, head:'none', face:'none', bg:0},
+  Dan:{v:2, skin:4, hair:'spiky', hc:0, eyes:'happy', mouth:'grin', top:'hoodie', tc:3, head:'none', face:'none', bg:1}
 };
+// Gizmo, el perro husky de los Ice Detectives (Nivel 5)
+function dogSVG(){
+  const id = 'avc' + (++avSeq), G = '#4B4F5C', W = '#FFFFFF';
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})"><rect width="120" height="120" fill="#CDEBFF"/>`
+    + `<path d="M16 126 C18 98 38 90 60 90 C82 90 102 98 104 126 Z" fill="${G}" ${SW}/><path d="M44 126 C45 104 52 96 60 96 C68 96 75 104 76 126 Z" fill="${W}" ${SW}/><path d="M38 96 Q60 108 82 96" fill="none" stroke="#3CB45A" stroke-width="6" stroke-linecap="round"/>`
+    + `<path d="M28 44 L22 10 L50 28 Z" fill="${G}" ${SW}/><path d="M92 44 L98 10 L70 28 Z" fill="${G}" ${SW}/><path d="M31 36 L28 18 L43 28 Z" fill="#F7A8C4"/><path d="M89 36 L92 18 L77 28 Z" fill="#F7A8C4"/>`
+    + `<ellipse cx="60" cy="56" rx="34" ry="31" fill="${G}" ${SW}/><path d="M60 36 C50 40 44 52 46 62 C40 66 40 78 50 82 C55 85 65 85 70 82 C80 78 80 66 74 62 C76 52 70 40 60 36 Z" fill="${W}" ${SW}/>`
+    + `<circle cx="49" cy="54" r="7" fill="${W}" ${SW}/><circle cx="71" cy="54" r="7" fill="${W}" ${SW}/><circle cx="50" cy="55" r="3.6" fill="${SO}"/><circle cx="70" cy="55" r="3.6" fill="${SO}"/>`
+    + `<ellipse cx="60" cy="68" rx="6" ry="4.5" fill="${SO}"/><path d="M52 75 Q60 82 68 75" fill="none" stroke="${SO}" stroke-width="2.4" stroke-linecap="round"/><path d="M57 78 Q60 88 63 78" fill="#F06BAA" ${SW}/></g></svg>`;
+}
 function monkeySVG(bg = '#FFE0C7', B = '#8B5A2B', T = '#E9C29B'){
   const id = 'avc' + (++avSeq);
   return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})">`
@@ -4302,16 +4992,17 @@ function dragonSVG(){
     + `<ellipse cx="60" cy="68" rx="26" ry="15" fill="${B}" ${SW}/><circle cx="52" cy="66" r="2" fill="${SO}"/><circle cx="68" cy="66" r="2" fill="${SO}"/><path d="M48 74 Q60 82 72 74" fill="none" stroke="${SO}" stroke-width="2.4" stroke-linecap="round"/>`
     + `<circle cx="46" cy="44" r="11" fill="#FFFFFF" ${SW}/><circle cx="74" cy="44" r="11" fill="#FFFFFF" ${SW}/><circle cx="48" cy="46" r="5" fill="${SO}"/><circle cx="72" cy="46" r="5" fill="${SO}"/><circle cx="49.5" cy="44" r="1.6" fill="#fff"/><circle cx="73.5" cy="44" r="1.6" fill="#fff"/></g></svg>`;
 }
-const isFriend = n => !!FRIENDS[n] || ['Ola','PROD 1','PROD 2','President Pop','Waldo','Coco'].includes(n);
+const isFriend = n => !!FRIENDS[n] || ['Ola','PROD 1','PROD 2','President Pop','Waldo','Coco','Gizmo'].includes(n);
 function friendSVG(name){
   if (name === 'Ola') return monkeySVG();
+  if (name === 'Gizmo') return dogSVG();
   if (name === 'PROD 1') return robotSVG('#E8463C', '1');
   if (name === 'PROD 2') return robotSVG('#8BC34A', '2');
   if (name === 'President Pop') return alienSVG();
   if (name === 'Waldo') return dragonSVG();
   if (name === 'Coco') return monkeySVG('#CDEBFF', '#6B4A33', '#F2D1A8');
   const s = avatarSVG(FRIENDS[name]);
-  return name === 'Uncle Dan' || name === 'Captain Conrad' || name === 'Uncle James' ? s.replace('</g></svg>', `<path d="M48 64 Q54 58.5 60 62.5 Q66 58.5 72 64 Q66 67.5 60 65.5 Q54 67.5 48 64 Z" fill="#2B2523" ${SW}/></g></svg>`) : s;
+  return name === 'Uncle Dan' || name === 'Captain Conrad' || name === 'Uncle James' || name === 'Hector Frost' ? s.replace('</g></svg>', `<path d="M48 64 Q54 58.5 60 62.5 Q66 58.5 72 64 Q66 67.5 60 65.5 Q54 67.5 48 64 Z" fill="#2B2523" ${SW}/></g></svg>`) : s;
 }
 const placeSVG = (svg, x, y, size) => svg.replace('<svg ', `<svg x="${x}" y="${y}" width="${size}" height="${size}" `);
 const SCENE_OPEN = '<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
@@ -4564,6 +5255,10 @@ const BG = {
   night:() => `<rect width="400" height="300" fill="#1F2D4A"/><circle cx="340" cy="56" r="28" fill="#FFF1B8" ${SW}/>` + [[40, 40], [120, 70], [200, 30], [260, 90], [70, 120], [380, 140]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.5" fill="#FFF1B8"/>`).join('') + `<path d="M0 240 Q200 220 400 244 L400 300 L0 300 Z" fill="#2A5A3A" ${SW}/>`,
   kitchen:() => `<rect width="400" height="300" fill="#FFF1B8"/>` + Array.from({length:8}, (_, i) => `<path d="M${i * 50} 0 v200" stroke="#F2DC8A" stroke-width="2"/>`).join('') + `<path d="M0 60 h400 M0 120 h400" stroke="#F2DC8A" stroke-width="2"/><rect y="200" width="400" height="100" fill="#C98F55" ${SW}/><path d="M0 214 h400" stroke="${SO}" stroke-width="2.4"/>`,
   stage:() => `<rect width="400" height="300" fill="#3A1B2E"/><ellipse cx="200" cy="270" rx="170" ry="40" fill="#FFF1B8" opacity=".35"/><rect y="250" width="400" height="50" fill="#B8763E" ${SW}/><path d="M0 0 h70 q-10 60 0 120 q10 60 -10 130 H0 Z" fill="#E8463C" ${SW}/><path d="M400 0 h-70 q10 60 0 120 q-10 60 10 130 H400 Z" fill="#E8463C" ${SW}/><path d="M0 0 h400 v26 H0 Z" fill="#B92620" ${SW}/>`,
+  // Ice Island (Nivel 5): lomas de nieve, pinos y copos
+  snow:() => `<rect width="400" height="300" fill="#DCEFFF"/>${cloud(40, 24)}${cloud(260, 36, .8)}<path d="M0 190 Q90 140 200 180 T400 160 L400 300 L0 300 Z" fill="#FFFFFF" ${SW}/>`
+    + [[60, 150], [330, 140], [370, 170]].map(([x, y]) => `<path d="M${x} ${y - 52} L${x - 22} ${y - 10} L${x - 10} ${y - 10} L${x - 26} ${y + 14} L${x + 26} ${y + 14} L${x + 10} ${y - 10} L${x + 22} ${y - 10} Z" fill="#2FA84F" ${SW}/><rect x="${x - 4}" y="${y + 14}" width="8" height="12" fill="#8B5A2B" ${SW}/>`).join('')
+    + [[120, 40], [200, 70], [300, 20], [30, 100], [240, 120], [360, 90]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#FFFFFF" ${SW}/>`).join(''),
   mountain:() => `<rect width="400" height="300" fill="#BFE3FA"/>${cloud(30, 30)}<path d="M40 220 L150 60 L260 220 Z" fill="#9AA0A6" ${SW}/><path d="M118 106 L150 60 L182 106 L165 98 L150 110 L135 98 Z" fill="#FFFFFF" ${SW}/><path d="M180 220 L290 90 L400 220 Z" fill="#8C96A8" ${SW}/><path d="M262 124 L290 90 L318 124 L302 116 L290 126 L278 116 Z" fill="#FFFFFF" ${SW}/><rect y="210" width="400" height="90" fill="#7DD08D" ${SW}/>`
 };
 // Dibujo de una palabra del banco (emoji, color, número, dibujo SVG o uno de los amigos) dentro de una escena
@@ -5488,5 +6183,8 @@ Object.assign(R, {
 
 });
 
+// Idioma: cada texto nuevo que se pinta pasa por tr() si la escuela escogió inglés
+trObserver.observe(document.body, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:TR_ATTRS});
+setLang(LANG);
 if (REMOTE) remoteBoot(); else route();
 </script>

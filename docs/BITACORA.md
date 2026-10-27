@@ -6,7 +6,7 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ## Estado actual (resumen rápido)
 
-- **App:** completa en modo demo y con backend Supabase listo. Tiene los **niveles 1, 2, 3 y 4 según los libros** (408 lecciones con escenas y Retos de Pandi), 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
+- **App:** completa en modo demo y con backend Supabase listo. Tiene los **niveles 1 a 5 según los libros** (509 lecciones con escenas y Retos de Pandi) y se puede usar **en español o en inglés** (lo escoge el profe para su escuela), 11 tipos de ejercicio, grupos, tareas semanales con calificación, ranking por grupo, medallas, editor de contenido y banco de palabras.
 - **Backend:** funcionando con el Supabase real del dueño (proyecto `itaxhosmkmlnoqdpljzh`). El 11 de octubre se creó la primera escuela desde `setup.html` (admin `pruebaapp`). RLS probado en Postgres 16 (26/26).
 - **Funciones nuevas (11 oct):** estadísticas del profe (palabras más falladas, quién no practicó), reporte para padres y aviso por WhatsApp, recordatorio diario, prueba de audio y micrófono, y panel del dueño (`owner.html`).
 - **Repositorio:** `hanzelcruz70-cyber/app-de-ingles` (publicado en GitHub Pages: https://hanzelcruz70-cyber.github.io/app-de-ingles/). Copia local del dueño: `C:\Users\Hanzel\Documents\Pandi Ingles`.
@@ -28,6 +28,11 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 - Recordatorios con Web Push desde el servidor (hoy son locales). Empaquetar para Google Play (TWA o Capacitor).
 
 ---
+
+## 2026-10-26 · Nivel 5 y la app en inglés
+- **Nivel 5** (libro *Poptropica English 5*, 120 páginas escaneadas leídas una por una): los *Ice Detectives* de Ice Island (Polly, Mike, el perro Gizmo, Hector Frost y Smith buscan los diamantes de la Reina). Bienvenida (5), 8 unidades de 10 (Friends, My life, Free time, Around the world, Shopping, Party time, School, Entertainment), 4 *Wider World*, 4 repasos y Despedida (4): 18 unidades, 101 lecciones, 80 escenas, 697 pantallas. Mismo vocabulario, gramática y tipo de actividad que cada página; cuentos, cantos y lecturas con texto propio (no se copia Pearson; las marcas de videojuegos y el nombre del músico real se cambiaron). Personajes nuevos dibujados (`FRIENDS`, `dogSVG`), fondo de nieve y banderas dibujadas de 14 países. `COURSE_VER = 8` lo agrega a las escuelas que ya tenían el curso.
+- **La app en inglés:** el profe del cliente quiere todo en inglés. Se hizo como opción **por escuela** (🌐 Idioma de la app, en Contenido): con *English* se traducen botones, mensajes, instrucciones de las 5 niveles, tipos de lección, pistas 💡 de las mini clases, fechas y el Excel de notas. Unas 900 traducciones (`EN` y `EN_RE`). Siguen en español a propósito: el reporte para padres por WhatsApp, las páginas legales, la columna «Traducción al español» del banco de palabras y los nombres de la demo.
+- **Pruebas:** revisión del Nivel 5 sin problemas (todas las palabras con dibujo, escenas jugables, ninguna lección con menos de 3 pantallas); recorrido automático en inglés de las pantallas del profe y del estudiante, tienda, personaje, audio y todas las pantallas de lecciones de muestra de los 5 niveles; búsqueda de textos sin traducir con el vocabulario español de la app.
 
 ## 2026-10-22 (3) · Las 3 pistas que dependían de Supabase, cerradas
 - **Lo que el dueño vio en Supabase:** «Max rows» = 1000; «Secure email change» activado; límite de inicio de sesión 30 cada 5 min por IP; Email provider activado (lo necesita el login); sin SMTP propio; no hay dominio para Pandi ni se piensa usar. El dueño ya corrió el `schema.sql` de la entrada (2).
