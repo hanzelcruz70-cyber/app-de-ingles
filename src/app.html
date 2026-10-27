@@ -1177,6 +1177,7 @@ const EN_RE = [
   [/^¿Qué dijo( .+)?\? Toca la bocina del globo\.$/, (m, n) => `What did${n || ''} say? Tap the speaker on the bubble.`],
   [/^Completa lo que dice( .+)?:$/, (m, n) => `Complete what${n || ''} says:`],
   [/^\+(\d+) 💎 gemas$/, (m, n) => `+${n} 💎 gems`],
+  [/^(\s*)gemas$/, (m, sp) => sp + 'gems'],
   [/^Toca cada carta para voltearla y escucha la palabra \(faltan (\d+)\)\. Después tendrás que encontrarlas\.$/, (m, n) => `Tap each card to flip it and hear the word (${n} left). Then you'll have to find them.`],
   [/^¡Muy bien! Faltan (\d+)\.$/, (m, n) => `Great! ${n} left.`],
   [/^\((\d+)\/(\d+)\) Toca la carta de:$/, (m, a, b) => `(${a}/${b}) Tap the card for:`],
