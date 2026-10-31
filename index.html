@@ -385,6 +385,9 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .pic.emoji{font-size:64px}
 .pic.xl.emoji{font-size:110px}
 .pic.sm.emoji{font-size:46px}
+.pic.friend svg{width:84px;height:84px}
+.pic.sm.friend svg{width:56px;height:56px}
+.pic.xl.friend svg{width:140px;height:140px}
 .pic .sw{width:70px;height:70px;border-radius:50%;box-shadow:inset 0 -6px 0 rgba(0,0,0,.18);border:2px solid var(--line);box-sizing:border-box}
 .pic.xl .sw{width:120px;height:120px}
 .pic.sm .sw{width:48px;height:48px}
@@ -464,12 +467,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .scene{position:relative;width:100%;border-radius:18px;overflow:hidden;border:2px solid var(--line);box-sizing:border-box;line-height:0;touch-action:manipulation}
 .scene>svg{width:100%;height:auto;display:block}
 .scene,.scene-ui,.scene-es{flex-shrink:0}
-.scene .cap{position:absolute;transform:translate(-50%,-50%);background:var(--art-paper);color:var(--art-ink);border:2px solid var(--art-ink);border-radius:8px;padding:2px 6px;font-size:12px;font-weight:800;line-height:1.1;white-space:nowrap;pointer-events:none}
+.scene .cap{position:absolute;transform:translate(-50%,-50%);background:var(--art-paper);color:var(--art-ink);border:2px solid var(--art-ink);border-radius:8px;padding:2px 6px;font-size:12px;font-weight:800;line-height:1.1;text-align:center;box-sizing:border-box;width:max-content;pointer-events:none}
 .scene .check{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;font-size:20px;font-weight:900;line-height:1;pointer-events:none;animation:pop .3s}
 .scene .bin{position:absolute;transform:translate(-50%,-50%);width:44%;height:56%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;padding-top:6px;background:transparent;border:0;color:var(--art-ink)}
-.scene .bin b{font-size:22px;font-weight:900;line-height:1.1;background:var(--art-paper);border:2.5px solid var(--art-ink);border-radius:12px;padding:3px 10px}
-.scene .bin .got{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;padding:0 8px}
-.scene .gchip{background:var(--art-paper);border:2px solid var(--green);border-radius:10px;padding:3px 7px;font-size:13px;font-weight:800;line-height:1.1}
+.scene .bin b{font-size:19px;font-weight:900;line-height:1.05;background:var(--art-paper);border:2.5px solid var(--art-ink);border-radius:12px;padding:3px 10px}
+.scene .bin .got{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;align-content:flex-start;padding:0 10px;max-width:100%;max-height:calc(100% - 46px);overflow-y:auto;box-sizing:border-box}
+.scene .gchip{background:var(--art-paper);border:2px solid var(--green);border-radius:10px;padding:2px 6px;font-size:12px;font-weight:800;line-height:1.1;max-width:100%;overflow-wrap:anywhere;box-sizing:border-box}
 .panels{display:flex;flex-direction:column;gap:12px}
 .scene.panel .bubble{position:absolute;left:3%;right:3%;top:3%;display:flex;align-items:center;gap:8px;background:var(--art-paper);color:var(--art-ink);border:2.5px solid var(--art-ink);border-radius:16px;padding:8px 10px;line-height:1.25;box-sizing:border-box}
 .scene.panel .bubble .n{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:var(--art-ink);color:var(--art-paper);font-size:13px;font-weight:800}
@@ -504,10 +507,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .deck.quiz .dface b,.deck.quiz .dface .abtn{display:none}
 .deck.quiz .dcard.good .dface{border-color:var(--green);box-shadow:0 0 0 4px var(--green)}
 .dcard.shake{animation:shake .35s}
+.deck,.deck-ask{flex-shrink:0}
 .deck-ask{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;font-size:18px}
 .deck-ask b{font-size:22px;color:var(--ink)}
 .deck-ask .abtn{width:44px;height:44px;min-width:0;padding:0;justify-content:center;border-radius:50%}
 .story-opts{margin-top:8px}
+.stage.asking .actor,.stage.asking .stage-bubble,.stage.asking .stage-props{visibility:hidden}
 .opt.shake{animation:shake .35s;border-color:var(--red)}
 .stage{position:relative;width:100%;aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:2px solid var(--line);box-sizing:border-box;line-height:0;background:var(--surface)}
 .stage.shake{animation:shake .4s}
@@ -556,7 +561,7 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .basket-field{height:300px;background:linear-gradient(180deg,#BFE3FA 0 78%,#7DD08D 78%)}
 .faller{position:absolute;left:0;top:0;width:58px;height:58px;border-radius:50%;background:var(--art-paper);border:3px solid var(--art-ink);display:grid;place-items:center;will-change:transform}
 .faller .pic.sm.emoji{font-size:34px}
-.faller svg{width:40px;height:40px}
+.faller svg,.faller .pic.friend svg{width:40px;height:40px}
 .faller.caught{opacity:0;transition:opacity .3s}
 .bask{position:absolute;left:0;bottom:6px;font-size:58px;line-height:1;transition:transform .12s;pointer-events:none}
 .bask-arrows{display:flex;justify-content:center;gap:16px;margin-bottom:8px}
@@ -865,7 +870,16 @@ const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ co
 const sample = (a, n) => shuffle(a).slice(0, n);
 const rnd = a => a[Math.floor(Math.random() * a.length)];
 const norm = t => t.toLowerCase().replace(/[’']/g, "'").replace(/[^a-z0-9' ]/g, ' ').replace(/\s+/g, ' ').trim();
-const opts = (ans, pool, n) => shuffle([ans, ...sample(pool.filter(x => x !== ans), n - 1)]);
+// El dibujo que de verdad se ve (sigue los 'w:'): dos palabras con el mismo dibujo no pueden salir juntas en un juego
+const imgKey = w => {
+  const fr = x => { try { return isFriend(x); } catch (e){ return false; } };
+  if (fr(w)) return 'f:' + w;
+  let im = V && V[w] ? V[w].img : w;
+  for (let n = 0; n < 5 && typeof im === 'string' && im.startsWith('w:'); n++){ const t = im.slice(2); if (fr(t)) return 'f:' + t; im = V[t] ? V[t].img : t; }
+  return im;
+};
+const distinctPics = (ws, keep = []) => { const seen = new Set(keep.map(imgKey)); return ws.filter(w => { const k = imgKey(w); if (seen.has(k)) return false; seen.add(k); return true; }); };
+const opts = (ans, pool, n) => shuffle([ans, ...distinctPics(shuffle(pool.filter(x => x !== ans)), [ans]).slice(0, n - 1)]);
 const ymd = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); // fecha local (no UTC)
 const dayKey = (back = 0) => { const d = new Date(); d.setDate(d.getDate() - back); return ymd(d); };
 const today = () => dayKey(0);
@@ -1077,6 +1091,21 @@ const EN = {
   'Ice Island, la hora y el pasado':'Ice Island, time and the past', 'Cómo son por fuera y por dentro':'What people are like outside and inside', 'Familias grandes y pequeñas':'Big and small families', 'Rutinas, must y should, ¿qué tan seguido?':'Routines, must and should, how often?', 'Para qué eres bueno y qué estabas haciendo':'What you are good at and what you were doing',
   'Deportes curiosos del mundo':'Funny sports around the world', 'Países, lugares, there is / there are':'Countries, places, there is / there are', 'Ropa, precios y de quién es':'Clothes, prices and whose it is', 'Dónde compran comida en el mundo':'Where people buy food around the world', 'El pasado de verbos irregulares y las fechas':'The past of irregular verbs and dates',
   'Materias y cómo fue: Was it…? Did you…?':'School subjects and how it was: Was it…? Did you…?', 'Escuelas especiales del mundo':'Special schools around the world', 'Nacionalidades, trabajos de película, who / that':'Nationalities, movie jobs, who / that', 'Despedida: los Ice Detectives':'Goodbye: the Ice Detectives',
+  'Regresar':'Back', 'Pon cada palabra en su lugar del dibujo.':'Put each word in its place in the picture.', 'Pon cada animal en su canasta.':'Put each animal in its basket.',
+  'Pon cada mascota en su canasta.':'Put each pet in its basket.', 'Lee y toca lo que lleva la primera niña.':'Read and tap what the first girl has.', 'Escucha y toca las cosas correctas.':'Listen and tap the right things.', 'Toca las respuestas correctas.':'Tap the right answers.',
+  // Nivel 6
+  'Future Island, el THD y los sentidos':'Future Island, the THD and the senses', 'Cosas para acampar y lo que sabemos hacer':'Camping things and what we can do', 'Acampar en otros países':'Camping in other countries',
+  'Animales, medidas y comparaciones':'Animals, sizes and comparisons', 'Lugares de la ciudad, cómo llegar, want to / have to':'Places in town, directions, want to / have to', 'Casas de niños del mundo':'Homes of children around the world',
+  'Comidas del mundo y el pasado con because':'Food from around the world and the past with because', 'Paseos, juegos mecánicos y lo que haremos':'Trips, rides and what we will do', 'Lugares famosos del mundo':'Famous places around the world',
+  'Películas, instrumentos, by myself y Have you ever…?':'Movies, instruments, by myself and Have you ever…?', 'El espacio, preguntas y más / menos':'Space, questions and more / less', 'Instrumentos de otros países':'Instruments from other countries',
+  'Cuidar el planeta, going to y If you…, you’ll…':'Caring for the planet, going to and If you…, you’ll…', 'Despedida: el misterio de los Martin':'Goodbye: the Martin mystery',
+  'Toca las reglas para acampar seguros.':'Tap the rules for safe camping.', 'Pon cada niño debajo de su lugar.':'Put each child under their place.', 'Toca lo que es bueno hacer antes de actuar.':'Tap the good things to do before you act.',
+  'Pon cada frase debajo de su dibujo.':'Put each sentence under its picture.', 'Pon cada cosa en su canasta: ahora o más tarde.':'Put each thing in its basket: now or later.', 'Toca los lugares que salen en la lectura.':'Tap the places in the reading.',
+  'Pon cada niño debajo de su casa.':'Put each child under their home.', 'Toca las buenas ideas para después de un mal día.':'Tap the good ideas for after a bad day.', 'Pon cada cosa en su canasta: día bueno o día malo.':'Put each thing in its basket: good day or bad day.',
+  'Pon cada comida debajo de su bandera.':'Put each food under its flag.', 'Pon cada plan debajo de su dibujo.':'Put each plan under its picture.', 'Toca lo que es seguro en la playa.':'Tap what is safe at the beach.',
+  'Pon cada niño debajo de su viaje.':'Put each child under their trip.', 'Pon cada cosa en su canasta: yo solo o con amigos.':'Put each thing in its basket: by myself or with friends.', 'Toca las cosas de un buen día.':'Tap the things from a good day.',
+  'Toca un lugar y ponlo debajo de su dibujo.':'Tap a place and put it under its picture.', 'Pon cada palabra en su canasta.':'Put each word in its basket.', 'Pon cada instrumento debajo de su dibujo.':'Put each instrument under its picture.',
+  'Toca las cosas que ayudan al planeta.':'Tap the things that help the planet.', 'Pon cada cosa en su canasta: problema o solución.':'Put each thing in its basket: problem or solution.', 'Pon cada lugar en su canasta: naturaleza o ciudad.':'Put each place in its basket: nature or town.',
   // Pistas 💡 de las mini clases
   '“I’m” es la forma corta de “I am”.':'“I’m” is the short form of “I am”.', '“What’s” es la forma corta de “What is”.':'“What’s” is the short form of “What is”.', 'La a suena como la “a” de “casa”, corta.':'The a sounds short, like the “a” in “cat”.', 'La s suena como una serpiente: sss.':'The s sounds like a snake: sss.',
   'Se dice “a” antes de consonante y “an” antes de vocal.':'We say “a” before a consonant and “an” before a vowel.', 'La m se dice con la boca cerrada: mmm.':'Say the m with your mouth closed: mmm.', 'La n suena por la nariz.':'The n sounds through your nose.', '“He’s” es la forma corta de “He is”.':'“He’s” is the short form of “He is”.',
@@ -1446,6 +1475,12 @@ function pic(img, size){
   return el;
 }
 
+// Dibujo de una palabra en los ejercicios: los personajes salen con su dibujo, no con el emoji del banco
+function wpic(w, size){
+  if (isFriend(w)){ const el = h('div', {class:'pic friend ' + (size || '')}); el.innerHTML = friendSVG(w); return el; }
+  return pic(V[w] ? V[w].img : '❓', size);
+}
+
 /* ---------- step builders ---------- */
 const F  = w => ({t:'flash', w});
 const PW = (w, pool) => ({t:'pickword', w, options:opts(w, pool, 3)});
@@ -1464,25 +1499,26 @@ const STORY = {
 };
 const RD = (q, answer, options) => ({t:'read', q, answer, options:shuffle(options)});
 
-/* ---------- course: curso semilla (niveles 1 a 4 según los libros; el profe lo puede editar) ---------- */
+/* ---------- course: curso semilla (niveles 1 a 6 según los libros; el profe lo puede editar) ---------- */
 function courseSeed(){
   const f = w => ({t:'flash', w}), pw = w => ({t:'pickword', w}), li = w => ({t:'listen', w}), ma = words => ({t:'match', words}), wr = w => ({t:'write', w});
   const sp = (text, img) => ({t:'speak', text, img}), od = (sentence, extra, img) => ({t:'order', sentence, extra, img});
   const fi = (before, answer, after, options, img) => ({t:'fill', before, answer, after, options, img}), me = words => ({t:'memory', words});
   const tp = (title, lines) => ({t:'tip', title, lines}), rd = (q, answer, options) => ({t:'read', story:{...STORY}, q, answer, options}), rs = (story, q, answer, options) => ({t:'read', story:{...story}, q, answer, options});
   return {
-    vocab: JSON.parse(JSON.stringify({...V5_SEED, ...V4_SEED, ...V_SEED, ...V2_SEED, ...V3_SEED, ...V1_SEED})), ver:COURSE_VER,
+    vocab: JSON.parse(JSON.stringify({...V6_SEED, ...V5_SEED, ...V4_SEED, ...V_SEED, ...V2_SEED, ...V3_SEED, ...V1_SEED})), ver:COURSE_VER,
     units: [
       ...level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
       ...level2Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
       ...level3Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
       ...level4Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
-      ...level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs})
+      ...level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}),
+      ...level6Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs})
     ]
   };
 }
 /* ---------- course: Level 2 (sigue el libro de Nivel 2: Welcome, 8 unidades de 10 lecciones y 4 repasos; textos, cantos y cuentos propios) ---------- */
-const COURSE_VER = 8; // 8: llega el Nivel 5 a las escuelas que ya tenían el curso
+const COURSE_VER = 9; // 9: llega el Nivel 6 a las escuelas que ya tenían el curso
 const svgPic = body => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">${body}</svg>`);
 const V2_SEED = Object.fromEntries(Object.entries({
   // Welcome
@@ -1586,7 +1622,7 @@ function level2Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     n2u3l8:[SO(['ng', 'nk'], [['sing', 0], ['long', 0], ['ring', 0], ['pink', 1], ['sink', 1], ['ink', 1]], 'Circle ng and nk.')],
     n2u3l9:[NM('park', ['jump','dance','swim','climb','swing','wave'])],
     n2u3l10:[FD('park', ['wave','touch','point','move','shake'], 'Choose and say. Then do.')],
-    n2u4l1:[sc('drop', 'Look and match.', 'Pon cada palabra en la parte de la cara que le toca.', {art:'face'}), FD('room', ['hair','face','eyes','mouth','nose','ears'])],
+    n2u4l1:[sc('drop', 'Look and match.', 'Pon cada palabra en su lugar del dibujo.', {art:'face'}), FD('room', ['hair','face','eyes','mouth','nose','ears'])],
     n2u4l2:[NM('room', ['eyes','ears','nose','mouth'])],
     n2u4l3:[NM('room', ['curly','straight','wavy','blond','messy','neat'], 'Listen and point.')],
     n2u4l4:[NM('room', ['blond','curly','straight','wavy'], 'Listen and number. Then say.')],
@@ -1606,7 +1642,7 @@ function level2Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     n2u5l5:[STO([pn('farm', ['Charlie', 'Uncle Dan'], 'The friends help Farmer Joe. Where are the pigs?', 'Los amigos ayudan al granjero Joe. ¿Dónde están los cerdos?'), pn('farm', ['Rose'], "The pigs are in the mud. What's that? It's small and yellow.", 'Los cerdos están en el lodo. ¿Qué es eso? Es pequeño y amarillo.'),
       pn('farm', ['Rose', 'Charlie'], "It's a baby duck! Is it cold? Yes, it is.", '¡Es un patito! ¿Tiene frío? Sí.'), pn('night', ['Charlie', 'Ola'], "Is it a bat? No, it isn't. It's an owl!", '¿Es un murciélago? No. ¡Es un búho!'), pn('farm', ['Uncle Dan'], 'Thank you, friends!', '¡Gracias, amigos!')])],
     n2u5l6:[DP('farm', [['cow', 'milk'], ['chickens', 'eggs'], ['sheep', 'wool'], ['horse', 'rides']], 'Show how animals help us.', 'Pon debajo de cada animal lo que nos da.')],
-    n2u5l7:[SO(['DAY', 'NIGHT'], [['cow', 0], ['horse', 0], ['duck', 0], ['bat', 1], ['owl', 1], ['fox', 1]], 'Awake in the day or at night?', 'Pon cada animal donde está despierto: de día o de noche.')],
+    n2u5l7:[SO(['DAY', 'NIGHT'], [['cow', 0], ['horse', 0], ['duck', 0], ['bat', 1], ['owl', 1], ['fox', 1]], 'Awake in the day or at night?', 'Pon cada animal en su canasta.')],
     n2u5l8:[SO(['igh', 'oa'], [['high', 0], ['light', 0], ['goat', 1], ['boat', 1], ['soap', 1], ['coat', 1]], 'Circle igh and oa.')],
     n2u5l9:[NM('farm', ['goat','bat','sheep','chickens','pig','goose'], 'Listen and number. Ask a friend.')],
     n2u5l10:[PK('farm', [['cow', false], ['pig', false], ['owl', true], ['sheep', false]], 'Circle the one that doesn’t belong.', 'Toca el animal que no vive en la granja.'), PK('night', [['fox', false], ['bat', false], ['horse', true], ['owl', false]], 'Circle the one that doesn’t belong.', 'Toca el animal que no es de la noche.')],
@@ -1883,7 +1919,7 @@ function level3Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     n3u2l7:[DP('park', ['kangaroo','emu','koala','wombat','snake'], 'Australian animals.', 'Pon cada animal debajo de su dibujo.')],
     n3u2l10:[FD('stage', ['blond hair','red hair','curly hair','gray hair','black mustache','short beard','glasses','blue eyes'], 'Choose. Then play.', 'Toca la bocina y luego toca lo que escuchaste.')],
     n3r1l2:[NM('stage', ['red hair','short beard','black mustache','blond hair','glasses','gray hair'], 'Listen and number.')],
-    n3u3l10:[SO(['HAS LEGS', 'NO LEGS'], [['cat', 0], ['rabbit', 0], ['parrot', 0], ['snake', 1], ['goldfish', 1]], 'Draw or write. Then play.', 'Pon cada mascota en su canasta: tiene patas o no tiene patas.')],
+    n3u3l10:[SO(['HAS LEGS', 'NO LEGS'], [['cat', 0], ['rabbit', 0], ['parrot', 0], ['snake', 1], ['goldfish', 1]], 'Draw or write. Then play.', 'Pon cada mascota en su canasta.')],
     n3x2l1:[DP('park', ['rabbit','hamster','cat','turtle'], 'Listen and read.', 'Pon cada mascota debajo de su dibujo.')],
     n3u4l4:[FD('room', ['bed','closet','shelf','computer','picture','blankets'], 'Listen and read.', 'Toca la bocina y luego toca lo que escuchaste.')],
     n3u4l7:[SO(['SHAPES', 'MATERIALS'], [['circle', 0], ['square', 0], ['triangle', 0], ['tiles', 1], ['stones', 1], ['glass', 1]], 'Count the shapes.', 'Pon cada palabra en su canasta: forma o material.')],
@@ -2234,7 +2270,7 @@ function level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     n1u8l4:[NM('park', ['angry','bored','hot','scared'], 'Listen and stick.')],
     n1xl1:[DP('stage', ['mask','costume','drum'], 'Read and match.')],
     n1xl3:[DP('room', ['house','houseboat','apartment'], 'Read and match.')],
-    n1xl4:[PK('kitchen', [['sandwiches', true, 'sandwiches'], ['fruit', true, 'fruit'], ['yogurt', true, 'yogurt'], ['juice', false, 'juice']], 'Read and match.', 'Toca lo que hay en la lonchera de la primera niña.')]
+    n1xl4:[PK('kitchen', [['sandwiches', true, 'sandwiches'], ['fruit', true, 'fruit'], ['yogurt', true, 'yogurt'], ['juice', false, 'juice']], 'Read and match.', 'Lee y toca lo que lleva la primera niña.')]
   };
 
   return [
@@ -2343,7 +2379,7 @@ function level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
       {title:'Be neat', kind:'Valores', items:[PK('room', [['🧸', true, 'put away your toys'], ['🛏️', true, 'make your bed'], ['🧦', false, 'socks on the floor']], 'Be neat.', 'Toca lo que hace un niño ordenado.'), sp('Be neat.', '✨')]},
       {title:'Places', kind:'Ciencias', items:[DP('street', ['store','library','playground','zoo','yard'], 'Listen and say.'), f('store'), fi("She's in the", 'playground', '.', ['play','ground'], 'w:playground'), sp("I'm in the library.", 'w:library')]},
       {title:'Phonics: f, ff, l, ll', kind:'Fonética', items:[SO(['f · ff', 'l · ll'], [['fan', 0], ['fig', 0], ['off', 0], ['puff', 0], ['leg', 1], ['doll', 1], ['bell', 1]], 'Listen and blend the sounds.'), tp('Phonics', [['f, ff: fan, off', 'La f suena como un soplido entre los dientes.'], ['l, ll: leg, doll, bell', 'La l y la ll suenan como “l”.']]), sp('leg, doll, fig, puff, bell, fan', '🔤')]},
-      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[NM('room', ['living room','kitchen','bathroom','dining room','bedroom']), PK('kitchen', [['refrigerator', true], ['stove', true], ['sink', true], ['sofa', false], ['bed', false]], 'Look and check.', 'Toca lo que hay en una cocina.'), fi("There's a sink in the", 'kitchen', '.', ['bedroom','sofa'], 'w:sink')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[NM('room', ['living room','kitchen','bathroom','dining room','bedroom']), PK('kitchen', [['refrigerator', true], ['stove', true], ['sink', true], ['sofa', false], ['bed', false]], 'Look and check.', 'Escucha y toca las cosas correctas.'), fi("There's a sink in the", 'kitchen', '.', ['bedroom','sofa'], 'w:sink')]},
       {title:'Have fun!', kind:'Juego', items:[FD('street', ['yard','library','store','playground','kitchen','living room'], 'Find and say.'), me(['bed','sofa','lamp','TV']), sp("Where's Dad? He's in the yard.", 'w:yard')]}
     ]),
     L1('n1r3', 'Units 5 and 6', 'Repaso de las unidades 5 y 6', 'purple', [
@@ -2671,7 +2707,7 @@ function level4Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     n4u2l7:[SO(['ELEPHANTS 🐘', 'GIRAFFES 🦒'], [['say hello with their trunks', 0], ['eat grass and flowers', 0], ['sleep standing up', 1], ['have long black tongues', 1]], 'Elephants and giraffes', 'Pon cada dato con su animal.')],
     n4u2l10:[FD('farm', ['giraffe','lion','hippo','crocodile','crab','camel','panda','gorilla'], PLAY)],
     n4u3l4:[DP('mountain', [['spring', 'go camping'], ['summer', 'go water skiing'], ['fall', 'go hiking'], ['winter', 'go snowboarding']], 'What does he do?', 'Pon debajo de cada estación lo que hace.')],
-    n4u3l7:[PK('night', [['🌀', true, 'a big storm'], ['💨', true, 'a lot of wind'], ['🌧️', true, 'a lot of rain'], ['🌈', false, 'sunny and quiet']], 'What is a hurricane like?', 'Toca lo que trae un huracán.')],
+    n4u3l7:[PK('night', [['🌀', true, 'a big storm'], ['💨', true, 'a lot of wind'], ['🌧️', true, 'a lot of rain'], ['🌈', false, 'sunny and quiet']], 'What is a hurricane like?', 'Toca las respuestas correctas.')],
     n4u3l10:[NM('mountain', [...WX, 'spring', 'summer'], PLAY)],
     n4u4l4:[DP('paper', TM, 'Look and match.', 'Pon cada hora debajo de su reloj.')],
     n4u4l7:[PK('street', [['⛵', true, 'Lanau: by boat'], ['💻', true, 'Ricky: on the Internet'], ['🏍️', true, 'Susanna: by snowmobile'], ['🚀', false, 'by rocket']], 'How do they go to school?', 'Toca cómo van a la escuela los niños del texto.')],
@@ -2763,7 +2799,8 @@ function level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   const pn = (bg, who, text) => ({bg, who, text, es:''});
   const tale = (title, panels) => ({scene:sc('story', 'Talk about the pictures. Then listen and read.', 'Escucha el cuento viñeta por viñeta. Toca la bocina de cada una.', {panels}),
     st:{title, en:panels.map(p => p.text).join(' '), es:''}});
-  const rd = (title, en, q, a, opts) => rs({title, en, es:''}, q, a, opts);
+  // Algunas lecturas traen un '' de más antes de la pregunta (sin él, la pregunta se perdía)
+  const rd = (title, en, ...r) => rs({title, en, es:''}, ...(r[0] === '' ? r.slice(1) : r));
   const look = lines => tp('Look!', lines.map(l => [l, '']));
   const L5 = (id, title, desc, c, lessons, tag) => ({id, title, desc, c, level:5, ...(tag ? {tag} : {}), lessons:lessons.map((l, i) => ({id:id + 'l' + (i + 1), ...l}))});
   const TOOK = 'Escucha la canción y cántala.', SAY = 'Escucha el canto y dilo.';
@@ -2972,6 +3009,317 @@ function level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     ], 'Despedida')
   ];
 }
+/* ---------- course: Level 6 (sigue el libro de Nivel 6: Matt, AL y Bella viajan en el tiempo detrás de Zeb y Dot; textos, cantos y cuentos propios) ---------- */
+const V6_SEED = Object.fromEntries(Object.entries({
+  // Personajes y Bienvenida
+  Matt:['👦🏼','Matt, ingeniero del tiempo'], AL:['🤖','AL, el robot de Matt'], Bella:['👧🏽','Bella'], Zeb:['🧔','Zeb Martin'], Dot:['👩‍🦰','Dot Martin'], Hannah:['👩','Hannah, la monitora del campamento'],
+  Tom:['👦','Tom'], Flo:['👱‍♀️','Flo'], Maria:['👧','Maria'], Felipe:['🤓','Felipe'], 'Carol Carnival':['🎩','Carol Carnival'], Peter:['👨','Peter, del estudio de grabación'],
+  look:['👀','verse'], smell:['👃','oler'], taste:['👅','saber (sabor)'], sound:['👂','sonar'], feel:['✋','sentirse (al tocar)'],
+  spiky:['🌵','con púas'], soft:['🧸','suave'], smooth:[svgP('<ellipse cx="32" cy="36" rx="26" ry="16" fill="#9AA0A6" $O/><path d="M16 30 Q26 22 40 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/><circle cx="46" cy="28" r="2.5" fill="#FFFFFF"/>'),'liso'], hard:['🧱','duro'], furry:['🐻','peludo'], sweet:['🍬','dulce'], loud:['📢','fuerte (ruido)'], spider:['🕷️','araña'], 'ice cube':['🧊','cubito de hielo'],
+  // Unidad 1
+  'sleeping bag':['🛌','bolsa de dormir'], tent:['⛺','tienda de campaña'], compass:['🧭','brújula'], flashlight:['🔦','linterna'], 'first-aid kit':[svgP('<path d="M24 18 V12 h16 v6" fill="none" stroke="#2A2230" stroke-width="4" stroke-linejoin="round"/><rect x="8" y="18" width="48" height="36" rx="6" fill="#FFFFFF" $O/><path d="M28 26 h8 v8 h8 v8 h-8 v8 h-8 v-8 h-8 v-8 h8 z" fill="#E8463C"/>'),'botiquín'],
+  poles:[svgP('<path d="M16 6 V58 M32 6 V58 M48 6 V58" stroke="#2A2230" stroke-width="8" stroke-linecap="round"/><path d="M16 6 V58 M32 6 V58 M48 6 V58" stroke="#9AA0A6" stroke-width="4" stroke-linecap="round"/>'),'varillas'],
+  pegs:[svgP([16, 32, 48].map(x => `<path d="M${x - 7} 8 h14 l-4 7 v33 l-3 8 l-3 -8 v-33 z" fill="#C9CED6" $O/>`).join('')),'estacas'],
+  'air mattress':[svgP('<rect x="4" y="20" width="56" height="24" rx="11" fill="#3D86F0" $O/><path d="M17 23 v18 M29 23 v18 M41 23 v18 M52 25 v14" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>'),'colchón inflable'],
+  'air pump':[svgP('<rect x="22" y="22" width="18" height="34" rx="4" fill="#E8463C" $O/><path d="M31 22 V8 M21 8 H41" stroke="#2A2230" stroke-width="4" stroke-linecap="round"/><path d="M40 48 Q58 48 56 26" fill="none" stroke="#2A2230" stroke-width="3" stroke-linecap="round"/><rect x="18" y="54" width="26" height="6" rx="2" fill="#4A4F57" $O/>'),'inflador'],
+  'pitch the tent':['🏕️','armar la tienda'], 'take down the tent':[svgP('<path d="M8 50 L22 40 L36 50 Z" fill="#FF8A1F" $O/><path d="M30 52 L52 30" stroke="#9AA0A6" stroke-width="4" stroke-linecap="round"/><path d="M46 8 V24 M38 17 L46 25 L54 17" fill="none" stroke="#3D86F0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 56 H60" stroke="#2A2230" stroke-width="2.4" stroke-linecap="round"/>'),'desarmar la tienda'], 'put in the pegs':['🔨','clavar las estacas'], 'set up the bed':['🛏️','preparar la cama'],
+  'cover our heads':['🧢','cubrirnos la cabeza'], 'light a fire':['🔥','prender una fogata'], 'keep out the rain':['☔','no dejar entrar la lluvia'], 'read a compass':['w:compass','leer una brújula'],
+  hiking:['🥾','caminar en la montaña'], camping:['w:tent','acampar'], climbing:['🧗','escalar'], swimming:['🏊','nadar'],
+  // Unidad 2
+  rhino:['🦏','rinoceronte'], cheetah:['🐆','guepardo'], panther:['🐈‍⬛','pantera'], scorpion:['🦂','escorpión'], seal:['🦭','foca'], otter:['🦦','nutria'], 'sea turtle':['🐢','tortuga marina'], whale:['🐋','ballena'],
+  meerkat:[svgP('<ellipse cx="32" cy="42" rx="12" ry="17" fill="#D9A66B" $O/><ellipse cx="32" cy="44" rx="6" ry="11" fill="#F2D1A8"/><path d="M22 34 l-5 7 M42 34 l5 7" stroke="#2A2230" stroke-width="2.6" stroke-linecap="round"/><circle cx="32" cy="17" r="11" fill="#D9A66B" $O/><ellipse cx="27.5" cy="16" rx="3.6" ry="4" fill="#2A2230"/><ellipse cx="36.5" cy="16" rx="3.6" ry="4" fill="#2A2230"/><circle cx="32" cy="22" r="2" fill="#2A2230"/>'),'suricata'],
+  lemur:[svgP('<path d="M42 54 Q62 44 54 14" fill="none" stroke="#2A2230" stroke-width="10" stroke-linecap="round"/><path d="M42 54 Q62 44 54 14" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="5 5"/><ellipse cx="28" cy="44" rx="13" ry="14" fill="#9AA0A6" $O/><circle cx="28" cy="20" r="12" fill="#9AA0A6" $O/><circle cx="23" cy="19" r="4.5" fill="#FFC83D" $O/><circle cx="33" cy="19" r="4.5" fill="#FFC83D" $O/><circle cx="23" cy="19" r="1.8" fill="#2A2230"/><circle cx="33" cy="19" r="1.8" fill="#2A2230"/><circle cx="28" cy="27" r="1.8" fill="#2A2230"/>'),'lémur'],
+  caterpillar:['🐛','oruga'], tortoise:['🐢','tortuga'],
+  tallest:['w:giraffe','el más alto'], longest:['w:snake','el más largo'], shortest:['w:caterpillar','el más corto'], biggest:['w:whale','el más grande'], smallest:['w:ant','el más pequeño'],
+  heaviest:['w:elephant','el más pesado'], lightest:['w:butterfly','el más liviano'], fastest:['w:cheetah','el más rápido'], slowest:['🐌','el más lento'],
+  // Unidad 3
+  supermarket:['🛒','supermercado'], 'movie theater':['🎦','cine'], 'shopping mall':['🛍️','centro comercial'], bank:['🏦','banco'], pharmacy:['💊','farmacia'],
+  hospital:['🏥','hospital'], airport:['🛫','aeropuerto'], bookstore:[svgP('<rect x="8" y="24" width="48" height="34" fill="#FFE0C7" $O/><path d="M4 24 L10 12 H54 L60 24 Z" fill="#E8463C" $O/><path d="M16 12 V24 M28 12 V24 M40 12 V24 M52 12 V24" stroke="#FFFFFF" stroke-width="3"/><rect x="14" y="32" width="20" height="16" rx="2" fill="#3D86F0" $O/><path d="M24 32 V48" stroke="#FFFFFF" stroke-width="2"/><rect x="40" y="36" width="10" height="22" fill="#8B5A2B" $O/>'),'librería'], station:['🚉','estación'], arcade:['🕹️','sala de videojuegos'], 'coffee shop':['☕','cafetería'],
+  'want to go':['🙋','querer ir'], 'have to go':['⏰','tener que ir'],
+  // Unidad 4
+  curry:['🍛','curry'], omelet:['🍳','tortilla de huevo'], spaghetti:['🍝','espagueti'], 'fish and chips':['🍟','pescado con papas fritas'], paella:['🥘','paella'], dumplings:['🥟','empanaditas al vapor'],
+  sushi:['🍣','sushi'], stew:[svgP('<path d="M8 28 H56 V44 a10 10 0 0 1 -10 10 H18 a10 10 0 0 1 -10 -10 Z" fill="#4A4F57" $O/><path d="M4 30 H10 M54 30 H60" stroke="#2A2230" stroke-width="4" stroke-linecap="round"/><ellipse cx="32" cy="28" rx="24" ry="6" fill="#A0522D" $O/><circle cx="22" cy="27" r="3.5" fill="#FF8A1F"/><circle cx="34" cy="29" r="3.5" fill="#E9C29B"/><circle cx="43" cy="26" r="3" fill="#3CB45A"/><path d="M24 18 q3 -5 0 -10 M34 18 q3 -5 0 -10" fill="none" stroke="#9AA0A6" stroke-width="2.4" stroke-linecap="round"/>'),'estofado'], noodles:['🍜','fideos'], soup:['🥣','sopa'],
+  'rice and beans':[svgP('<path d="M6 30 h52 a26 24 0 0 1 -52 0 z" fill="#3D86F0" $O/><ellipse cx="32" cy="30" rx="26" ry="8" fill="#FFFFFF" $O/>' + [[18, 29], [26, 27], [34, 31], [42, 28], [30, 33], [46, 31]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="3" ry="2" fill="#5A2E1A"/>`).join('')),'gallo pinto (arroz con frijoles)'],
+  'pack my bag':['🎒','empacar mi mochila'], 'miss the bus':['🚌','perder el bus'], 'pass a test':['💯','pasar un examen'], 'eat my lunch':['🍱','comer mi almuerzo'], 'bring my juice':['🧃','traer mi jugo'],
+  'drop the ball':[svgP('<circle cx="34" cy="46" r="13" fill="#FF8A1F" $O/><path d="M22 46 h24 M34 33 v26" stroke="#2A2230" stroke-width="2"/><path d="M20 6 v10 M30 4 v10 M40 6 v10 M20 22 v4 M30 20 v4 M40 22 v4" stroke="#2A2230" stroke-width="2.6" stroke-linecap="round"/>'),'dejar caer la pelota'],
+  // Unidad 5
+  aquarium:['🐠','acuario'], 'amusement park':['🎠','parque de diversiones'], palace:['🏯','palacio'], 'water park':['🏊','parque acuático'], theater:['🎭','teatro'], 'national park':['🏞️','parque nacional'],
+  circus:['🎪','circo'], 'botanical gardens':['🌺','jardín botánico'],
+  'ride the Ferris wheel':['🎡','subirse a la rueda de Chicago'], 'go on the bumper cars':['🚗','subirse a los carritos chocones'], 'play miniature golf':['⛳','jugar minigolf'], 'go on the paddle boats':['🚣','subirse a los botes de pedal'],
+  'ride the roller coaster':['🎢','subirse a la montaña rusa'], 'go on the pirate ship':['🏴‍☠️','subirse al barco pirata'], 'go on the water slide':['💦','tirarse por el tobogán de agua'],
+  // Unidad 6
+  thriller:['😱','película de suspenso'], comedy:['😂','comedia'], 'sci-fi':['🛸','ciencia ficción'], romance:['💘','película romántica'], musical:['🎶','musical'], cartoon:['🐭','caricatura'], action:['💥','película de acción'], western:['🤠','película del oeste'],
+  cello:['🎻','violonchelo'], saxophone:['🎷','saxofón'], drums:['🥁','batería'],
+  harmonica:[svgP('<rect x="6" y="22" width="52" height="20" rx="4" fill="#C9CED6" $O/><rect x="6" y="22" width="52" height="7" rx="3" fill="#8C96A8" $O/>' + [12, 20, 28, 36, 44, 52].map(x => `<rect x="${x - 2}" y="33" width="4" height="5" fill="#2A2230"/>`).join('')),'armónica'],
+  clarinet:[svgP('<path d="M29 4 h6 l2 44 l7 10 h-24 l7 -10 z" fill="#2A2230" $O/>' + [16, 24, 32, 40].map(y => `<circle cx="32" cy="${y}" r="2.4" fill="#C9CED6"/>`).join('')),'clarinete'],
+  harp:[svgP('<path d="M14 58 V8 Q42 6 50 34 V58 Z" fill="none" stroke="#C9A227" stroke-width="5" stroke-linejoin="round"/>' + [20, 26, 32, 38, 44].map((x, i) => `<path d="M${x} ${10 + i * 4} V56" stroke="#8B5A2B" stroke-width="1.6"/>`).join('') + '<rect x="10" y="54" width="44" height="6" rx="2" fill="#8B5A2B" $O/>'),'arpa'],
+  tambourine:[svgP('<circle cx="32" cy="32" r="22" fill="#FFE0A3" $O/><circle cx="32" cy="32" r="22" fill="none" stroke="#8B5A2B" stroke-width="6"/>' + [[32, 10], [54, 32], [32, 54], [10, 32]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#E9B44C" $O/>`).join('')),'pandereta'],
+  cymbal:[svgP('<ellipse cx="32" cy="28" rx="27" ry="8" fill="#E9B44C" $O/><circle cx="32" cy="22" r="3.5" fill="#C9A227" $O/><path d="M32 36 V60 M22 60 H42" stroke="#2A2230" stroke-width="3" stroke-linecap="round"/>'),'platillo'],
+  maracas:[svgP('<path d="M20 34 L12 58" stroke="#8B5A2B" stroke-width="5" stroke-linecap="round"/><ellipse cx="23" cy="22" rx="11" ry="14" fill="#E8463C" $O/><path d="M44 34 L52 58" stroke="#8B5A2B" stroke-width="5" stroke-linecap="round"/><ellipse cx="41" cy="22" rx="11" ry="14" fill="#3CB45A" $O/><path d="M16 20 h14 M34 20 h14" stroke="#FFC83D" stroke-width="3"/>'),'maracas'],
+  castanets:[svgP('<path d="M8 36 Q8 14 30 14 Q30 40 8 36 Z" fill="#8B5A2B" $O/><path d="M56 36 Q56 14 34 14 Q34 40 56 36 Z" fill="#A0522D" $O/><path d="M22 14 Q32 6 42 14" fill="none" stroke="#E8463C" stroke-width="3"/>'),'castañuelas'],
+  // Unidad 7
+  planet:['🪐','planeta'], comet:['☄️','cometa'], telescope:['🔭','telescopio'], alien:['👽','extraterrestre'], spaceship:['🛸','nave espacial'], satellite:['🛰️','satélite'], 'the Moon':['🌙','la Luna'], star:['⭐','estrella'], 'the Sun':['☀️','el Sol'],
+  complicated:['⚙️','complicado'], amazing:['🤩','asombroso'], frightening:['😨','que da miedo'], intelligent:['🐬','inteligente'], brilliant:['🌟','brillante, genial'], important:['🏅','importante'], fascinating:['✨','fascinante'], gorgeous:['🌅','precioso'],
+  // Unidad 8
+  'recycle paper':['📰','reciclar papel'], 'recycle bottles':['🍾','reciclar botellas'], 'pick up trash':['🚮','recoger basura'], 'reuse plastic bags':['🛍️','reusar bolsas plásticas'], 'turn off the lights':['💡','apagar las luces'], 'use public transportation':['🚌','usar el transporte público'],
+  'save trees':['🌳','salvar árboles'], 'save resources':['🛢️','ahorrar recursos'], 'keep the planet clean':['🌍','mantener limpio el planeta'], 'reduce waste':['🗑️','reducir la basura'], recycle:['♻️','reciclar'], 'conserve energy':['🔋','ahorrar energía'], 'reduce pollution':['🌫️','reducir la contaminación']
+}).map(([k, [img, es]]) => [k, {img, es}]));
+function level6Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
+  const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
+  const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
+  const SO = (bins, words, title, es) => sc('sort', title, es || 'Escucha cada palabra y ponla en su canasta.', {bins, words});
+  const CH = (bg, who, title, es, lines) => sc('chant', title, es, {bg, who, lines: lines.map(l => [l, ''])});
+  const pn = (bg, who, text) => ({bg, who, text, es:''});
+  const tale = (title, panels) => ({scene:sc('story', 'Talk about the pictures. Then listen and read.', 'Escucha el cuento viñeta por viñeta. Toca la bocina de cada una.', {panels}),
+    st:{title, en:panels.map(p => p.text).join(' '), es:''}});
+  const text = (title, en) => ({title, en, es:''});
+  const look = lines => tp('Look!', lines.map(l => [l, '']));
+  const L6 = (id, title, desc, c, lessons, tag) => ({id, title, desc, c, level:6, ...(tag ? {tag} : {}), lessons:lessons.map((l, i) => ({id:id + 'l' + (i + 1), ...l}))});
+  const SING = 'Escucha la canción y cántala.';
+  const TEAM = ['Matt','AL','Bella','Zeb','Dot'], CAMP = ['Hannah','Tom','Flo','Maria','Felipe'];
+  const SE = ['look','smell','taste','sound','feel'], TX = ['spiky','soft','smooth','hard','hot','cold','furry','sweet','loud'];
+  const EQ = ['sleeping bag','tent','poles','pegs','compass','flashlight','first-aid kit','air mattress','air pump'];
+  const CA = ['pitch the tent','take down the tent','put in the pegs','set up the bed','cover our heads','light a fire','keep out the rain','read a compass'];
+  const AN = ['rhino','cheetah','panther','meerkat','emu','scorpion','seal','otter','sea turtle','tiger','lemur','koala','whale'];
+  const SU = ['tallest','longest','shortest','biggest','smallest','heaviest','lightest','fastest','slowest'];
+  const PL = ['supermarket','library','park','movie theater','shopping mall','museum','bank','pharmacy','castle'], P2 = ['hospital','airport','bookstore','station','arcade','coffee shop'];
+  const FO = ['curry','omelet','spaghetti','fish and chips','paella','dumplings','sushi','stew','rice and beans','noodles','soup'];
+  const BD = ['pack my bag','miss the bus','pass a test','eat my lunch','bring my juice','drop the ball'];
+  const TR = ['aquarium','amusement park','palace','water park','theater','national park','circus','botanical gardens'];
+  const RI = ['ride the Ferris wheel','go on the bumper cars','play miniature golf','go on the paddle boats','ride the roller coaster','go on the pirate ship','go on the water slide'];
+  const MO = ['thriller','comedy','sci-fi','romance','musical','cartoon','action','western'];
+  const IN = ['cello','harmonica','saxophone','triangle','drums','clarinet','harp','tambourine','cymbal','maracas','castanets'];
+  const SP = ['astronaut','planet','comet','telescope','alien','spaceship','satellite','the Moon','star','the Sun'];
+  const AJ = ['complicated','amazing','frightening','intelligent','brilliant','important','fascinating','gorgeous'];
+  const EV = ['recycle paper','recycle bottles','pick up trash','reuse plastic bags','turn off the lights','use public transportation'];
+  const SV = ['save trees','save resources','keep the planet clean','reduce waste','conserve energy','reduce pollution'];
+
+  // Cuentos propios con Matt, AL y Bella (mismos temas y vocabulario que el libro, otras palabras)
+  const T0 = tale('The Time Hole', [pn('street', ['Matt', 'AL'], "It's the year 2084 on Future Island. Matt is a time engineer. He works late every night with AL, his robot."),
+    pn('street', ['AL', 'Matt'], 'Matt, look! A man and a woman have our new THD! — Hey! Stop! That is our time machine!'), pn('night', ['Zeb', 'Dot'], "We want to go home, Zeb. — Don't worry, Dot. This machine can help us."),
+    pn('street', ['Matt', 'AL'], 'They opened a time hole! Quick, AL! Follow them!'), pn('camp', ['Bella', 'Matt'], "Hi! I'm Bella. Welcome to the adventure camp! — Thanks! Where are we? And when are we?")]);
+  const T1 = tale('Bella Joins the Team', [pn('camp', ['Matt', 'Bella'], "We're looking for a man and a woman. They have a time machine. — A time machine? Cool!"),
+    pn('camp', ['Bella', 'AL'], 'I love camping, but I want to travel in time! — Are you good at computers? — Yes, I am!'), pn('camp', ['AL', 'Matt'], "Beep! There's a new trace. They went to Africa! — Let's go!"),
+    pn('camp', ['Bella'], "Wait! I'm taking my rope and my compass. Safety first!"), pn('camp', ['Matt', 'Bella'], 'OK, Bella. You can come with us. — Hooray!')]);
+  const T2 = tale('Run, Rhino, Run!', [pn('park', ['Matt', 'Bella'], "We're in Africa! Look, there are the man and the woman! — They're running away!"),
+    pn('park', ['AL'], 'Rhinos can run fifty kilometers an hour. Cheetahs are faster. They are the fastest animals on land, and they...'), pn('park', ['Matt', 'AL'], 'AL, please be quiet! There is a big rhino behind us! — Oops!'),
+    pn('park', ['Bella', 'Matt'], 'Quick! Climb the tree! I can tie my rope to this branch. — Good job, Bella!'), pn('park', ['Bella', 'AL'], 'Hello, little meerkat! Oh no, a cheetah! — Hold on! THD, take us away!')]);
+  const T3 = tale('The Lost City', [pn('street', ['Bella', 'Matt'], 'Where are we now? — This is the lost city of Atlantis. It is under the ocean!'),
+    pn('street', ['AL', 'Matt'], 'How do we get to the control center? — Go straight, then turn left at the mall.'), pn('room', ['Matt', 'AL'], 'Look at this video. The man and the woman are Zeb and Dot Martin. They wanted a space-time chip.'),
+    pn('room', ['AL', 'Bella'], 'A space-time chip is very important for a time machine. The THD has three. — Do you have one, AL? — Yes, I have one more.'), pn('street', ['Bella', 'Matt'], "Shh! A guard! Let's hide behind these newspapers. — I'm hungry. Let's go and eat!")]);
+  const T4 = tale('At the Restaurant', [pn('kitchen', ['Zeb', 'Dot'], "These dumplings are delicious! Did you cook them? — No, I didn't. The cook made them."),
+    pn('street', ['Dot'], 'Dot is behind the restaurant. She is looking in a trash can. She wants the old food.'), pn('street', ['Dot', 'Bella'], "Eek! A rat! — It isn't a rat. It's my meerkat!"),
+    pn('kitchen', ['Matt', 'AL'], 'Mm, this soup is really good! — I needed some oil. Ah, that is better!'), pn('street', ['Bella', 'Matt'], 'Where did the Martins go? — They took a trash can of old food! Why?')]);
+  const T5 = tale('The Flying Pod', [pn('park', ['Carol Carnival', 'Matt'], 'Welcome to the amusement park! — Thanks. What happened to that ride?'),
+    pn('park', ['Carol Carnival'], 'Two weird people went on the Space Ride. They sat in a pod and closed the door.'), pn('park', ['Carol Carnival', 'Bella'], "Then I saw a flash and I heard a BANG! The pod flew off the ride! — But pods can't fly!"),
+    pn('park', ['AL', 'Matt'], 'Maybe they used the THD for power. — Look! The pod is in the lake.'), pn('park', ['Bella', 'Matt'], "It didn't work. What do Zeb and Dot want? — I don't know. Let's find out!")]);
+  const T6 = tale('The Recording Studio', [pn('stage', ['Bella', 'AL'], "Wow! I always wanted to see a recording studio! — There's nobody here."),
+    pn('stage', ['Peter'], "Help! Help! I'm in the closet!"), pn('stage', ['Peter', 'Matt'], 'Thank you! A weird man and a weird woman came. They locked me in the closet! — Did they take anything?'),
+    pn('stage', ['Peter'], 'They recorded some music. Hey, they took the saxophone!'), pn('stage', ['Matt', 'AL'], "A trash can of old food and now a saxophone! What's going on? — We have a trace!")]);
+  const T7 = tale('The Machine on the Hill', [pn('night', ['Zeb', 'Dot'], "Our machine is ready! — Finally! I can't wait!"),
+    pn('night', ['Zeb'], "The saxophone is playing our music. This will work. Don't worry!"), pn('night', ['Bella', 'AL'], "What's that bright light? Is it a comet? — I don't think so."),
+    pn('night', ['Matt', 'Bella'], "It's a spaceship! Zeb and Dot are going up! — Quick!"), pn('night', ['Bella', 'Matt'], 'Are they astronauts? — Hmm, I wonder. — This is the most amazing adventure ever!')]);
+  const T8 = tale('Home to Mars', [pn('space', ['Bella', 'Dot'], "You aren't astronauts. You're aliens! — Yes. We just want to go home to Mars."),
+    pn('space', ['Zeb', 'Bella'], 'Our ship broke down. We needed some important things. — Like a saxophone and a trash can of old food?'), pn('space', ['Dot'], 'We used the saxophone to call our friends. And we recycle old food. It is our energy!'),
+    pn('space', ['AL', 'Zeb'], "Here is a space-time chip. Please give us back our THD. — Thank you! We'll get home safely now."), pn('space', ['Matt', 'Bella'], "Now we have to go home, too. — Back to the camp. I'm going to miss you, guys!")]);
+
+  // Lecturas propias (mismo tema y tipo de texto que cada página del libro)
+  const R1 = text('A Letter from Camp', "Dear Mom, It's my second day at camp. I have new friends from Spain and Mexico. They are teaching me Spanish! Last night there was a big campfire and we sang songs. My tent is cold, but my sleeping bag is warm. Today we are hiking to the wildlife park. Love, Flo");
+  const R1b = text('Sam Stone, Adventurer', 'Sam Stone is an adventurer from Canada. He climbed a very high mountain when he was twenty-five. He goes to deserts, mountains and jungles. The jungle is difficult because there are snakes and insects. He sleeps in a tree! Before an adventure, he learns about the plants and animals and he packs a survival kit. He is scared of tall buildings!');
+  const RW1 = text('Camping Around the World', 'Niran lives in Thailand. He camps in a national park with very high mountains and big caves. Kayla lives in the United States. She camps in the desert in the spring because the summer is too hot. Her dad cooks on the campfire. Marco lives in Italy. In the summer, he stays in a small cabin on an island with a volcano. He hikes to the top with his grandpa.');
+  const R2 = text('Lulu the Koala', 'Lulu the koala lived next to a busy road. It was dangerous, and she was sick. Now she lives in a koala reserve. She eats fresh leaves and she sleeps in a big tree. She is safe and healthy. Koalas live longer and are happier in the reserve.');
+  const R2b = text('Chameleons', 'There are about one hundred and sixty kinds of chameleons. Some are smaller than your finger and some are longer than your arm. They have very long tongues and they are good at climbing. Many chameleons change color when they are scared, angry, hot or cold. They eat insects. They catch flies with their tongues!');
+  const R3 = text('A Very Small Island', 'Hi! I live on a very small island. Only six hundred people live here. There is one school and there are two banks, but there are no shopping malls. There is no airport and there are no cars! We go everywhere by bike. To go shopping, we take a boat to a bigger island.');
+  const R3b = text('Cool Places', 'In Barcelona, there is a famous house with funny chimneys on the roof. They look like soldiers! In the park, there is a long bench that looks like a snake. In England, there is a small, quiet village on a river with a lot of little bridges. In Australia, there is a town in the middle of the desert, near a huge red rock.');
+  const RW2 = text('Our Homes', 'Luna lives in a cave house in a small town in Spain. Some people think caves are dark, but she loves her home. Kai lives in a very busy city in China. His apartment is on the fortieth floor, and there is a sports center behind it. Sofia lives on a small island in Greece. Her white house is near the harbor, and she likes watching the boats.');
+  const R4 = text('My Good Day', 'Last May, I played the guitar in a school concert. I was scared and I didn\'t want to play. Then I went on stage and I was OK. I really liked it! Now I want to be a rock star. — Ben, 12');
+  const R4b = text('Anna the Sailor', 'Anna Brooks sailed alone around the world. Her trip started in November and finished in February. It was often dangerous. There were storms and big waves, and her food was boring. On one very bad day, there was a big storm. She didn\'t open her presents. A week later, there were no storms. She called her family, opened her presents and laughed.');
+  const RW3 = text('Our Vacations', 'Ravi went to India and visited the Taj Mahal. An emperor built it for his wife. It took twenty thousand workers! Selin went to Turkey. She stayed near an old castle and she went in a hot-air balloon over strange rocks. Diego went to Peru. He visited an old city in the mountains. People called Incas lived there long ago.');
+  const R5 = text('A Postcard from Hawaii', "Hi Gemma! I'm in Hawaii. It's great! On the first day, we went surfing. The ocean was warm, but surfing was difficult. Yesterday it rained, but today it is hot. We played volleyball on the beach. The aquarium was good, and I loved the sea turtles. I'll see you soon! Love, Sarah");
+  const R5b = text('Beach Safety', 'At the beach, always wear a T-shirt, a hat and sunblock. Swim between the red and yellow flags. The water is safe there. Never swim near a red flag. It means the water is dangerous. Always surf between the surfing signs and stay with your surfboard.');
+  const R6 = text('My Favorite Book', "My favorite book is The Secret Diary of Max. It's a comedy with really good cartoons. Max is in middle school and he writes in his diary every day. He has a best friend and a mean little brother. The funniest part happens at Halloween. I read it faster than any other book! — Rosa, 13");
+  const R6b = text('A Good Day', 'On a good day, good things happen. Have you ever won a game? Have you ever helped a friend? Have you ever laughed and laughed? Have you ever eaten a big cake? Have you ever sung a happy song? On a good day, good things happen. Smile and say, "What a day!"');
+  const RW4 = text('World Instruments', 'In Mali, people play djembe drums. They are made of hard wood and goat skin, and people play them at special celebrations. In Argentina, people play the bandoneón for the tango. It has square boxes with seventy-one buttons, and it is very difficult to play. In Japan, people play the shamisen. It is like a guitar with three strings.');
+  const R7 = text('The Lost Spaceship', 'One night in April, a spaceship landed in a field. It was four o\'clock in the morning, but the noise and the lights woke Jake up. A door opened and some strange people walked out. They had large heads and small bodies, and they were green. "Am I dreaming?" Jake said. He put on his jeans and ran to the spaceship.');
+  const R7b = text('Space Facts', 'Stars can be different colors. Hot stars are blue, cool stars are red, and the Sun is yellow. The first man in space went there in 1961. The first men walked on the Moon in 1969. In space, astronauts sleep in sleeping bags on the wall. Saturn is farther from the Sun than Jupiter.');
+  const R8 = text('What Are We Doing to Our Planet?', 'Factories, cars and planes send bad gases into the air. This is air pollution, and it makes us sick. We need cleaner energy from the sun, the wind and the water. People also make billions of tons of trash every year. Plastic bottles and bags go into rivers and oceans and kill ocean animals. We have to reduce, reuse and recycle!');
+  const R8b = text('Our Amazing World', 'The highest waterfall in the world is in Venezuela. Australia is the biggest island and the smallest continent. The Sahara in Africa is the biggest hot desert. The Nile in Africa is the longest river, and the Amazon is a very close second. Mount Fuji is the highest mountain in Japan.');
+
+  return [
+    L6('n6w', 'Welcome', 'Future Island, el THD y los sentidos', 'purple', [
+      {title:'The time hole', kind:'Cuento', items:[T0.scene, rs(T0.st, "What is Matt's job?", "He's a time engineer", ["He's a teacher","He's a pilot"]), rs(T0.st, 'What did the man and the woman take?', 'The new THD', ['A robot','A car']), sp('Quick, AL! Follow them!', 'w:Matt')]},
+      {title:'Meet the characters', kind:'Vocabulario', items:[NM('camp', TEAM), ...TEAM.map(f), fi('AL is a robot. He is very', 'talkative', '.', ['quiet','lazy'], 'w:AL'), fi('Bella is good at', 'computers', '.', ['cooking','surfing'], 'w:Bella')]},
+      {title:'The five senses', kind:'Vocabulario', items:[DP('paper', SE), ...SE.map(f), look(['The pineapple feels spiky and tastes sweet.', 'The drum looks red and sounds loud.', 'The ice cube feels cold.']), fi('The pineapple', 'tastes', 'sweet.', ['taste','tasting'], 'w:pineapple')]},
+      {title:'It feels soft', kind:'Gramática', items:[FD('room', TX), ...['spiky','soft','smooth','hard','furry','sweet','loud'].map(f), look(['Does it look good? Yes, it does. / No, it doesn\'t.', 'What does it look like? It looks good.', 'It looks like a cake.']),
+        fi('Does it smell nice? Yes, it', 'does', '.', ['is','do'], '🌹'), fi('The ice cube', 'feels', 'cold.', ['feel','looks like'], 'w:ice cube'), fi('This robot looks', 'like', 'a dog.', ['likes','as'], '🐕'), sp('It looks like a cake.', '🎂')]},
+      {title:'Guess what it is!', kind:'Juego', items:[me(['look','smell','taste','feel']), fi('It is a fruit. It feels spiky and tastes sweet. It is a', 'pineapple', '.', ['cake','spider'], 'w:pineapple'), fi('It is an animal. It feels', 'furry', '.', ['spiky','wet'], '🐻'), od('Does it taste sweet', ['do'], '🍬')]}
+    ], 'Bienvenida'),
+    L6('n6u1', 'Adventure camp', 'Cosas para acampar y lo que sabemos hacer', 'blue', [
+      {title:'Camping things', kind:'Vocabulario', items:[NM('camp', CAMP), FD('camp', EQ), ...EQ.map(f), ma(['tent','compass','flashlight','sleeping bag'])]},
+      {title:'I like hiking', kind:'Gramática', items:[look(['Flo is good at swimming.', "I like hiking, but I don't like sailing.", 'I love fishing and camping.']), fi('Flo is good', 'at', 'swimming.', ['in','on'], 'w:swimming'),
+        fi('I like hiking, but I', "don't", 'like sailing.', ["doesn't",'not'], 'w:sailing'), fi('Maria loves', 'dancing', '.', ['dance','dances'], '💃'), fi('Felipe is good at science', 'and', 'math.', ['but','because'], '🔬'), sp('I love fishing and camping.', 'w:fishing')]},
+      {title:'At the camp', kind:'Vocabulario', items:[NM('camp', CA), ...CA.filter(w => w !== 'read a compass').map(f), CH('camp', ['Tom', 'Flo'], 'Camping is fun!', SING, ['Pitch the tent and put in the pegs, set up the bed and rest your legs!', 'Light a fire, read a compass, too. Camping is fun for me and you!', 'Keep out the rain, cover your head. In the morning, take down the tent. Then home we head!'])]},
+      {title:"We're putting in the pegs", kind:'Gramática', items:[look(["I'm pitching the tent.", "We're putting in the pegs.", "I can pitch a tent, but I can't read a compass."]), fi("It's raining, so we're", 'covering', 'our heads.', ['cover','covers'], 'w:cover our heads'),
+        fi("I'm lost, so I'm", 'reading', 'a compass.', ['read','reads'], 'w:compass'), fi('I can light a fire, but I', "can't", 'cook fish.', ['can','don\'t'], 'w:light a fire'), od("We're putting in the pegs", ['puting'], 'w:pegs'), sp("I'm pitching the tent.", 'w:pitch the tent')]},
+      {title:'Cuento: Bella joins the team', kind:'Cuento', items:[T1.scene, rs(T1.st, 'What does Bella love?', 'Camping', ['Sailing','Cooking']), rs(T1.st, 'Where did the trace go?', 'To Africa', ['To the Moon','To school']), rs(T1.st, 'What does Bella take?', 'Her rope and her compass', ['A tent and a fire','A cake']), sp('Safety first!', '⛑️')]},
+      {title:'Safety first', kind:'Valores', items:[PK('camp', [['⛰️', true, 'Pitch your tent on a high, flat place.'], ['🔥', true, 'Light the fire far from the tents.'], ['💧', true, 'Take water and dry food.'], ['🩹', true, 'Take a first-aid kit.'], ['🌊', false, 'Pitch your tent next to the river.']], 'Safety first at camp.', 'Toca las reglas para acampar seguros.'), sp('Always take a first-aid kit.', 'w:first-aid kit')]},
+      {title:'A letter from camp', kind:'Lectura', items:[rs(R1, 'Where are her new friends from?', 'Spain and Mexico', ['Italy and Japan','China and Korea']), rs(R1, 'What did they do last night?', 'They sang songs at the campfire', ['They went swimming','They watched TV']), rs(R1, 'Is her sleeping bag cold?', "No, it's warm", ["Yes, it's cold"]), sp('Today we are hiking to the wildlife park.', 'w:hiking')]},
+      {title:'Real adventurers', kind:'Lectura', items:[DP('paper', [['🧭', 'learn about plants and animals'], ['🎒', 'pack a survival kit'], ['🏃', 'train six days a week']], 'Get ready for an adventure.', 'Pon cada idea debajo de su dibujo.'),
+        rs(R1b, 'Where does Sam sleep in the jungle?', 'In a tree', ['In a tent','In a car']), rs(R1b, 'What is Sam scared of?', 'Tall buildings', ['Snakes','Insects']), sp('I want to be an adventurer!', '🧗')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('camp', ['tent','pegs','compass','sleeping bag','flashlight','first-aid kit']), fi('You put these in when you pitch a tent. They are', 'pegs', '.', ['poles','compasses'], 'w:pegs'), fi('What is Sally good at? She is good at', 'cooking', '.', ['cook','cooks'], '🍳'), wr('compass')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['tent','compass','air pump','flashlight']), me(['light a fire','pitch the tent','set up the bed','keep out the rain']), fi('I went camping, and in my tent there was a sleeping bag', 'and', 'a flashlight.', ['but','because'], 'w:sleeping bag'), sp('What are you good at?', '⭐')]}
+    ]),
+    L6('n6x1', 'Camping around the world', 'Acampar en otros países', 'yellow', [
+      {title:'Camping around the world', kind:'Lectura', items:[DP('paper', [['🏔️', 'Niran: mountains and caves'], ['🏜️', 'Kayla: the desert'], ['🌋', 'Marco: an island with a volcano']], 'Read and match.', 'Pon cada niño debajo de su lugar.'),
+        rs(RW1, 'When does Kayla camp in the desert?', 'In the spring', ['In the summer','In the winter']), rs(RW1, 'Who does Marco hike with?', 'His grandpa', ['His dad','His sister']), sp('I want to camp in the mountains.', '🏕️')]}
+    ], 'Wider World'),
+    L6('n6u2', 'Wildlife park', 'Animales, medidas y comparaciones', 'green', [
+      {title:'Wild animals', kind:'Vocabulario', items:[FD('park', AN.slice(0, 7)), FD('park', AN.slice(7)), ...AN.filter(w => !['emu','tiger','koala'].includes(w)).map(f), ma(['rhino','seal','otter','whale'])]},
+      {title:'How heavy is it?', kind:'Gramática', items:[look(["How heavy is it? It's eight hundred kilograms.", "How tall is it? It's five meters tall.", 'The giraffe is taller than the rhino.', 'The giraffe is the tallest.']),
+        fi('How', 'heavy', 'is the rhino? It is 1,600 kilograms.', ['tall','long'], 'w:rhino'), fi('The giraffe is', 'taller', 'than the rhino.', ['tall','tallest'], 'w:giraffe'), fi('The elephant is the', 'heaviest', '.', ['heavier','heavy'], 'w:elephant'), od('How tall is the giraffe', ['heavy'], 'w:giraffe'), sp('The cheetah is faster than the lion.', 'w:cheetah')]},
+      {title:'The biggest and the fastest', kind:'Vocabulario', items:[DP('paper', SU.slice(0, 5)), DP('paper', SU.slice(5)), ...SU.map(f), CH('park', ['Maria', 'Felipe'], 'At the wildlife park', SING, ["Who's the fastest? The cheetah is! Who's the tallest? The giraffe is!", "The whale is the biggest, and the elephant's heavy, too.", "Big or small, fast or slow, let's go to the wildlife park and say hello!"])]},
+      {title:'Are otters bigger than seals?', kind:'Gramática', items:[look(["Are otters bigger than seals? Yes, they are. / No, they aren't.", "Were the giraffes taller than the trees? Yes, they were. / No, they weren't.", 'Which is the heaviest? The hippo is the heaviest.']),
+        fi('Are otters bigger than seals? No, they', "aren't", '.', ["isn't",'weren\'t'], 'w:otter'), fi('Were the giraffes taller than the trees? Yes, they', 'were', '.', ['was','are'], 'w:giraffe'), fi('Which is the', 'smallest', '? The meerkat is.', ['smaller','small'], 'w:meerkat'), sp('Are rhinos heavier than seals?', 'w:rhino')]},
+      {title:'Cuento: Run, rhino, run!', kind:'Cuento', items:[T2.scene, rs(T2.st, 'Why is Matt angry with AL?', 'He talks too much', ['He is slow','He is lazy']), rs(T2.st, 'Where do they climb?', 'Up a tree', ['Up a mountain','Up a wall']), rs(T2.st, 'Which animal is the fastest?', 'The cheetah', ['The rhino','The meerkat']), sp('Quick! Climb the tree!', '🌳')]},
+      {title:'Think before you act', kind:'Valores', items:[PK('classroom', [['🤔', true, 'Stop and think.'], ['🙋', true, 'Ask your teacher for help.'], ['👂', true, 'Ask your friend, "What is wrong?"'], ['😠', false, 'Shout at your friend.']], 'Think before you act.', 'Toca lo que es bueno hacer antes de actuar.'), sp('I think before I act.', '🤔')]},
+      {title:'Lulu the koala', kind:'Lectura', items:[rs(R2, 'Where did Lulu live before?', 'Next to a busy road', ['In a zoo','In a big city']), rs(R2, 'Is Lulu healthy now?', 'Yes, she is', ["No, she isn't"]), rs(R2, 'Where do koalas live longer?', 'In the reserve', ['Next to the road','In the ocean']), sp('Koalas are happier in the reserve.', 'w:koala')]},
+      {title:'Chameleons', kind:'Ciencias', items:[SO(['TRUE ✔️', 'FALSE ✖️'], [['They have long tongues.', 0], ['They eat insects.', 0], ['They are good at climbing.', 0], ['They are all very big.', 1], ['They eat pizza.', 1]], 'Chameleons', 'Pon cada frase en su canasta: verdadero o falso.'),
+        rs(R2b, 'When do chameleons change color?', 'When they are scared, angry, hot or cold', ['When they eat','When they sleep']), rs(R2b, 'How do they catch flies?', 'With their tongues', ['With their feet','With their tails']), sp('Chameleons are good at climbing.', '🦎')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('park', ['cheetah','panther','rhino','lemur','seal','otter']), fi('Meerkats are', 'smaller', 'than lemurs.', ['small','smallest'], 'w:meerkat'), fi('Cheetahs are the', 'fastest', 'animals on land.', ['faster','fast'], 'w:cheetah'), wr('whale')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['rhino','cheetah','seal','whale']), me(['tallest','biggest','fastest','slowest']), fi('It is an orange cat with black stripes. It is a', 'tiger', '.', ['lion','panther'], 'w:tiger'), sp('Is the tent the heaviest thing?', 'w:tent')]}
+    ]),
+    L6('n6r1', 'Units 1 and 2', 'Repaso de las unidades 1 y 2', 'purple', [
+      {title:'Review: adventure camp', kind:'Repaso', shuffle:true, items:[NM('camp', ['put in the pegs','set up the bed','keep out the rain','cover our heads','pitch the tent']), fi("He's", 'setting', 'up the bed.', ['set','sets'], 'w:set up the bed'), fi('The tent is keeping out the', 'rain', '.', ['fire','pegs'], 'w:keep out the rain'), sp("We're pitching a tent.", 'w:tent')]},
+      {title:'Review: wildlife park', kind:'Repaso', shuffle:true, items:[FD('park', ['giraffe','rhino','panther','whale','elephant','cheetah']), fi('The panther is heavier than the cheetah, but it is', 'lighter', 'than the tiger.', ['light','lightest'], 'w:panther'), fi('The whale is the', 'biggest', 'animal in the ocean.', ['bigger','big'], 'w:whale'), sp('The giraffe is taller than the rhino.', 'w:giraffe')]}
+    ], 'Repaso'),
+    L6('n6u3', 'Where we live', 'Lugares de la ciudad, cómo llegar, want to / have to', 'red', [
+      {title:'Places in town', kind:'Vocabulario', items:[FD('street', PL), ...PL.filter(w => !['library','park','museum','castle'].includes(w)).map(f), ma(['bank','pharmacy','supermarket','movie theater'])]},
+      {title:'How do you get to the school?', kind:'Gramática', items:[look(['How do you get to the school?', 'Go straight, then turn left at First Avenue.', "It's next to the movie theater. / It's behind the park. / It's at the end of First Avenue."]),
+        fi('Go straight, then turn', 'left', 'at First Avenue.', ['next','behind'], '⬅️'), fi("It's next", 'to', 'the movie theater.', ['of','at'], 'w:movie theater'), fi("It's at the end", 'of', 'the street.', ['to','in'], '🏁'), od('How do you get to the bank', ['go'], 'w:bank'), sp('Could you repeat that, please?', '🔁')]},
+      {title:'More places', kind:'Vocabulario', items:[NM('street', P2), ...P2.map(f), CH('street', ['Tom', 'Maria'], 'Where do you want to go?', SING, ['I want to go to the movie theater. I want to see a show!', 'But I have to go to the library. My books are late, you know!', 'I have to go to the airport. My friend is coming today!'])]},
+      {title:'I have to go to the library', kind:'Gramática', items:[look(['I want to go to the park. / She wants to go to the park.', 'I have to go to the library. / He has to go to the library.']), DP('street', [['🦷', 'She has to go to the dentist.'], ['🤒', 'He has to go to the hospital.'], ['📖', 'They have to go to the library.'], ['✈️', 'We have to go to the airport.']], 'Where do they have to go?', 'Pon cada frase debajo de su dibujo.'),
+        fi('She', 'wants', 'to go to the arcade.', ['want','wanting'], 'w:arcade'), fi('He', 'has', 'to go to the pharmacy.', ['have','having'], 'w:pharmacy'), sp('I have to go to the bookstore.', 'w:bookstore')]},
+      {title:'Cuento: The lost city', kind:'Cuento', items:[T3.scene, rs(T3.st, 'Where is Atlantis?', 'Under the ocean', ['On the Moon','In the desert']), rs(T3.st, 'What did the Martins want?', 'A space-time chip', ['A meerkat','A car']), rs(T3.st, 'Why do they hide?', 'A guard is coming', ['It is raining','They are tired']), sp('Go straight, then turn left at the mall.', '🗺️')]},
+      {title:'Be flexible', kind:'Valores', items:[SO(['NOW ✔️', 'LATER ⏳'], [['do my homework', 0], ['take care of my little brother', 0], ['study for the test', 0], ['play video games', 1], ['meet my friends', 1]], 'Be flexible.', 'Pon cada cosa en su canasta: ahora o más tarde.'), sp("It's frustrating, but I'm OK about it.", '🙂')]},
+      {title:'A very small island', kind:'Lectura', items:[rs(R3, 'How many people live on the island?', 'Six hundred', ['Six thousand','Sixty']), rs(R3, 'How do people go to places?', 'By bike', ['By car','By plane']), rs(R3, 'Are there any shopping malls?', "No, there aren't", ['Yes, there are']), sp('There is no airport on my island.', 'w:airport')]},
+      {title:'Cool places', kind:'Geografía', items:[PK('street', [['🏠', true, 'A house with funny chimneys'], ['🐍', true, 'A bench like a snake'], ['🌉', true, 'A village with little bridges'], ['🗿', false, 'A big city on the Moon']], 'Cool places', 'Toca los lugares que salen en la lectura.'),
+        rs(R3b, 'What do the chimneys look like?', 'Soldiers', ['Snakes','Bridges']), rs(R3b, 'Where is the town in Australia?', 'In the middle of the desert', ['On a river','On the beach']), sp('I want to go to Barcelona.', '🏙️')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[NM('street', ['arcade','bookstore','museum','library','bank','station']), fi('The bookstore is', 'between', 'the bank and the cafe.', ['next','end'], 'w:bookstore'), fi('I have', 'to', 'go to the supermarket.', ['go','at'], 'w:supermarket'), wr('hospital')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['bank','pharmacy','station','arcade']), me(['airport','hospital','bookstore','coffee shop']), fi('Where do you', 'want', 'to go this weekend?', ['wants','wanting'], '🙋'), sp('Where do you have to go this weekend?', '⏰')]}
+    ]),
+    L6('n6x2', 'Our homes', 'Casas de niños del mundo', 'yellow', [
+      {title:'Our homes', kind:'Lectura', items:[DP('paper', [['⛰️', 'Luna: a cave house'], ['🏙️', 'Kai: the fortieth floor'], ['⛵', 'Sofia: near the harbor']], 'Read and match.', 'Pon cada niño debajo de su casa.'),
+        rs(RW2, 'What is behind Kai\'s apartment?', 'A sports center', ['A supermarket','A beach']), rs(RW2, 'Where is Sofia\'s house?', 'Near the harbor', ['In a cave','In a big city']), sp('I want to live on an island.', '🏝️')]}
+    ], 'Wider World'),
+    L6('n6u4', 'Good days, bad days', 'Comidas del mundo y el pasado con because', 'blue', [
+      {title:'Food from around the world', kind:'Vocabulario', items:[FD('kitchen', FO.slice(0, 6)), FD('kitchen', FO.slice(6)), ...FO.filter(w => !['noodles','soup'].includes(w)).map(f), ma(['curry','sushi','paella','dumplings'])]},
+      {title:'He dropped the plate', kind:'Gramática', items:[look(['I cooked stew.', 'He dropped the plate.', 'She paddled very quickly.', 'We fell in the lake.']), fi('Yesterday, I', 'dropped', 'a plate in the kitchen.', ['drop','droped'], '🍽️'),
+        fi('A year ago, he', 'climbed', 'a high mountain.', ['climb','climbing'], '🏔️'), fi('Last month, I', 'fell', 'in the river.', ['falled','fall'], '🌊'), fi('Hannah', 'cooked', 'a big stew.', ['cook','cooks'], 'w:stew'), sp('What did you do? I cooked spaghetti!', 'w:spaghetti')]},
+      {title:'A bad day', kind:'Vocabulario', items:[NM('classroom', BD), ...BD.map(f), CH('classroom', ['Flo', 'Tom'], 'It was a bad day', SING, ["I missed the bus and I was late. I didn't pass my test today.", "I didn't bring my juice, I dropped the ball. It was a bad day, the worst of all!", "But then my friend said, \"Let's play!\" And now it's a good, good day!"])]},
+      {title:'Because I was late', kind:'Gramática', items:[look(["What happened? I didn't pass my test because I didn't study.", "He didn't bring his juice because he was late for school."]), fi('I', 'passed', 'the test because I studied a lot.', ['pass','passing'], 'w:pass a test'),
+        fi("He didn't miss the bus", 'because', 'he was early.', ['but','and'], 'w:miss the bus'), fi("They didn't swim in the ocean because there was a red", 'flag', '.', ['fish','juice'], '🚩'), od("I didn't play soccer because I was tired", ['didn\'t'], '😴'), sp("He didn't eat the curry because it was spicy.", 'w:curry')]},
+      {title:'Cuento: At the restaurant', kind:'Cuento', items:[T4.scene, rs(T4.st, 'Who looked in a trash can?', 'Dot', ['Bella','Matt']), rs(T4.st, 'What did Dot say the meerkat was?', 'A rat', ['A dog','A cat']), rs(T4.st, 'What did the Martins take?', 'A trash can of old food', ['The soup','A saxophone']), sp("It isn't a rat. It's a meerkat!", 'w:meerkat')]},
+      {title:'Be positive', kind:'Valores', items:[PK('room', [['⚽', true, 'Practice a sport.'], ['💬', true, 'Talk to a friend.'], ['👪', true, 'Talk to your family.'], ['📝', true, 'Write about your day.'], ['😡', false, 'Stay angry all day.']], 'Be positive about your day.', 'Toca las buenas ideas para después de un mal día.'), sp("Don't worry. Be happy!", '😊')]},
+      {title:'My good day', kind:'Lectura', items:[rs(R4, 'Where did Ben play the guitar?', 'In a school concert', ['At the beach','At a wedding']), rs(R4, 'Did Ben want to play at first?', "No, he didn't", ['Yes, he did']), rs(R4, 'What does Ben want to be now?', 'A rock star', ['A teacher','A sailor']), sp('It was a really good day!', '🎸')]},
+      {title:'Anna the sailor', kind:'Lectura', items:[SO(['GOOD DAY 😊', 'BAD DAY 😟'], [['no storms', 0], ['called her family', 0], ['opened her presents', 0], ['a big storm', 1], ['boring food', 1]], 'Good and bad days at sea', 'Pon cada cosa en su canasta: día bueno o día malo.'),
+        rs(R4b, 'How did Anna sail around the world?', 'Alone', ['With her family','With her friends']), rs(R4b, 'When did her trip finish?', 'In February', ['In November','In May']), sp('She sailed around the world.', '⛵')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[NM('kitchen', ['fish and chips','sushi','spaghetti','paella','dumplings','curry']), fi('Greg was hungry because he', "didn't", 'eat his lunch.', ["doesn't",'not'], 'w:eat my lunch'), fi('This is fish that is not cooked. It is', 'sushi', '.', ['stew','soup'], 'w:sushi'), wr('omelet')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['curry','sushi','stew','paella']), me(['pack my bag','miss the bus','pass a test','drop the ball']), fi('Did you brush your teeth yesterday? No, I', "didn't", '.', ["don't",'wasn\'t'], '🪥'), sp('What did you do last week?', '📅')]}
+    ]),
+    L6('n6r2', 'Units 3 and 4', 'Repaso de las unidades 3 y 4', 'purple', [
+      {title:'Review: where we live', kind:'Repaso', shuffle:true, items:[FD('street', ['station','castle','shopping mall','movie theater','bank','supermarket']), fi('She', 'wants', 'to go to the station.', ['want','have'], 'w:station'), fi('They have to go to the', 'swimming pool', '.', ['airport','bank'], '🏊'), sp('How do I get to the library?', 'w:library')]},
+      {title:'Review: good days, bad days', kind:'Repaso', shuffle:true, items:[DP('paper', [['Japan', 'sushi'], ['Italy', 'spaghetti'], ['Spain', 'paella'], ['China', 'dumplings']], 'International food fair', 'Pon cada comida debajo de su bandera.'), fi('I liked the movie. I', "didn't", 'like the movie.', ["don't",'not'], '🎬'), fi('James', 'visited', 'his grandparents last Saturday.', ['visit','visiting'], '👵'), sp('First, I want to eat curry.', 'w:curry')]}
+    ], 'Repaso'),
+    L6('n6u5', 'Trips', 'Paseos, juegos mecánicos y lo que haremos', 'green', [
+      {title:'Places to visit', kind:'Vocabulario', items:[FD('street', TR), ...TR.map(f), ma(['aquarium','palace','circus','national park'])]},
+      {title:'Did you go to the aquarium?', kind:'Gramática', items:[look(['What did you do yesterday? I went to the aquarium.', "Did you go to the aquarium? Yes, I did. / No, I didn't.", 'Did you like the aquarium?']),
+        fi('What did you do yesterday? I', 'went', 'to the palace.', ['go','goed'], 'w:palace'), fi('Did you like the museum? Yes, I', 'did', '.', ['do','was'], '🏛️'), fi('Did Maria go to the theater? No, she', "didn't", '.', ["doesn't",'wasn\'t'], 'w:theater'), od('Did you go to the park', ['went'], 'w:park'), sp('I went to the aquarium yesterday.', 'w:aquarium')]},
+      {title:'At the amusement park', kind:'Vocabulario', items:[NM('park', RI), ...RI.map(f), CH('park', ['Felipe', 'Flo'], 'A day at the amusement park', SING, ['We went to the amusement park. We rode the Ferris wheel up high!', 'Did you like the bumper cars? Yes, I did! We went zooming by!', 'We went on the roller coaster ten times. Now we feel sick! Oh my!'])]},
+      {title:"First, I'll ride the Ferris wheel", kind:'Gramática', items:[look(['What will you do at the amusement park?', "First, I'll ride the Ferris wheel. Then I'll go on the bumper cars."]), fi("First, I'll", 'ride', 'the roller coaster.', ['rode','riding'], 'w:ride the roller coaster'),
+        fi("Then I'll", 'go', 'on the pirate ship.', ['went','goes'], 'w:go on the pirate ship'), fi('What', 'will', 'you do next summer?', ['did','are'], '☀️'), od("Then I'll play miniature golf", ['will'], 'w:play miniature golf'), sp("First, I'll go on the water slide.", 'w:go on the water slide')]},
+      {title:'Cuento: The flying pod', kind:'Cuento', items:[T5.scene, rs(T5.st, 'What did Carol Carnival see?', 'A flash', ['A rainbow','A star']), rs(T5.st, 'Where did the pod go?', 'Into the lake', ['To the Moon','To the palace']), rs(T5.st, 'What did they use for power?', 'The THD', ['The Ferris wheel','A battery']), sp('Pods can\'t fly!', '🛸')]},
+      {title:'Plan, but be flexible', kind:'Valores', items:[DP('paper', [['🌅', 'get up and have breakfast'], ['📚', 'do my homework'], ['⚽', 'play soccer'], ['🍕', 'have dinner']], 'Plan your Saturday.', 'Pon cada plan debajo de su dibujo.'), sp('I think I will get up at seven-thirty.', '⏰')]},
+      {title:'A postcard from Hawaii', kind:'Lectura', items:[rs(R5, 'What did Sarah do on the first day?', 'She went surfing', ['She went to the aquarium','She played volleyball']), rs(R5, 'Was surfing easy?', "No, it wasn't", ['Yes, it was']), rs(R5, 'What did she love at the aquarium?', 'The sea turtles', ['The sharks','The seals']), sp('Hawaii is the place to be!', '🏄')]},
+      {title:'Beach safety', kind:'Salud', items:[PK('beach', [['👕', true, 'Wear a T-shirt.'], ['🧢', true, 'Wear a hat.'], ['🧴', true, 'Put on sunblock.'], ['🚩', false, 'Swim near a red flag.']], 'Sun and swim safety', 'Toca lo que es seguro en la playa.'),
+        rs(R5b, 'Where is the water safe?', 'Between the red and yellow flags', ['Near a red flag','Far away from the beach']), rs(R5b, 'What does a red flag mean?', 'The water is dangerous', ['The water is warm','You can surf']), sp('Never swim near a red flag.', '🚩')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('park', ['ride the Ferris wheel','go on the bumper cars','ride the roller coaster','go on the paddle boats','go on the pirate ship','play miniature golf']), fi('Yesterday, I went hiking in the', 'national park', '.', ['aquarium','palace'], 'w:national park'), fi("First, I'll go on the Ferris wheel because I like to go up", 'high', '.', ['fast','slow'], 'w:ride the Ferris wheel'), wr('circus')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['aquarium','palace','circus','theater']), me(['ride the Ferris wheel','go on the bumper cars','go on the water slide','play miniature golf']), fi('The Ferris wheel is next', 'to', 'the entrance.', ['of','at'], 'w:ride the Ferris wheel'), sp('What will you do tomorrow?', '🎠')]}
+    ]),
+    L6('n6x3', 'Our vacations', 'Lugares famosos del mundo', 'yellow', [
+      {title:'Our vacations', kind:'Lectura', items:[DP('paper', [['🕌', 'Ravi: India'], ['🎈', 'Selin: Turkey'], ['⛰️', 'Diego: Peru']], 'Read and match.', 'Pon cada niño debajo de su viaje.'),
+        rs(RW3, 'Who built the Taj Mahal?', 'An emperor', ['The Incas','Twenty children']), rs(RW3, 'Who lived in the old city in Peru?', 'The Incas', ['An emperor','Selin']), sp('My favorite vacation was at the beach.', '🏖️')]}
+    ], 'Wider World'),
+    L6('n6u6', 'Arts', 'Películas, instrumentos, by myself y Have you ever…?', 'red', [
+      {title:'Types of movies', kind:'Vocabulario', items:[FD('stage', MO), ...MO.map(f), ma(['thriller','comedy','cartoon','western'])]},
+      {title:'I saw it by myself', kind:'Gramática', items:[look(['I saw the movie by myself.', 'You wrote it by yourself.', 'He made it by himself. / She didn\'t go by herself.', 'We didn\'t watch it by ourselves. / They didn\'t draw it by themselves.']),
+        fi('I wrote the letter by', 'myself', '.', ['me','himself'], '✉️'), fi('They made dinner by', 'themselves', '.', ['them','ourselves'], '🍲'), fi('He watched the movie by', 'himself', '.', ['herself','him'], 'w:movie theater'), od('She played the game by herself', ['her'], '🎮'), sp('I saw a scary thriller by myself.', 'w:thriller')]},
+      {title:'Musical instruments', kind:'Vocabulario', items:[NM('stage', IN.slice(0, 6)), NM('stage', IN.slice(6)), ...IN.filter(w => w !== 'triangle').map(f), CH('stage', ['Maria', 'Peter'], 'Music on the radio', SING, ['Did you hear the music on the radio last night?', 'There was a saxophone and drums. It sounded just right!', "Have you ever played the harp? No, I haven't, but I want to try!"])]},
+      {title:'Have you ever played the saxophone?', kind:'Gramática', items:[look(["Did you hear the cello? Yes, I did. / No, I didn't.", "Have you ever played the saxophone? Yes, I have. / No, I haven't.", "Have you ever been to a concert? No, I've never been to a concert.", 'play → played, go → been, get → gotten, eat → eaten']),
+        fi('Have you ever', 'played', 'chess?', ['play','playing'], '♟️'), fi('Have you ever', 'been', 'to another country?', ['go','went'], '✈️'), fi('Have you ever eaten sushi? Yes, I', 'have', '.', ['did','am'], 'w:sushi'), od('Have you ever gotten 100 percent in a test', ['got'], '💯'), sp("I've never been to a concert.", '🎤')]},
+      {title:'Cuento: The recording studio', kind:'Cuento', items:[T6.scene, rs(T6.st, 'Who locked Peter in the closet?', 'Zeb and Dot', ['Matt and Bella','AL']), rs(T6.st, 'What did they take?', 'The saxophone', ['The drums','The harp']), rs(T6.st, 'What did AL find?', 'A trace', ['A chip','A guitar']), sp('We have a trace!', 'w:AL')]},
+      {title:'Be self-sufficient', kind:'Valores', items:[SO(['BY MYSELF 🙋', 'WITH FRIENDS 👫'], [['review for a test', 0], ['make my bed', 0], ['brush my teeth', 0], ['play soccer', 1], ['go to a concert', 1]], 'Learn to be self-sufficient.', 'Pon cada cosa en su canasta: yo solo o con amigos.'), sp('I review for a test by myself.', '📖')]},
+      {title:'My favorite book', kind:'Lectura', items:[rs(R6, 'What kind of book is it?', 'A comedy', ['A thriller','A romance']), rs(R6, 'Who is mean in the book?', "Max's little brother", ['Max','His best friend']), rs(R6, 'When does the funniest part happen?', 'At Halloween', ['At Christmas','On his birthday']), sp('My favorite book is very funny.', '📚')]},
+      {title:'A poem', kind:'Lectura', items:[PK('room', [['🏆', true, 'You won a game.'], ['🤝', true, 'You helped a friend.'], ['😂', true, 'You laughed and laughed.'], ['🚌', false, 'You missed the bus.']], 'On a good day…', 'Toca las cosas de un buen día.'),
+        rs(R6b, 'What happens on a good day?', 'Good things happen', ['Bad things happen','Nothing happens']), rs(R6b, 'What do you say at the end?', '"What a day!"', ['"That\'s bad!"','"Goodbye!"']), sp('On a good day, good things happen.', '🌞')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('stage', ['cello','harmonica','saxophone','drums','harp','maracas']), fi('I was scared when I watched the', 'thriller', 'by myself.', ['comedy','cartoon'], 'w:thriller'), fi('Has Ann ever flown in a plane by herself? Yes, she', 'has', '.', ['have','did'], '✈️'), wr('cello')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['thriller','comedy','sci-fi','musical']), me(['cello','harp','drums','saxophone']), fi('Have you ever', 'seen', 'a musical at the theater?', ['saw','see'], 'w:musical'), sp('Have you ever played the harp?', 'w:harp')]}
+    ]),
+    L6('n6r3', 'Units 5 and 6', 'Repaso de las unidades 5 y 6', 'purple', [
+      {title:'Review: trips', kind:'Repaso', shuffle:true, items:[DP('paper', [['👑', 'palace'], ['🎭', 'theater'], ['🐠', 'aquarium'], ['🎢', 'amusement park']], 'Where can you see it?', 'Toca un lugar y ponlo debajo de su dibujo.'), fi('She', 'liked', 'the roller coaster.', ['like','likes'], 'w:ride the roller coaster'), fi("He didn't", 'like', 'the bumper cars.', ['liked','likes'], 'w:go on the bumper cars'), sp('First, I will go to the aquarium.', 'w:aquarium')]},
+      {title:'Review: arts', kind:'Repaso', shuffle:true, items:[NM('stage', ['triangle','drums','cello','saxophone','harmonica']), fi('Yesterday, I made a cake by', 'myself', '.', ['me','my'], '🎂'), fi('I have never', 'been', 'to the circus.', ['go','went'], 'w:circus'), sp('Did you watch a cartoon by yourself?', 'w:cartoon')]}
+    ], 'Repaso'),
+    L6('n6u7', 'Space', 'El espacio, preguntas y más / menos', 'blue', [
+      {title:'Things in space', kind:'Vocabulario', items:[FD('space', SP), ...SP.filter(w => w !== 'astronaut').map(f), ma(['planet','comet','satellite','telescope'])]},
+      {title:'Who are they?', kind:'Gramática', items:[look(["Who are they? They're astronauts.", 'When did they come? They came last night.', 'Where did they come from? They came from the Moon.', 'How did they get here? They came by spaceship.', 'Why are you looking at the sky? I saw a flashing light.']),
+        fi('', 'Where', 'did they come from? From the Moon.', ['Who','When'], 'w:the Moon'), fi('', 'How', 'did they get here? By spaceship.', ['Why','Who'], 'w:spaceship'), fi('', 'When', 'is your birthday?', ['Who','How'], '🎂'), fi('', 'Who', 'is your favorite teacher?', ['Where','How'], '🧑‍🏫'), sp('What is that flashing light?', 'w:star')]},
+      {title:'Amazing and fascinating', kind:'Vocabulario', items:[NM('space', AJ), ...AJ.map(f), CH('space', ['Felipe', 'Maria'], 'Space is amazing', SING, ['Look at the Moon, look at the stars. Is there an alien living on Mars?', 'Space is fascinating, space is amazing, too.', 'Astronauts in spaceships, flying high in the blue!'])]},
+      {title:'More complicated', kind:'Gramática', items:[look(['The big telescope is more complicated than the small telescope.', 'The big telescope is the most complicated.', 'The small telescope is less complicated than the big telescope.', 'The small telescope is the least complicated.']),
+        fi('Math is', 'more', 'complicated than English.', ['most','much'], '➗'), fi('A thriller is more frightening', 'than', 'a musical.', ['that','then'], 'w:thriller'), fi('This is the', 'most', 'amazing adventure ever!', ['more','much'], 'w:amazing'), od('Which telescope is the least complicated', ['less'], 'w:telescope'), sp('A spider is more frightening than a koala.', 'w:spider')]},
+      {title:'Cuento: The machine on the hill', kind:'Cuento', items:[T7.scene, rs(T7.st, 'Where is the machine?', 'On a hill', ['In the lake','In a cave']), rs(T7.st, 'What does Bella think the light is?', 'A comet', ['A star','The Sun']), rs(T7.st, 'Where are Zeb and Dot going?', 'Up to the spaceship', ['To school','To the amusement park']), sp('This is the most amazing adventure ever!', 'w:spaceship')]},
+      {title:'Use your imagination', kind:'Valores', items:[DP('space', [['🪐', 'Maybe it is a planet.'], ['🛰️', 'Maybe it is a satellite.'], ['🚀', 'Maybe it is a rocket.']], 'What is it? Use your imagination.', 'Pon cada idea debajo de su dibujo.'), sp('I think maybe it is a planet.', 'w:planet')]},
+      {title:'The lost spaceship', kind:'Lectura', items:[rs(R7, 'What woke Jake up?', 'The noise and the lights', ['His mom','His dog']), rs(R7, 'What did the strange people look like?', 'Large heads, small bodies, green', ['Small heads, big bodies, blue','Tall and red']), rs(R7, 'Where did Jake run?', 'To the spaceship', ['To his bed','To school']), sp('Who are those people? Where are they from?', 'w:alien')]},
+      {title:'Space facts', kind:'Ciencias', items:[SO(['HOT STARS 🔵', 'COOL STARS 🔴'], [['blue', 0], ['very hot', 0], ['red', 1], ['cooler', 1]], 'Stars are different colors', 'Pon cada palabra en su canasta.'),
+        rs(R7b, 'When did the first men walk on the Moon?', 'In 1969', ['In 1961','In 2011']), rs(R7b, 'Where do astronauts sleep in space?', 'In sleeping bags on the wall', ['In beds','On the floor']), sp('The Sun is a yellow star.', 'w:the Sun')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[FD('space', ['telescope','spaceship','planet','comet','alien','astronaut']), fi('My dad is', 'brilliant', '. He helped me set up my telescope.', ['frightening','boring'], 'w:telescope'), fi("It's very", 'important', 'not to look at the Sun.', ['gorgeous','amazing'], 'w:the Sun'), wr('planet')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['planet','comet','star','the Moon']), me(['amazing','brilliant','gorgeous','frightening']), fi('Who is more brilliant, a scientist', 'or', 'a writer?', ['and','but'], '🧑‍🔬'), sp('Space is fascinating!', 'w:fascinating')]}
+    ]),
+    L6('n6x4', 'World instruments', 'Instrumentos de otros países', 'yellow', [
+      {title:'World instruments', kind:'Música', items:[DP('paper', [['🥁', 'djembe drums: Mali'], ['🪗', 'bandoneón: Argentina'], ['🎸', 'shamisen: Japan']], 'Read and match.', 'Pon cada instrumento debajo de su dibujo.'),
+        rs(RW4, 'Where do people play djembe drums?', 'In Mali', ['In Japan','In Argentina']), rs(RW4, 'How many strings does the shamisen have?', 'Three', ['Six','Four']), sp('I want to learn the drums.', 'w:drums')]}
+    ], 'Wider World'),
+    L6('n6u8', 'The environment', 'Cuidar el planeta, going to y If you…, you’ll…', 'green', [
+      {title:'Help the planet', kind:'Vocabulario', items:[NM('camp', CAMP), FD('street', EV), ...EV.map(f), ma(['recycle paper','pick up trash','turn off the lights','reuse plastic bags'])]},
+      {title:'Are you going to recycle?', kind:'Gramática', items:[look(['Are you going to recycle paper? Yes, I am.', "No, I'm not. I'm going to recycle bottles."]), fi("I'm going", 'to', 'pick up the trash.', ['at','for'], 'w:pick up trash'),
+        fi('Tom is going to', 'recycle', 'the bottles.', ['recycles','recycling'], 'w:recycle bottles'), fi('Are you going to help? Yes, I', 'am', '.', ['do','going'], '🙋'), od('Flo is going to have a big dinner', ['go'], '🍽️'), sp("I'm going to turn off the TV.", '📺')]},
+      {title:'Save the Earth', kind:'Vocabulario', items:[DP('paper', SV), ...SV.map(f), CH('camp', ['Hannah', 'Flo'], 'Save the Earth!', SING, ['What can you do to save the Earth? Turn off the lights at home!', 'Recycle paper, pick up trash, and keep the planet clean!', "Use the bus and reuse your bags. Let's take care of our green planet!"])]},
+      {title:"If you reuse bags, you'll reduce waste", kind:'Gramática', items:[look(['What can you do to help? I can use public transportation.', "If you reuse plastic bags, you'll reduce waste.", "I will = I'll, she will = she'll, we will = we'll"]),
+        fi('If you turn off the lights, you\'ll', 'conserve', 'energy.', ['reuse','recycle'], 'w:conserve energy'), fi('If you recycle paper, you\'ll', 'save', 'trees.', ['reduce','turn'], 'w:save trees'), fi('If you', 'pick', "up trash, you'll keep the planet clean.", ['turn','use'], 'w:pick up trash'), od("If you use public transportation, you'll reduce pollution", ['will'], 'w:reduce pollution'), sp("If you recycle bottles, you'll save resources.", 'w:recycle bottles')]},
+      {title:'Cuento: Home to Mars', kind:'Cuento', items:[T8.scene, rs(T8.st, 'Where are the Martins from?', 'Mars', ['The Moon','Future Island']), rs(T8.st, 'What do they recycle?', 'Old food', ['Paper','Bottles']), rs(T8.st, 'What did AL give them?', 'A space-time chip', ['A saxophone','A compass']), sp("I'm going to miss you, guys!", 'w:Bella')]},
+      {title:'Save our planet', kind:'Valores', items:[PK('room', [['🚿', true, 'Take very quick showers.'], ['📄', true, 'Write on both sides of the paper.'], ['🚲', true, 'Ride a bike or walk.'], ['♻️', true, 'Put trash in the recycling bins.'], ['💡', false, 'Leave the lights on all day.']], 'How good are you at saving the planet?', 'Toca las cosas que ayudan al planeta.'), sp('I always turn off the lights.', 'w:turn off the lights')]},
+      {title:'Our planet', kind:'Lectura', items:[SO(['PROBLEM 😟', 'SOLUTION 😊'], [['bad gases in the air', 0], ['plastic in the ocean', 0], ['energy from the sun and the wind', 1], ['reduce, reuse and recycle', 1]], 'Problems and solutions', 'Pon cada cosa en su canasta: problema o solución.'),
+        rs(R8, 'What makes air pollution?', 'Factories, cars and planes', ['Trees and flowers','The sun and the wind']), rs(R8, 'What kills ocean animals?', 'Plastic bottles and bags', ['Clean water','Fish']), sp('We have to reduce, reuse and recycle!', '♻️')]},
+      {title:'Our amazing world', kind:'Geografía', items:[DP('paper', [['💧', 'the highest waterfall'], ['🏜️', 'the biggest hot desert'], ['🏞️', 'the longest river'], ['🗻', 'the highest mountain in Japan']], 'Read and match.', 'Pon cada lugar debajo de su dibujo.'),
+        rs(R8b, 'Where is the highest waterfall?', 'In Venezuela', ['In Japan','In Australia']), rs(R8b, 'What is the longest river?', 'The Nile', ['The Amazon','Mount Fuji']), sp('My country is amazing!', '🌎')]},
+      {title:'I can do it!', kind:'Quiz', shuffle:true, items:[NM('street', ['recycle paper','recycle bottles','pick up trash','reuse plastic bags','turn off the lights','use public transportation']), fi('If you reuse plastic bags, you\'ll reduce', 'waste', '.', ['water','energy'], 'w:reduce waste'), fi("I'm going to recycle paper. This will", 'save', 'trees.', ['reduce','turn'], 'w:save trees'), wr('recycle')]},
+      {title:'Have fun!', kind:'Juego', items:[me(['recycle paper','pick up trash','turn off the lights','use public transportation']), me(['save trees','reduce waste','conserve energy','reduce pollution']), fi('Are you going to see a movie this weekend? Yes, I', 'am', '.', ['do','will'], '🎬'), sp("I'm going to reuse plastic bags.", 'w:reuse plastic bags')]}
+    ]),
+    L6('n6r4', 'Units 7 and 8', 'Repaso de las unidades 7 y 8', 'purple', [
+      {title:'Review: space', kind:'Repaso', shuffle:true, items:[FD('space', ['astronaut','the Moon','spaceship','telescope','satellite','comet']), fi('', 'Who', "is he? He's an astronaut.", ['Where','How'], 'w:astronaut'), fi('A fish is', 'less', 'intelligent than a dog.', ['most','much'], '🐟'), sp('Which is the most important?', 'w:important')]},
+      {title:'Review: the environment', kind:'Repaso', shuffle:true, items:[NM('street', ['turn off the lights','use public transportation','reuse plastic bags','recycle paper']), fi("I'm going to collect these old newspapers and", 'recycle', 'them.', ['reduce','turn off'], 'w:recycle paper'), fi("If you give me fifteen minutes, I'll", 'help', 'later.', ['helps','helped'], '⏱️'), sp('I can use public transportation.', 'w:use public transportation')]}
+    ], 'Repaso'),
+    L6('n6g', 'Goodbye', 'Despedida: el misterio de los Martin', 'red', [
+      {title:'Story quiz', kind:'Juego', items:[FD('camp', ['Matt','AL','Bella','Zeb','Dot','Peter']), fi('Matt is a time', 'engineer', '.', ['teacher','pilot'], 'w:Matt'), fi('Zeb and Dot are from', 'Mars', '.', ['the Moon','Atlantis'], 'w:planet'), fi('Dot said the meerkat was a', 'rat', '.', ['dog','cat'], 'w:meerkat')]},
+      {title:'Who said it?', kind:'Juego', items:[DP('camp', [['Tom', '"Good, I\'m really hungry!"'], ['Maria', '"...and it made terrible noises..."'], ['Peter', '"Help! I\'m in the closet!"'], ['Bella', '"I\'m going to miss you, guys!"']], 'Who said it?', 'Pon cada frase debajo de quien la dijo.'),
+        fi('The Martins took a saxophone to send a', 'message', '.', ['cake','bus'], 'w:saxophone'), fi('They recycle old food as', 'energy', '.', ['music','paper'], '♻️'), sp('We solved the mystery! They were from Mars.', 'w:alien')]},
+      {title:'What I learned', kind:'Escritura', items:[fi('I can pitch a tent, but I', "can't", 'read a compass.', ['can','don\'t'], 'w:compass'), fi('The cheetah is the', 'fastest', 'animal.', ['faster','fast'], 'w:cheetah'), fi('I', 'have', 'to go to the library.', ['has','want'], 'w:library'), fi("I didn't pass my test", 'because', "I didn't study.", ['but','and'], 'w:pass a test'),
+        fi('Have you ever', 'been', 'to a concert?', ['go','went'], '🎤'), od("If you recycle paper, you'll save trees", ['will'], 'w:save trees'), sp('In the future, I will be a time engineer!', '⏳')]},
+      {title:'My favorite unit', kind:'Escritura', items:[SO(['NATURE 🌳', 'TOWN 🏙️'], [['wildlife park', 0], ['adventure camp', 0], ['national park', 0], ['shopping mall', 1], ['movie theater', 1], ['recording studio', 1]], 'Nature or town?', 'Pon cada lugar en su canasta: naturaleza o ciudad.'), sp('My favorite unit is Space because it is amazing.', '⭐')]}
+    ], 'Despedida')
+  ];
+}
 // Escuelas que ya tenían el curso: agrega las palabras y unidades nuevas (cerradas) sin tocar lo que el profe editó
 function upgradeCourse(c){
   if ((c.ver || 2) >= COURSE_VER) return false;
@@ -2989,6 +3337,13 @@ function upgradeCourse(c){
   if ((c.ver || 2) < 7){
     // Instrucciones que decían la respuesta en español (el profe no quiere significados): la pista pasa a inglés
     const fix = new Map([["En el dibujo 1 el estuche es rosado, la pizarra negra y el borrador verde. Tócalos.","Lee y toca: «In picture 1, the pencil case is pink, the board is black and the eraser is green.»"],["A Max le gustan el queso, la carne y el pan. Toca lo que le gusta.","Lee y toca lo que le gusta: «Max likes cheese, meat and bread.»"],["En el dibujo B hay flores, pájaros y árboles, pero no hay arcoíris ni arañas. Toca lo que sí hay.","Lee y toca lo que sí hay: «In picture B, there are flowers, birds and trees. There isn't a rainbow and there aren't any spiders.»"],["Grandpa tiene lentes, bigote y barba. Tócalos.","Lee y toca: «Grandpa has glasses, a mustache and a beard.»"],["En la casa rodante hay planta, ducha y cobijas. Toca lo que sí está.","Lee y toca lo que sí está: «In the camper, there's a plant, a shower and blankets.»"],["A Coco le encanta el agua, pero le dan miedo las alturas. Pon cada actividad en su canasta.","Pon cada actividad en su canasta."]]);
+    c.units.forEach(u => u.lessons.forEach(l => (l.items || []).forEach(it => { if (it.t === 'scene' && fix.has(it.es)) it.es = fix.get(it.es); })));
+  }
+  if ((c.ver || 2) < 9){
+    // Instrucciones que traducían la palabra que el niño tiene que reconocer
+    const fix = new Map([['Pon cada palabra en la parte de la cara que le toca.', 'Pon cada palabra en su lugar del dibujo.'], ['Pon cada animal donde está despierto: de día o de noche.', 'Pon cada animal en su canasta.'],
+      ['Pon cada mascota en su canasta: tiene patas o no tiene patas.', 'Pon cada mascota en su canasta.'], ['Toca lo que hay en la lonchera de la primera niña.', 'Lee y toca lo que lleva la primera niña.'],
+      ['Toca lo que hay en una cocina.', 'Escucha y toca las cosas correctas.'], ['Toca lo que trae un huracán.', 'Toca las respuestas correctas.']]);
     c.units.forEach(u => u.lessons.forEach(l => (l.items || []).forEach(it => { if (it.t === 'scene' && fix.has(it.es)) it.es = fix.get(it.es); })));
   }
   seedC.units.forEach((su, i) => {
@@ -3381,7 +3736,8 @@ document.addEventListener('pointerdown', () => { lastTap = Date.now(); }, {captu
 // Voz de cada personaje: niños con voz aguda (niña y niño distintas), adultos con voz normal, robots y animales divertidas
 const CAST_KIND = {Charlie:'boy', Kim:'boy', Harry:'boy', Cody:'boy', Oliver:'boy', Rose:'girl', Beth:'girl', Katy:'girl', Sophie:'girl',
   'Uncle Dan':'man', 'Captain Conrad':'man', 'Uncle James':'man', 'Finley Keen':'man', 'Aunt Fifi':'woman', 'President Pop':'woman',
-  'PROD 1':'robot', 'PROD 2':'robot', Ola:'monkey', Coco:'monkey', Waldo:'dragon'};
+  'PROD 1':'robot', 'PROD 2':'robot', Ola:'monkey', Coco:'monkey', Waldo:'dragon',
+  Matt:'boy', Tom:'boy', Felipe:'boy', Bella:'girl', Flo:'girl', Maria:'girl', Hannah:'woman', Dot:'woman', 'Carol Carnival':'woman', Zeb:'man', Peter:'man', AL:'robot'};
 const VOICE_KIND = {girl:{g:'f', pitch:1.6, rate:1, alt:2}, boy:{g:'m', pitch:1.8, rate:1.03, alt:1.15}, woman:{g:'f', pitch:1.1, rate:0.95, alt:1.3},
   man:{g:'m', pitch:0.95, rate:0.92, alt:0.7}, robot:{g:'m', pitch:0.4, rate:0.85, alt:0.3}, monkey:{g:'f', pitch:2, rate:1.15, alt:2}, dragon:{g:'m', pitch:0.6, rate:0.85, alt:0.4}};
 const FEM_RE = /female|zira|hazel|susan|samantha|\bava\b|allison|aria|jenny|emma|michelle|\bana\b|joanna|salli|kimberly|ivy|libby|sonia|natasha|clara|karen|moira|tessa|fiona|victoria|google us english/i;
@@ -4963,7 +5319,19 @@ const FRIENDS = {
   Maddy:{v:2, skin:0, hair:'curly', hc:4, eyes:'big', mouth:'laugh', top:'tee', tc:0, head:'none', face:'none', bg:5},
   Emma:{v:2, skin:1, hair:'long', hc:2, eyes:'normal', mouth:'smile', top:'collar', tc:6, head:'none', face:'round', bg:5},
   Robbie:{v:2, skin:1, hair:'short', hc:2, eyes:'happy', mouth:'grin', top:'hoodie', tc:4, head:'none', face:'none', bg:0},
-  Dan:{v:2, skin:4, hair:'spiky', hc:0, eyes:'happy', mouth:'grin', top:'hoodie', tc:3, head:'none', face:'none', bg:1}
+  Dan:{v:2, skin:4, hair:'spiky', hc:0, eyes:'happy', mouth:'grin', top:'hoodie', tc:3, head:'none', face:'none', bg:1},
+  // Nivel 6: Matt y Bella viajan en el tiempo detrás de Zeb y Dot; los chicos del campamento abren cada unidad
+  Matt:{v:2, skin:1, hair:'spiky', hc:3, eyes:'big', mouth:'smile', top:'hoodie', tc:2, head:'none', face:'none', bg:3},
+  Bella:{v:2, skin:2, hair:'long', hc:0, eyes:'big', mouth:'laugh', top:'tee', tc:6, head:'none', face:'none', bg:5},
+  Zeb:{v:2, skin:1, hair:'curly', hc:1, eyes:'big', mouth:'grin', top:'collar', tc:9, head:'cap', face:'none', bg:4},
+  Dot:{v:2, skin:0, hair:'curly', hc:3, eyes:'big', mouth:'soft', top:'collar', tc:6, head:'flower', face:'none', bg:4},
+  Hannah:{v:2, skin:0, hair:'bob', hc:3, eyes:'normal', mouth:'smile', top:'explorer', tc:9, head:'none', face:'none', bg:1},
+  Tom:{v:2, skin:0, hair:'short', hc:2, eyes:'normal', mouth:'grin', top:'collar', tc:4, head:'none', face:'none', bg:0},
+  Flo:{v:2, skin:0, hair:'bob', hc:4, eyes:'happy', mouth:'laugh', top:'tee', tc:5, head:'none', face:'none', bg:2},
+  Maria:{v:2, skin:2, hair:'long', hc:1, eyes:'big', mouth:'smile', top:'tee', tc:1, head:'none', face:'none', bg:5},
+  Felipe:{v:2, skin:1, hair:'short', hc:0, eyes:'normal', mouth:'grin', top:'collar', tc:0, head:'none', face:'round', bg:1},
+  'Carol Carnival':{v:2, skin:0, hair:'long', hc:3, eyes:'normal', mouth:'smile', top:'collar', tc:4, head:'grad', face:'none', bg:2},
+  Peter:{v:2, skin:1, hair:'short', hc:1, eyes:'normal', mouth:'soft', top:'collar', tc:2, head:'none', face:'square', bg:0}
 };
 // Gizmo, el perro husky de los Ice Detectives (Nivel 5)
 function dogSVG(){
@@ -5011,9 +5379,10 @@ function dragonSVG(){
     + `<ellipse cx="60" cy="68" rx="26" ry="15" fill="${B}" ${SW}/><circle cx="52" cy="66" r="2" fill="${SO}"/><circle cx="68" cy="66" r="2" fill="${SO}"/><path d="M48 74 Q60 82 72 74" fill="none" stroke="${SO}" stroke-width="2.4" stroke-linecap="round"/>`
     + `<circle cx="46" cy="44" r="11" fill="#FFFFFF" ${SW}/><circle cx="74" cy="44" r="11" fill="#FFFFFF" ${SW}/><circle cx="48" cy="46" r="5" fill="${SO}"/><circle cx="72" cy="46" r="5" fill="${SO}"/><circle cx="49.5" cy="44" r="1.6" fill="#fff"/><circle cx="73.5" cy="44" r="1.6" fill="#fff"/></g></svg>`;
 }
-const isFriend = n => !!FRIENDS[n] || ['Ola','PROD 1','PROD 2','President Pop','Waldo','Coco','Gizmo'].includes(n);
+const isFriend = n => !!FRIENDS[n] || ['Ola','PROD 1','PROD 2','President Pop','Waldo','Coco','Gizmo','AL'].includes(n);
 function friendSVG(name){
   if (name === 'Ola') return monkeySVG();
+  if (name === 'AL') return robotSVG('#FFC83D', 'AL');
   if (name === 'Gizmo') return dogSVG();
   if (name === 'PROD 1') return robotSVG('#E8463C', '1');
   if (name === 'PROD 2') return robotSVG('#8BC34A', '2');
@@ -5021,7 +5390,7 @@ function friendSVG(name){
   if (name === 'Waldo') return dragonSVG();
   if (name === 'Coco') return monkeySVG('#CDEBFF', '#6B4A33', '#F2D1A8');
   const s = avatarSVG(FRIENDS[name]);
-  return name === 'Uncle Dan' || name === 'Captain Conrad' || name === 'Uncle James' || name === 'Hector Frost' ? s.replace('</g></svg>', `<path d="M48 64 Q54 58.5 60 62.5 Q66 58.5 72 64 Q66 67.5 60 65.5 Q54 67.5 48 64 Z" fill="#2B2523" ${SW}/></g></svg>`) : s;
+  return name === 'Uncle Dan' || name === 'Captain Conrad' || name === 'Uncle James' || name === 'Hector Frost' || name === 'Zeb' ? s.replace('</g></svg>', `<path d="M48 64 Q54 58.5 60 62.5 Q66 58.5 72 64 Q66 67.5 60 65.5 Q54 67.5 48 64 Z" fill="#2B2523" ${SW}/></g></svg>`) : s;
 }
 const placeSVG = (svg, x, y, size) => svg.replace('<svg ', `<svg x="${x}" y="${y}" width="${size}" height="${size}" `);
 const SCENE_OPEN = '<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
@@ -5122,7 +5491,7 @@ const SCENE_MODES = {
     let i = 0, heard = false;
     const info = h('div', {class:'speak-status', 'aria-live':'polite'});
     const upd = () => { info.textContent = `Toca la bocina y luego toca lo que escuchaste (${i + 1} de ${order.length})`; };
-    const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { heard = true; say(order[i]); }});
+    const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { if (i >= order.length) return; heard = true; say(order[i]); }});
     A.targets.forEach(t => {
       const b = pos(h('button', {class:'target', type:'button', 'aria-label':'Opción'}), t.x, t.y);
       b.style.width = (t.r * 2 / 4) + '%'; b.style.height = (t.r * 2 / 3) + '%';
@@ -5278,6 +5647,10 @@ const BG = {
   snow:() => `<rect width="400" height="300" fill="#DCEFFF"/>${cloud(40, 24)}${cloud(260, 36, .8)}<path d="M0 190 Q90 140 200 180 T400 160 L400 300 L0 300 Z" fill="#FFFFFF" ${SW}/>`
     + [[60, 150], [330, 140], [370, 170]].map(([x, y]) => `<path d="M${x} ${y - 52} L${x - 22} ${y - 10} L${x - 10} ${y - 10} L${x - 26} ${y + 14} L${x + 26} ${y + 14} L${x + 10} ${y - 10} L${x + 22} ${y - 10} Z" fill="#2FA84F" ${SW}/><rect x="${x - 4}" y="${y + 14}" width="8" height="12" fill="#8B5A2B" ${SW}/>`).join('')
     + [[120, 40], [200, 70], [300, 20], [30, 100], [240, 120], [360, 90]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#FFFFFF" ${SW}/>`).join(''),
+  // Campamento (Nivel 6): árboles, tienda de campaña y fogata
+  camp:() => `<rect width="400" height="300" fill="#BFE3FA"/>${cloud(230, 24)}<path d="M0 180 Q100 150 200 176 T400 166 L400 300 L0 300 Z" fill="#7DD08D" ${SW}/>`
+    + [[40, 168], [92, 156], [366, 166]].map(([x, y]) => `<path d="M${x} ${y - 56} L${x - 24} ${y - 12} L${x - 11} ${y - 12} L${x - 28} ${y + 14} L${x + 28} ${y + 14} L${x + 11} ${y - 12} L${x + 24} ${y - 12} Z" fill="#2F8F4A" ${SW}/><rect x="${x - 4}" y="${y + 14}" width="8" height="12" fill="#8B5A2B" ${SW}/>`).join("")
+    + `<path d="M250 236 L300 166 L350 236 Z" fill="#FF8A1F" ${SW}/><path d="M300 166 L286 236 L314 236 Z" fill="#B85C10" ${SW}/><path d="M160 250 l40 -10 M160 240 l40 10" stroke="#8B5A2B" stroke-width="7" stroke-linecap="round"/><path d="M180 240 C168 226 176 214 180 204 C184 214 194 224 180 240 Z" fill="#FFC83D" ${SW}/>`,
   mountain:() => `<rect width="400" height="300" fill="#BFE3FA"/>${cloud(30, 30)}<path d="M40 220 L150 60 L260 220 Z" fill="#9AA0A6" ${SW}/><path d="M118 106 L150 60 L182 106 L165 98 L150 110 L135 98 Z" fill="#FFFFFF" ${SW}/><path d="M180 220 L290 90 L400 220 Z" fill="#8C96A8" ${SW}/><path d="M262 124 L290 90 L318 124 L302 116 L290 126 L278 116 Z" fill="#FFFFFF" ${SW}/><rect y="210" width="400" height="90" fill="#7DD08D" ${SW}/>`
 };
 // Dibujo de una palabra del banco (emoji, color, número, dibujo SVG o uno de los amigos) dentro de una escena
@@ -5324,7 +5697,8 @@ Object.assign(SCENE_MODES, {
     A.targets.forEach(t => {
       const b = pos(h('button', {class:'target', type:'button', 'aria-label':t.cap || 'Opción'}), t.x, t.y);
       b.style.width = (t.r * 2 / 4) + '%'; b.style.height = (t.r * 2 / 3) + '%';
-      if (t.cap) pos(h('span', {class:'cap'}, t.cap), t.x, Math.min(t.y + t.r + 16, 286));
+      // el texto no pasa del ancho de su columna (si es largo, baja a otra línea en vez de tocar al de al lado)
+      if (t.cap) pos(h('span', {class:'cap', style:`max-width:${(t.r / 0.36 * 0.92 / 4).toFixed(1)}%`}, t.cap), t.x, Math.min(t.y + t.r + 16, 284));
       b.onclick = () => {
         if (b.classList.contains('ok')) return;
         if (t.cap) say(t.cap);
@@ -5350,7 +5724,7 @@ Object.assign(SCENE_MODES, {
       if (--left === 0) end();
     };
     shuffle(s.words).forEach(([w, bin]) => {
-      const c = h('button', {class:'wchip', type:'button', 'data-w':w, 'data-bin':String(bin)}, V[w] && !V[w].img.startsWith('data:') && !V[w].img.startsWith('sw:') && !V[w].img.startsWith('n:') ? V[w].img + ' ' : '', w);
+      const c = h('button', {class:'wchip', type:'button', 'data-w':w, 'data-bin':String(bin)}, V[w] && isEmoji(V[w].img) ? V[w].img + ' ' : '', w);
       c.onclick = () => { if (c.dataset.dragged) return; $$('.wchip', bank).forEach(x => x.classList.remove('sel')); c.classList.add('sel'); sel = c; say(w); };
       dragify(c, el => { const b = el && el.closest('.bin'); if (b) put(bins.indexOf(b), c); });
       bank.append(c);
@@ -5398,9 +5772,10 @@ Object.assign(SCENE_MODES, {
     // A la mitad, una pregunta rápida: ¿quién lo dijo?
     const askWho = () => {
       asked = true; auto = false; pending = true; const b = beats[qAt]; ctl.hidden = true; quiz.hidden = false; quiz.innerHTML = '';
+      st.el.classList.add('asking'); // sin el globo ni quien habla, para que la respuesta no se vea
       quiz.append(h('b', {}, '¿Quién dijo esto?'), h('p', {}, '«' + b.text + '»'));
       const row = h('div', {class:'who-row'}, ...shuffle([b.sp, ...shuffle(cast.filter(n => n !== b.sp)).slice(0, 3)]).map(n => { const btn = h('button', {class:'who-btn', type:'button', 'aria-label':n}, h('span', {html:friendSVG(n)}), h('small', {}, n));
-        btn.onclick = () => { if (n !== b.sp) return wrong(btn); sfx(true); celebrateMini(btn); setTimeout(() => { quiz.hidden = true; ctl.hidden = false; pending = false; go(); }, 650); };
+        btn.onclick = () => { if (n !== b.sp) return wrong(btn); sfx(true); celebrateMini(btn); setTimeout(() => { st.el.classList.remove('asking'); quiz.hidden = true; ctl.hidden = false; pending = false; go(); }, 650); };
         return btn; }));
       quiz.append(row);
     };
@@ -5490,7 +5865,7 @@ function grade(ok, correct){
   const s = L.cur, foot = $('#lfoot'), btn = $('#lbtn');
   L.graded++;
   if (ok){ L.xp += 10; sfx(true); if (L.review && S){ const k = missKey(s); if (k && S.miss && S.miss[k]){ S.miss[k]--; if (S.miss[k] <= 0) delete S.miss[k]; } } }
-  else { L.mistakes++; sfx(false); noteMiss(s); if (!L.requeued.has(s)){ const again = s.t === 'tip' && s.quiz ? {...s.quiz, game:null} : {...s, game:null}; L.requeued.add(s); L.requeued.add(again); L.queue.push(again); } }
+  else { L.mistakes++; sfx(false); noteMiss(s); if (!L.requeued.has(s)){ const again = s.t === 'tip' && s.quiz ? {...s.quiz, game:null} : {...s, game:null}; if (Array.isArray(again.options)) again.options = shuffle(again.options.slice()); /* otro orden: que no se responda de memoria por la posición */ L.requeued.add(s); L.requeued.add(again); L.queue.push(again); } }
   foot.className = 'lfoot ' + (ok ? 'ok' : 'bad');
   const fb = $('#fbMsg'); fb.innerHTML = '';
   fb.append(h('strong', {}, ok ? rnd(PRAISE) : 'Casi… ¡tú puedes!'));
@@ -5548,7 +5923,7 @@ const R = {
     // Se ve y se escucha la palabra; después la tarjeta se esconde y hay que tocar su dibujo
     ctx.hideBtn();
     const v = V[s.w], a1 = audioBtn(s.w), a2 = audioBtn(s.w, true);
-    const card = h('div', {class:'flash pop'}, pic(v.img, 'xl'), h('div', {class:'word'}, s.w), h('div', {class:'audio-row'}, a1, a2));
+    const card = h('div', {class:'flash pop'}, wpic(s.w, 'xl'), h('div', {class:'word'}, s.w), h('div', {class:'audio-row'}, a1, a2));
     const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Toca Escuchar para oír la palabra.'), quiz = h('div', {class:'tip-quiz', hidden:true});
     let started = false;
     const go = () => {
@@ -5560,7 +5935,7 @@ const R = {
         card.hidden = true; info.hidden = true; quiz.hidden = false; $('#lbtn').hidden = false;
         quiz.append(h('h3', {}, 'Ahora tú: toca el dibujo de «' + s.w + '»'), h('div', {class:'audio-row'}, audioBtn(s.w, false, true)));
         const box = h('div', {class:'opts grid2'}); let sel = null;
-        os.forEach(o => { const b = h('button', {class:'opt tile', type:'button', 'aria-label':'Opción'}, pic(V[o].img)); selectable(box, () => { sel = o; ctx.ready(() => ({ok:sel === s.w, correct:s.w})); })(b); box.append(b); });
+        os.forEach(o => { const b = h('button', {class:'opt tile', type:'button', 'aria-label':'Opción'}, wpic(o)); selectable(box, () => { sel = o; ctx.ready(() => ({ok:sel === s.w, correct:s.w})); })(b); box.append(b); });
         quiz.append(box);
       }, 1400);
     };
@@ -5582,7 +5957,7 @@ const R = {
       const v = V[w];
       const el = h('div', {class:'dcard', role:'button', tabindex:'0', 'aria-label':'Carta ' + (k + 1), style:`--hue:${(k * 57 + 20) % 360}`},
         h('div', {class:'dback', 'aria-hidden':'true'}, h('span', {}, '?')),
-        h('div', {class:'dface'}, pic(v.img, 'sm'), h('b', {}, w), audioBtn(w, false, true)));
+        h('div', {class:'dface'}, wpic(w, 'sm'), h('b', {}, w), audioBtn(w, false, true)));
       const c = {w, el};
       const tap = () => phase === 1 ? flip(c) : choose(c);
       el.addEventListener('click', e => { if (!e.target.closest('.abtn')) tap(); });
@@ -5649,7 +6024,7 @@ const R = {
   },
   pickword(s, ctx){
     if (s.game && GAME_R[s.game]) return GAME_R[s.game](s, ctx);
-    ctx.body.append(h('div', {class:'flash'}, pic(V[s.w].img, 'xl')));
+    ctx.body.append(h('div', {class:'flash'}, wpic(s.w, 'xl')));
     const box = h('div', {class:'opts'}); let sel = null;
     s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; ctx.ready(() => ({ok: sel === s.w, correct: s.w})); })(b); box.append(b); });
     ctx.body.append(box);
@@ -5658,7 +6033,7 @@ const R = {
     if (s.game && GAME_R[s.game]) return GAME_R[s.game](s, ctx);
     ctx.body.append(h('div', {class:'audio-row'}, audioBtn(s.w, false, true), audioBtn(s.w, true)));
     const box = h('div', {class:'opts grid2'}); let sel = null;
-    s.options.forEach(o => { const b = h('button', {class:'opt tile', type:'button', 'aria-label':'Opción'}, pic(V[o].img)); selectable(box, () => { sel = o; ctx.ready(() => ({ok: sel === s.w, correct: s.w})); })(b); box.append(b); });
+    s.options.forEach(o => { const b = h('button', {class:'opt tile', type:'button', 'aria-label':'Opción'}, wpic(o)); selectable(box, () => { sel = o; ctx.ready(() => ({ok: sel === s.w, correct: s.w})); })(b); box.append(b); });
     ctx.body.append(box);
   },
   match(s, ctx){
@@ -5675,12 +6050,12 @@ const R = {
       } else { [A, B].forEach(x => { x.classList.remove('sel'); x.classList.add('wrong'); setTimeout(() => x.classList.remove('wrong'), 400); }); sfx(false); }
     };
     shuffle(s.words).forEach(w => { const el = h('button', {class:'opt', type:'button', 'data-w':w}, w); el.onclick = () => { $$('.opt', left).forEach(o => o.classList.remove('sel')); el.classList.add('sel'); a = el; tryPair(); }; left.append(el); });
-    shuffle(s.words).forEach(w => { const el = h('button', {class:'opt', type:'button', 'data-w':w, 'aria-label':'Imagen'}, pic(V[w].img, 'sm')); el.onclick = () => { $$('.opt', right).forEach(o => o.classList.remove('sel')); el.classList.add('sel'); b = el; tryPair(); }; right.append(el); });
+    shuffle(s.words).forEach(w => { const el = h('button', {class:'opt', type:'button', 'data-w':w, 'aria-label':'Imagen'}, wpic(w, 'sm')); el.onclick = () => { $$('.opt', right).forEach(o => o.classList.remove('sel')); el.classList.add('sel'); b = el; tryPair(); }; right.append(el); });
     ctx.body.append(h('div', {class:'match'}, left, right));
   },
   write(s, ctx){
     const v = V[s.w];
-    ctx.body.append(h('div', {class:'flash'}, pic(v.img, 'xl'), h('div', {class:'audio-row'}, audioBtn(s.w), audioBtn(s.w, true))));
+    ctx.body.append(h('div', {class:'flash'}, wpic(s.w, 'xl'), h('div', {class:'audio-row'}, audioBtn(s.w), audioBtn(s.w, true))));
     const inp = h('input', {class:'write-in', id:'writeIn', autocomplete:'off', autocapitalize:'off', spellcheck:'false', 'aria-label':'Escribe la palabra en inglés', placeholder: s.w.split('').map((c, i) => i === 0 ? c : (c === ' ' ? ' ' : '_')).join(' ')});
     inp.addEventListener('input', () => inp.value.trim() ? ctx.ready(() => ({ok: norm(inp.value) === norm(s.w), correct: s.w})) : ctx.unready());
     inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) $('#lbtn').click(); });
@@ -5758,7 +6133,7 @@ const R = {
     const grid = h('div', {class:'mem'});
     cards.forEach(c => {
       const el = h('button', {class:'mcard', type:'button', 'aria-label':'Carta'}, h('span', {class:'back'}, '?'));
-      const face = () => { el.innerHTML = ''; el.append(c.kind === 'word' ? c.w : pic(V[c.w].img)); el.classList.add('up'); };
+      const face = () => { el.innerHTML = ''; el.append(c.kind === 'word' ? c.w : wpic(c.w)); el.classList.add('up'); };
       const hide = () => { el.innerHTML = ''; el.append(h('span', {class:'back'}, '?')); el.classList.remove('up'); };
       el.onclick = () => {
         if (busy || el.classList.contains('up') || el.classList.contains('ok')) return;
@@ -5864,7 +6239,7 @@ const GAME_R = {
     const opts = s.options, n = opts.length;
     let lane = Math.floor(n / 2), started = false, done = false, last = 0;
     const field = h('div', {class:'game-field basket-field'});
-    const items = opts.map(w => { const el = h('div', {class:'faller', 'aria-hidden':'true'}, pic(V[w].img, 'sm')); field.append(el); return {w, el, lane:0, y:-80}; });
+    const items = opts.map(w => { const el = h('div', {class:'faller', 'aria-hidden':'true', style:'transform:translate(0,-90px)'}, wpic(w, 'sm')); field.append(el); return {w, el, lane:0, y:-80}; });
     const bask = h('div', {class:'bask', 'aria-hidden':'true'}, '🧺'); field.append(bask);
     const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Toca la bocina para empezar. Mueve la canasta para atrapar lo que escuchaste.');
     const W = () => field.clientWidth || 320, H = () => field.clientHeight || 300, lw = () => W() / n;
@@ -5900,7 +6275,7 @@ const GAME_R = {
     let ready = false, heard = false, over = false;
     const field = h('div', {class:'game-field cups-field'});
     const cups = ws.map((w, k) => {
-      const el = h('button', {class:'cup-slot', type:'button', 'aria-label':'Vaso', style:`left:${slots[k]}%`}, h('span', {class:'cup-pic'}, pic(V[w].img, 'sm')), h('span', {class:'cup', style:`--hue:${[8, 200, 280][k]}`}));
+      const el = h('button', {class:'cup-slot', type:'button', 'aria-label':'Vaso', style:`left:${slots[k]}%`}, h('span', {class:'cup-pic'}, wpic(w, 'sm')), h('span', {class:'cup', style:`--hue:${[8, 200, 280][k]}`}));
       const c = {w, el, at:k}; el.onclick = () => pick(c); field.append(el); return c;
     });
     const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Mira bien dónde está cada dibujo.');
@@ -5947,7 +6322,7 @@ const GAME_R = {
       setTimeout(() => { shout.textContent = ok ? '¡GOOOL!' : '¡Atajada!'; shout.classList.add('on', ok ? 'ok' : 'bad'); }, 450);
       setTimeout(() => ctx.finish(ok, s.w), 1100);
     };
-    ctx.body.append(h('div', {class:'flash', style:'padding:10px'}, pic(V[s.w].img, 'xl')),
+    ctx.body.append(h('div', {class:'flash', style:'padding:10px'}, wpic(s.w, 'xl')),
       h('p', {class:'muted', style:'margin:0'}, '¡Penal! Patea la pelota a la palabra en inglés que va con el dibujo.'), field);
   },
   // Cofres: el cofre con la palabra correcta tiene el tesoro
@@ -5959,7 +6334,7 @@ const GAME_R = {
       c.onclick = () => { if (over) return; over = true; c.classList.add('open'); if (o === s.w) celebrateMini(c); setTimeout(() => ctx.finish(o === s.w, s.w), 900); };
       return c;
     }));
-    ctx.body.append(h('div', {class:'flash', style:'padding:10px'}, pic(V[s.w].img, 'xl')),
+    ctx.body.append(h('div', {class:'flash', style:'padding:10px'}, wpic(s.w, 'xl')),
       h('p', {class:'muted', style:'margin:0'}, '¡Cofres del tesoro! Abre el cofre con la palabra que va con el dibujo.'), row);
   }
 };
@@ -6054,6 +6429,7 @@ function makeSpell(words, rnd){
   return {t:'spell', w, tiles:shuffle([...w.split(''), ...shuffle(extra).slice(0, 2)])};
 }
 function makePop(words){
+  words = distinctPics(words);
   if (words.length < 4) return null;
   const pool = shuffle(words).slice(0, 6);
   return {t:'pop', words:pool, ask:pool.slice(0, 3)};
@@ -6066,7 +6442,7 @@ function lessonExtras(lesson, unit){
   const sents = lessonSentences(lesson), story = unitStory(unit, lesson), words = lessonWords(lesson);
   const unitSents = unit.lessons.flatMap(lessonSentences);
   const levelPairs = units().filter(u => levelOf(u) === levelOf(unit)).flatMap(u => u.lessons.flatMap(l => qaPairs(lessonSentences(l))));
-  const who = levelOf(unit) >= 4 ? ['Oliver', 'Sophie', 'Coco', 'Uncle James'] : levelOf(unit) === 3 ? ['Kim', 'Katy', 'PROD 1', 'PROD 2'] : levelOf(unit) === 2 ? ['Charlie', 'Rose', 'Ola'] : ['Harry', 'Beth', 'Cody', 'Waldo'];
+  const who = levelOf(unit) >= 6 ? ['Matt', 'Bella', 'AL', 'Felipe'] : levelOf(unit) === 5 ? ['Polly', 'Mike', 'Gizmo', 'Maddy'] : levelOf(unit) === 4 ? ['Oliver', 'Sophie', 'Coco', 'Uncle James'] : levelOf(unit) === 3 ? ['Kim', 'Katy', 'PROD 1', 'PROD 2'] : levelOf(unit) === 2 ? ['Charlie', 'Rose', 'Ola'] : ['Harry', 'Beth', 'Cody', 'Waldo'];
   const mk = {
     fix:() => makeFix(sents.length ? sents : unitSents, rnd),
     chat:() => makeChat(qaPairs(sents).length ? qaPairs(sents) : qaPairs(unitSents), levelPairs, rnd, who[rnd(who.length)]),
@@ -6114,7 +6490,7 @@ Object.assign(R, {
     const draw = () => { slots.innerHTML = ''; for (let i = 0; i < s.w.length; i++) slots.append(h('span', {class:'spell-slot' + (got[i] ? ' on' : '')}, got[i] ? got[i].c : '')); got.length === s.w.length ? ctx.ready(() => ({ok:got.map(x => x.c).join('') === s.w, correct:s.w})) : ctx.unready(); };
     s.tiles.forEach(c => { const b = h('button', {class:'wchip spell-tile', type:'button'}, c); b.onclick = () => { if (b.classList.contains('used') || got.length >= s.w.length) return; b.classList.add('used'); got.push({c, b}); draw(); }; bank.append(b); });
     slots.onclick = () => { const x = got.pop(); if (x){ x.b.classList.remove('used'); draw(); } };
-    ctx.body.append(h('div', {class:'flash'}, pic(v.img, 'xl'), h('div', {class:'audio-row'}, audioBtn(s.w))), slots, h('p', {class:'muted', style:'margin:0;text-align:center;font-size:14px'}, 'Toca las letras en orden. Para borrar, toca los espacios.'), bank);
+    ctx.body.append(h('div', {class:'flash'}, wpic(s.w, 'xl'), h('div', {class:'audio-row'}, audioBtn(s.w))), slots, h('p', {class:'muted', style:'margin:0;text-align:center;font-size:14px'}, 'Toca las letras en orden. Para borrar, toca los espacios.'), bank);
     draw();
   },
   pop(s, ctx){
@@ -6145,7 +6521,7 @@ Object.assign(R, {
       b.ph = Math.random() * 6.28;
       b.el.className = 'bubble-pop'; b.el.style.width = b.el.style.height = d + 'px';
       b.el.style.setProperty('--hue', String(Math.floor(Math.random() * 360)));
-      b.in.innerHTML = ''; b.in.append(pic(V[b.w].img, 'sm'));
+      b.in.innerHTML = ''; b.in.append(wpic(b.w, 'sm'));
     };
     const B = Array.from({length:6}, (_, k) => {
       const el = h('button', {class:'bubble-pop', type:'button', 'aria-label':'Burbuja'}), inn = h('span', {class:'bub-in'}), boom = h('span', {class:'bub-boom'}, '✨');
