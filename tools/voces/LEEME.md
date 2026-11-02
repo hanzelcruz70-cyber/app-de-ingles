@@ -2,12 +2,12 @@
 
 La app lee primero los audios de `audio/` (hechos con ElevenLabs). Si un texto no tiene audio, por ejemplo una lección que escribió el profe, usa la voz del teléfono como antes.
 
-Hoy se generan dos cosas:
+Hoy hay audio de:
 
 - **Cuentos y cantos:** cada personaje con su voz (Matt, Bella, AL, Rose, Charlie…).
-- **Palabras sueltas:** con una voz alegre y clara (Emily).
+- **Palabras sueltas, frases de los ejercicios y lecturas:** con una voz alegre y clara (Emily).
 
-Las frases de los ejercicios todavía usan la voz del teléfono.
+Con `eleven_flash_v2_5` ElevenLabs cobra unos 0,2 créditos por carácter. Si la llave tiene un límite de créditos y se llega a él, el script se para solo; sube el límite en ElevenLabs → Developers → API Keys y vuelve a correrlo.
 
 ## Archivos
 

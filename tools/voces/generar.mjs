@@ -2,7 +2,7 @@
 // Uso (en la carpeta del proyecto):
 //   node tools/voces/generar.mjs --estimar            cuenta caracteres y créditos, no gasta nada
 //   node tools/voces/generar.mjs --solo=cuentos       solo cuentos y cantos (una voz por personaje)
-//   node tools/voces/generar.mjs --solo=palabras      solo las palabras sueltas
+//   node tools/voces/generar.mjs --solo=palabras      solo las palabras sueltas (también: frases, lecturas; se pueden juntar con coma)
 //   node tools/voces/generar.mjs --limite=20000       para cuando lleve 20 000 caracteres
 //   node tools/voces/generar.mjs --indice             solo vuelve a armar audio/indice.js
 // La llave de API va en la variable ELEVENLABS_API_KEY o en tools/voces/.llave (ese archivo no se sube a GitHub).
@@ -22,7 +22,9 @@ const PRECIO = /flash|turbo/.test(cfg.modelo) ? 0.5 : 1; // créditos por carác
 
 const vozDe = who => cfg.voces[(who && cfg.personajes[who]) || 'narrador'];
 const archivo = t => crypto.createHash('sha1').update(`${vozDe(t.who).id}|${cfg.modelo}|${t.text}`).digest('hex').slice(0, 16) + '.mp3';
-const elegidos = textos.filter(t => !solo || (solo === 'cuentos' ? t.who : !t.who));
+// tipo: cuentos (con personaje), palabras, frases (de los ejercicios) o lecturas
+const tipoDe = t => t.who ? 'cuentos' : t.tipo === 'frase' ? 'frases' : t.tipo === 'lectura' ? 'lecturas' : 'palabras';
+const elegidos = textos.filter(t => !solo || String(solo).split(',').includes(tipoDe(t)));
 
 function indice(){
   const map = {};
@@ -44,7 +46,7 @@ if (!KEY && fs.existsSync(llave)) KEY = fs.readFileSync(llave, 'utf8').trim();
 if (!KEY){ console.error('Falta la llave de ElevenLabs: ponla en ELEVENLABS_API_KEY o en tools/voces/.llave'); process.exit(1); }
 
 fs.mkdirSync(DIR, {recursive:true});
-let gastado = 0, hechos = 0, parar = false;
+let gastado = 0, hechos = 0, parar = false, cobrado = 0;
 const sinVoz = new Set();
 async function uno(t){
   const v = vozDe(t.who);
@@ -61,6 +63,7 @@ async function uno(t){
   }
   fs.writeFileSync(path.join(DIR, archivo(t)), Buffer.from(await res.arrayBuffer()));
   gastado += t.text.length; hechos++;
+  const cobro = +(res.headers.get('character-cost') || res.headers.get('x-character-count') || 0); if (cobro) cobrado += cobro;
   if (hechos % 25 === 0) process.stdout.write(`\r${hechos}/${faltan.length} audios · ${gastado} caracteres`);
 }
 const cola = faltan.slice();
@@ -71,6 +74,6 @@ await Promise.all([0, 1].map(async () => {
     await uno(t);
   }
 }));
-console.log(`\nListo: ${hechos} audios nuevos, ${gastado} caracteres (unos ${Math.ceil(gastado * PRECIO)} créditos).`);
+console.log(`\nListo: ${hechos} audios nuevos, ${gastado} caracteres (unos ${Math.ceil(gastado * PRECIO)} créditos según la tarifa; ElevenLabs informó ${cobrado || 'sin dato'}).`);
 if (sinVoz.size) console.log('Estas voces no están en tu cuenta. Agrégalas en ElevenLabs → Voice Library → Add to My Voices y vuelve a correr:\n  ' + [...sinVoz].join('\n  '));
 console.log('Índice: ' + indice() + ' audios en audio/indice.js');
