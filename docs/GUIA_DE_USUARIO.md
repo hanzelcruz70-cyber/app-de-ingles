@@ -18,7 +18,7 @@ La interfaz está en español y las lecciones en inglés.
 4. Si no se oye la voz, toca **"¿No se oye? Probar audio y micrófono"** debajo del botón.
 5. Debajo están los enlaces a los **Términos y condiciones** y al **Aviso de privacidad**. Al entrar se aceptan.
 
-La app **no habla sola** en ningún momento (no hay saludo de voz ni frases automáticas). La voz en inglés suena solo cuando el niño toca un botón de bocina (**Escuchar** / **Lento**) en un ejercicio.
+En los ejercicios de escuchar, **la palabra o la frase suena sola** apenas aparece (y otra vez en cada ronda nueva). Si el niño no la oyó, toca la bocina (**Escuchar** / **Lento**) para repetirla. Fuera de los ejercicios la app no habla sola (no hay saludo de voz). Los cuentos, los cantos y las palabras sueltas usan voces de ElevenLabs, con una voz distinta para cada personaje; lo que no tiene audio grabado (por ejemplo, una lección que escribió el profe) suena con la voz del teléfono.
 
 ### Modo demo
 
@@ -65,14 +65,14 @@ Abajo hay cuatro secciones: **Aprender**, **Tareas**, **Ranking** y **Perfil**.
     - *¿Verdadero o falso?:* ¿esta frase pasó en el cuento de la unidad? (Este y *Ordena el cuento* solo salen desde la lección del cuento en adelante, cuando el niño ya lo leyó.)
     - *Ordena el cuento:* tocar partes del cuento en orden.
     - *Arma la palabra:* letras revueltas con su dibujo.
-    - *Atrapa la burbuja:* las burbujas suben desde abajo, cruzan la pantalla de lado a lado y rebotan entre ellas. Se toca la bocina y se atrapa la burbuja con lo que se escuchó; son 3 rondas y cada una va más rápido. La palabra buscada siempre está en alguna burbuja y no se repiten dibujos.
+    - *Atrapa la burbuja:* las burbujas suben desde abajo, cruzan la pantalla de lado a lado y rebotan entre ellas. La palabra suena sola y se atrapa la burbuja con lo que se escuchó (la bocina la repite); son 3 rondas y cada una va más rápido. La palabra buscada siempre está en alguna burbuja y no se repiten dibujos.
   - **Encabezado del camino** (como en Duolingo): una franja del color de la unidad, pegada arriba, que dice el nivel y la unidad que se está viendo (*NIVEL 2, UNIDAD 3 · My face*) y cambia al bajar por el camino.
   - **📚 Niveles:** si el niño puede ver más de un nivel, al tocar la franja sale la lista de sus niveles: *Tu nivel* (el de su grupo, con **CONTINUAR**), *Para repasar* (los anteriores, con **REPASAR**) y *Ya lo empezaste* (uno más alto donde ya completó algo). Cada uno muestra cuántas lecciones lleva o **¡COMPLETADO!**. **← Regresar** vuelve al camino. Los niveles que todavía no le tocan no aparecen, y si ya avanzó en un nivel, no se le cierra aunque lo cambien de grupo.
   - **Unidades en el camino:** la unidad de arriba sale en la franja; las siguientes se separan con una línea que dice su nombre y cuántas lecciones lleva (por ejemplo *Unidad 1 · My toys (3/10)*), o 🔒 si está cerrada.
   - **Pandi en el camino:** es la misma imagen de Pandi, separada en capas para que se mueva sin que se noten uniones: parpadea, mueve la cabeza, abre y cierra la boca, mueve el brazo levantado y todo el cuerpo. En cada unidad hace algo distinto: gira el mundo sobre la mano, rebota una pelota, lee un libro y pasa la página, mastica, saluda y habla, flota con un globo, hace malabares, canta o duerme (con los ojos y la boca cerrados). Si lo tocan, salta, saluda y se ríe, y dice algo como *¡Tú puedes!*.
   - **Escenas del libro (Nivel 2):** cada lección empieza con la actividad de su página, dibujada e interactiva. El título es la instrucción del libro y debajo va la explicación en español:
     - *Look and match* / *Listen and write*: toca una palabra (o arrástrala) y ponla en su lugar del dibujo (por ejemplo, los colores del loro).
-    - *Listen and find* / *Listen and circle*: toca la bocina y luego el dibujo que escuchaste.
+    - *Listen and find* / *Listen and circle*: la palabra suena sola; toca el dibujo que escuchaste (la bocina la repite).
     - *Listen and number*: igual, y cada dibujo recibe su número en orden.
     - *Listen and chant* / *Listen and sing*: los personajes cantan en un escenario animado, línea por línea (**▶ Escuchar el canto completo** o **Siguiente línea ▶**). Hasta 3 líneas salen con un espacio (**«Completa el canto»**): hay que escoger la palabra que falta para seguir cantando. Abajo se van juntando las líneas ya cantadas.
     - *Listen to the story*: el cuento animado, al estilo de los cuentos de Duolingo. Los personajes entran caminando, el que habla se mueve, saltan si dicen algo con «!», el globo se escribe solo y aparecen dibujos de lo que dicen. Se avanza con **Siguiente ▶** o **▶ Escuchar todo**. En hasta 3 globos falta una palabra (**«Completa lo que dice…»**) y a la mitad sale **«¿Quién dijo esto?»**: sin responder, **Siguiente** no avanza. Al terminar el cuento salen otro *¿Quién lo dijo?* y una frase del cuento para completar.
@@ -107,7 +107,7 @@ Tipos de ejercicio:
 | Ordenar oración | *"Ordena la oración"* tocando las palabras. |
 | Completar | *"Completa la oración"*: elige la palabra que falta. |
 | Memoria | *"Memoria: encuentra las parejas"* volteando cartas. |
-| Mini clase | Frases de ejemplo en inglés. Hay que tocar la bocina de **cada frase** (se marca con ✓). Después sale **«Ahora tú»**: completar una de las frases, tocar la frase que se escucha u ordenar la frase. Sin eso no aparece **Comprobar**. Si se falla, al final de la lección se repite solo esa pregunta (no toda la mini clase). Las pistas de pronunciación o gramática salen con 💡 en español; las traducciones, no. |
+| Mini clase | Frases de ejemplo en inglés. Suenan solas una tras otra y cada una se marca con ✓; con su bocina se repite. Después sale **«Ahora tú»**: completar una de las frases, tocar la frase que se escucha u ordenar la frase. Sin eso no aparece **Comprobar**. Si se falla, al final de la lección se repite solo esa pregunta (no toda la mini clase). Las pistas de pronunciación o gramática salen con 💡 en español; las traducciones, no. |
 | Lectura | *"Lee y responde"*: un texto corto en inglés y una pregunta. |
 
 **Sin traducciones:** a pedido del profe, la app no muestra el significado en español de las palabras ni de las frases (ni en las tarjetas, los cantos, los cuentos o las lecturas). En español quedan solo las instrucciones, las pistas (💡, la regla de *Encuentra el error*, *Pista: empieza con…*) y la interfaz. El profe sí ve la traducción en el banco de palabras y en sus estadísticas.

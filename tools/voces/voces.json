@@ -1,0 +1,35 @@
+{
+  "_nota": "Voz de ElevenLabs de cada personaje. 'narrador' lee las palabras sueltas. Si cambias una voz, borra sus audios (o usa --rehacer) y vuelve a generar.",
+  "modelo": "eleven_flash_v2_5",
+  "formato": "mp3_22050_32",
+  "ajustes": {"stability": 0.4, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": true},
+  "voces": {
+    "narrador":   {"id": "d8WcCpplp8meHt10UhL8", "nombre": "Emily - Bright & Energetic (biblioteca)"},
+    "nina1":      {"id": "ocZQ262SsZb9RIxcQBOj", "nombre": "Lulu Lollipop - Sweet & Bubbly Girl (biblioteca)"},
+    "nina2":      {"id": "n7Wi4g1bhpw4Bs8HK5ph", "nombre": "Gigi - Cute, Peppy, Energetic (biblioteca)"},
+    "nina3":      {"id": "Q9tvtUZSrZWvXOcpOOLK", "nombre": "Jasmine - Natural Young American (biblioteca)"},
+    "nino1":      {"id": "XjGYkUkzth8BPs29fmcV", "nombre": "Teddy Twinkle - Cute Cartoon Boy (biblioteca)"},
+    "nino2":      {"id": "loY1uopAz31XyhAEhNSa", "nombre": "VALF - Child, Young, Playful (biblioteca)"},
+    "nino3":      {"id": "nuNMqNdrDex14QQRI9Jq", "nombre": "Jayjay - youthful character (biblioteca)"},
+    "robot":      {"id": "ZEcx3Wdpj4EvM8PltzHY", "nombre": "Retro Robot (biblioteca)"},
+    "animalito":  {"id": "mdzEgLpu0FjTwYs5oot0", "nombre": "Moxy Mouse (biblioteca)"},
+    "hombre1":    {"id": "CwhRBWXzGAHq8TQ4Fs17", "nombre": "Roger (de la cuenta)"},
+    "hombre2":    {"id": "IKne3meq5aSn9XLyUdCD", "nombre": "Charlie (de la cuenta)"},
+    "hombre3":    {"id": "JBFqnCBsd6RMkjVDRZzb", "nombre": "George (de la cuenta)"},
+    "pillo":      {"id": "N2lVS1w4EtoT3dr4eOWO", "nombre": "Callum - Husky Trickster (de la cuenta)"},
+    "fortachon":  {"id": "SOYHLrjzK2X1ezoPC6cr", "nombre": "Harry - Fierce Warrior (de la cuenta)"},
+    "mujer1":     {"id": "EXAVITQu4vr4xnSDxMaL", "nombre": "Sarah (de la cuenta)"},
+    "mujer2":     {"id": "FGY2WhTYpPnrIDTdsKH5", "nombre": "Laura (de la cuenta)"},
+    "mujer3":     {"id": "hpp4J3VqNfWAUOO0d1Us", "nombre": "Bella (de la cuenta)"}
+  },
+  "personajes": {
+    "Harry": "nino1", "Beth": "nina2", "Cody": "nino2", "Aunt Fifi": "mujer2", "Waldo": "nino3",
+    "Charlie": "nino1", "Rose": "nina1", "Uncle Dan": "hombre1", "Ola": "animalito",
+    "Kim": "nino2", "Katy": "nina1", "Captain Conrad": "hombre3", "PROD 1": "robot", "PROD 2": "robot", "President Pop": "mujer2",
+    "Oliver": "nino1", "Sophie": "nina2", "Uncle James": "hombre1", "Finley Keen": "hombre2", "Coco": "animalito",
+    "Polly": "nina3", "Mike": "nino2", "Gizmo": "animalito", "Hector Frost": "pillo", "Smith": "fortachon", "The Queen": "mujer3",
+    "Police Chief": "mujer1", "Mrs. Jones": "mujer1", "Maddy": "nina1", "Emma": "nina2", "Robbie": "nino3", "Dan": "nino1",
+    "Matt": "nino1", "Bella": "nina2", "AL": "robot", "Zeb": "pillo", "Dot": "mujer2", "Hannah": "mujer1",
+    "Tom": "nino2", "Flo": "nina1", "Maria": "nina3", "Felipe": "nino3", "Carol Carnival": "mujer3", "Peter": "hombre1"
+  }
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pandi · escuchar voces</title>
+<style>
+  :root{--bg:#FFFFFF;--ink:#1F2430;--muted:#5E6472;--line:#E3E6EC;--card:#F6F7F9}
+  @media (prefers-color-scheme: dark){:root{--bg:#12151C;--ink:#ECEEF2;--muted:#A2A8B4;--line:#2A2F3A;--card:#1A1E27}}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui,sans-serif;padding:16px}
+  h1{font-size:22px;margin:0 0 4px} p{color:var(--muted);margin:0 0 16px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+  h2{font-size:18px;margin:0 0 8px} .row{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:0} button{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;width:40px;height:40px;cursor:pointer;flex:none}
+  .t{flex:1;min-width:0}
+</style>
+</head>
+<body>
+<h1>Escuchar las voces de ElevenLabs</h1>
+<p>Toca ▶ para oír cada audio. Están agrupados por personaje («Palabras» es la voz general).</p>
+<div id="out"></div>
+<script src="../../audio/indice.js"></script>
+<script>
+  const A = window.PANDI_AUDIO || {}, groups = {};
+  Object.entries(A).forEach(([k, f]) => { const i = k.indexOf('|'), who = k.slice(0, i) || 'Palabras', text = k.slice(i + 1); (groups[who] = groups[who] || []).push([text, f]); });
+  const out = document.getElementById('out'); let cur = null;
+  if (!Object.keys(groups).length) out.textContent = 'Todavía no hay audios. Corre node tools/voces/generar.mjs';
+  Object.keys(groups).sort().forEach(who => {
+    const s = document.createElement('section'), h = document.createElement('h2'); h.textContent = who + ' (' + groups[who].length + ')'; s.append(h);
+    groups[who].forEach(([text, f]) => {
+      const r = document.createElement('div'), b = document.createElement('button'), t = document.createElement('div');
+      r.className = 'row'; t.className = 't'; t.textContent = text; b.textContent = '▶'; b.setAttribute('aria-label', 'Escuchar');
+      b.onclick = () => { if (cur) cur.pause(); cur = new Audio('../../audio/' + f); cur.play(); };
+      r.append(b, t); s.append(r);
+    });
+    out.append(s);
+  });
+</script>
+</body>
+</html>

@@ -1073,7 +1073,7 @@ const EN = {
   'Ice Island, la hora y el pasado':'Ice Island, time and the past', 'Cómo son por fuera y por dentro':'What people are like outside and inside', 'Familias grandes y pequeñas':'Big and small families', 'Rutinas, must y should, ¿qué tan seguido?':'Routines, must and should, how often?', 'Para qué eres bueno y qué estabas haciendo':'What you are good at and what you were doing',
   'Deportes curiosos del mundo':'Funny sports around the world', 'Países, lugares, there is / there are':'Countries, places, there is / there are', 'Ropa, precios y de quién es':'Clothes, prices and whose it is', 'Dónde compran comida en el mundo':'Where people buy food around the world', 'El pasado de verbos irregulares y las fechas':'The past of irregular verbs and dates',
   'Materias y cómo fue: Was it…? Did you…?':'School subjects and how it was: Was it…? Did you…?', 'Escuelas especiales del mundo':'Special schools around the world', 'Nacionalidades, trabajos de película, who / that':'Nationalities, movie jobs, who / that', 'Despedida: los Ice Detectives':'Goodbye: the Ice Detectives',
-  'Regresar':'Back', 'Pon cada palabra en su lugar del dibujo.':'Put each word in its place in the picture.', 'Pon cada animal en su canasta.':'Put each animal in its basket.',
+  'Regresar':'Back', 'Escucha y toca lo que oíste.':'Listen and tap what you heard.', 'Escucha y toca lo que oíste. Se le pone su número.':'Listen and tap what you heard. Number it.', 'Escucha bien… ¡ya empieza!':'Listen carefully… here it comes!', 'Escucha la palabra…':'Listen to the word…', 'Mueve la canasta debajo de lo que oíste. Para oírlo otra vez, toca la bocina.':'Move the basket under what you heard. To hear it again, tap the speaker.', 'Escucha y busca debajo de qué vaso está lo que oíste. Para oírlo otra vez, toca la bocina.':'Listen and find which cup hides what you heard. To hear it again, tap the speaker.', '¡Desfile! Los dibujos pasan de un lado al otro. Escucha y atrapa el que oíste.':'Parade! The pictures go from side to side. Listen and catch the one you heard.', '¡Lluvia de dibujos! Caen en paracaídas. Escucha y atrapa el que oíste.':'Picture rain! They fall with parachutes. Listen and catch the one you heard.', '¡Topos! Los dibujos salen de los hoyos y se esconden. Escucha y atrapa el que oíste.':'Moles! The pictures pop out of the holes and hide. Listen and catch the one you heard.', 'Pon cada palabra en su lugar del dibujo.':'Put each word in its place in the picture.', 'Pon cada animal en su canasta.':'Put each animal in its basket.',
   'Pon cada mascota en su canasta.':'Put each pet in its basket.', 'Lee y toca lo que lleva la primera niña.':'Read and tap what the first girl has.', 'Escucha y toca las cosas correctas.':'Listen and tap the right things.', 'Toca las respuestas correctas.':'Tap the right answers.',
   // Nivel 6
   'Future Island, el THD y los sentidos':'Future Island, the THD and the senses', 'Cosas para acampar y lo que sabemos hacer':'Camping things and what we can do', 'Acampar en otros países':'Camping in other countries',
@@ -1213,6 +1213,10 @@ const EN_RE = [
   [/^Toca la bocina de cada frase para escucharla \(faltan (\d+)\)\.$/, (m, n) => `Tap the speaker on each sentence to hear it (${n} left).`],
   [/^Pista: empieza con “(.+)” y tiene (\d+) letras$/, (m, l, n) => `Hint: it starts with “${l}” and has ${n} letters`],
   [/^Ayuda a (.+): ¿qué respuesta va con la pregunta\?$/, (m, n) => `Help ${n}: which answer goes with the question?`],
+  [/^Escucha y toca lo que oíste \((\d+) de (\d+)\)\. Para oírlo otra vez, toca la bocina\.$/, (m, a, b) => `Listen and tap what you heard (${a} of ${b}). To hear it again, tap the speaker.`],
+  [/^Escucha y atrapa lo que oíste \((\d+) de (\d+)\)\. Para oírlo otra vez, toca la bocina\.$/, (m, a, b) => `Listen and catch what you heard (${a} of ${b}). To hear it again, tap the speaker.`],
+  [/^Escucha cada frase \(faltan (\d+)\)\. Para oír una otra vez, toca su bocina\.$/, (m, n) => `Listen to each sentence (${n} left). To hear one again, tap its speaker.`],
+  [/^Ronda (\d+) de (\d+): escucha y atrapa la burbuja que oíste$/, (m, a, b) => `Round ${a} of ${b}: listen and catch the bubble you heard`],
   [/^Ronda (\d+) de (\d+): toca la bocina y atrapa la burbuja que escuchaste$/, (m, a, b) => `Round ${a} of ${b}: tap the speaker and catch the bubble you heard`],
   [/^Ahora tú: toca el dibujo de «(.+)»$/, (m, w) => `Now you: tap the picture of «${w}»`],
   [/^Escuché: “(.+)”\. ¡El micrófono funciona!$/, (m, w) => `I heard: “${w}”. The microphone works!`],
@@ -1500,7 +1504,7 @@ function courseSeed(){
   };
 }
 /* ---------- course: Level 2 (sigue el libro de Nivel 2: Welcome, 8 unidades de 10 lecciones y 4 repasos; textos, cantos y cuentos propios) ---------- */
-const COURSE_VER = 9; // 9: llega el Nivel 6 a las escuelas que ya tenían el curso
+const COURSE_VER = 10; // 10: las palabras suenan solas (cambian las instrucciones de «Toca la bocina y luego…»)
 const svgPic = body => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">${body}</svg>`);
 const V2_SEED = Object.fromEntries(Object.entries({
   // Welcome
@@ -1553,8 +1557,8 @@ const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Satur
 function level2Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   // Escenas de cada página del libro: van al principio de la lección. Los cantos y canciones pasan a escena con el fondo de la unidad.
   const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
-  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
-  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Escucha y toca lo que oíste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Escucha y toca lo que oíste. Se le pone su número.', {bg, words});
   const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
   const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
   const SO = (bins, words, title, es) => sc('sort', title, es || 'Toca una palabra y ponla en su canasta.', {bins, words});
@@ -1882,8 +1886,8 @@ const V3_SEED = Object.fromEntries(Object.entries({
 }).map(([k, [img, es]]) => [k, {img, es}]));
 function level3Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
-  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
-  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Escucha y toca lo que oíste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Escucha y toca lo que oíste. Se le pone su número.', {bg, words});
   const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
   const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
   const SO = (bins, words, title, es) => sc('sort', title, es || 'Toca una palabra y ponla en su canasta.', {bins, words});
@@ -1894,16 +1898,16 @@ function level3Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
     st:{title, en:panels.map(p => p.text).join(' '), es:panels.map(p => p.es).join(' ')}});
   // Escenas extra de páginas donde la actividad del libro es buscar, comparar o clasificar
   const PRE3 = {
-    n3u1l7:[NM('park', ['trees','flowers','birds','rock'], 'Count and write.', 'Toca la bocina y luego toca lo que escuchaste.')],
+    n3u1l7:[NM('park', ['trees','flowers','birds','rock'], 'Count and write.', 'Escucha y toca lo que oíste.')],
     n3u1l10:[PK('park', [['rainbow', false, 'a rainbow'], ['flowers', true, 'flowers'], ['birds', true, 'birds'], ['spiders', false, 'spiders'], ['trees', true, 'trees']], 'Spot the differences.', 'Lee y toca lo que sí hay: «In picture B, there are flowers, birds and trees. There isn\'t a rainbow and there aren\'t any spiders.»')],
     n3x1l1:[DP('room', ['cake','candle','piñata'], 'Listen and read.', 'Pon cada palabra debajo de su dibujo.')],
     n3x1l2:[PK('kitchen', [['soup', true, 'soup'], ['cake', false, 'cake'], ['piñata', false, 'piñata']], 'Read and circle.', '¿Qué le gusta a Yoon-ji? Tócalo.')],
     n3u2l7:[DP('park', ['kangaroo','emu','koala','wombat','snake'], 'Australian animals.', 'Pon cada animal debajo de su dibujo.')],
-    n3u2l10:[FD('stage', ['blond hair','red hair','curly hair','gray hair','black mustache','short beard','glasses','blue eyes'], 'Choose. Then play.', 'Toca la bocina y luego toca lo que escuchaste.')],
+    n3u2l10:[FD('stage', ['blond hair','red hair','curly hair','gray hair','black mustache','short beard','glasses','blue eyes'], 'Choose. Then play.', 'Escucha y toca lo que oíste.')],
     n3r1l2:[NM('stage', ['red hair','short beard','black mustache','blond hair','glasses','gray hair'], 'Listen and number.')],
     n3u3l10:[SO(['HAS LEGS', 'NO LEGS'], [['cat', 0], ['rabbit', 0], ['parrot', 0], ['snake', 1], ['goldfish', 1]], 'Draw or write. Then play.', 'Pon cada mascota en su canasta.')],
     n3x2l1:[DP('park', ['rabbit','hamster','cat','turtle'], 'Listen and read.', 'Pon cada mascota debajo de su dibujo.')],
-    n3u4l4:[FD('room', ['bed','closet','shelf','computer','picture','blankets'], 'Listen and read.', 'Toca la bocina y luego toca lo que escuchaste.')],
+    n3u4l4:[FD('room', ['bed','closet','shelf','computer','picture','blankets'], 'Listen and read.', 'Escucha y toca lo que oíste.')],
     n3u4l7:[SO(['SHAPES', 'MATERIALS'], [['circle', 0], ['square', 0], ['triangle', 0], ['tiles', 1], ['stones', 1], ['glass', 1]], 'Count the shapes.', 'Pon cada palabra en su canasta: forma o material.')],
     n3u4l9:[PK('room', [['plant', true, 'a plant on the table'], ['mirror', false, 'a mirror above the bed'], ['shower', true, 'a shower behind the door'], ['blankets', true, 'blankets in the closet'], ['computer', false, 'a computer in front of the window']], 'Look. Then write Y or N.', 'Lee y toca lo que sí está: «In the camper, there\'s a plant, a shower and blankets.»')],
     n3u4l10:[FD('room', ['plant','closet','picture','mirror','computer','bed'], 'Spot the differences.')],
@@ -2194,8 +2198,8 @@ const V1_SEED = Object.fromEntries(Object.entries({
 }).map(([k, [img, es]]) => [k, {img, es}]));
 function level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
-  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
-  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Escucha y toca lo que oíste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Escucha y toca lo que oíste. Se le pone su número.', {bg, words});
   const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
   const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
   const SO = (bins, words, title, es) => sc('sort', title, es || 'Escucha cada palabra y ponla en su canasta.', {bins, words});
@@ -2257,7 +2261,7 @@ function level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
 
   return [
     L1('n1a', 'Alphabet', 'El abecedario con dibujos', 'purple', [
-      {title:'A to M', kind:'Vocabulario', items:[NM('paper', ABC.slice(0, 7), 'Listen and say.', 'Toca la bocina y luego toca lo que escuchaste.'), FD('paper', ABC.slice(7, 13), 'Listen and find.'), ...ABC.slice(0, 13).map(f), ma(['ant','balloon','egg','key']), wr('map')]},
+      {title:'A to M', kind:'Vocabulario', items:[NM('paper', ABC.slice(0, 7), 'Listen and say.', 'Escucha y toca lo que oíste.'), FD('paper', ABC.slice(7, 13), 'Listen and find.'), ...ABC.slice(0, 13).map(f), ma(['ant','balloon','egg','key']), wr('map')]},
       {title:'N to Z', kind:'Canto', items:[NM('paper', ABC.slice(13, 20), 'Listen and say.'), FD('paper', ABC.slice(20), 'Listen and find.'), ...ABC.slice(13).map(f),
         CH('paper', ['Harry', 'Beth'], 'Sing the alphabet song.', 'Escucha y canta el abecedario.', [['A, B, C, D, E, F, G', 'A, B, C, D, E, F, G'], ['H, I, J, K, L, M, N, O, P', 'H, I, J, K, L, M, N, O, P'], ['Q, R, S, T, U, V', 'Q, R, S, T, U, V'], ['W, X, Y and Z. Now I know my ABC!', 'W, X, Y y Z. ¡Ya me sé el abecedario!']]), ma(['robot','tiger','zebra','umbrella'])]}
     ], 'Alfabeto'),
@@ -2277,7 +2281,7 @@ function level1Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
         tp('Look!', [["What's your name?", '¿Cómo te llamas?'], ["My name's Cody.", 'Me llamo Cody.'], ['How old are you?', '¿Cuántos años tienes?'], ["I'm seven.", 'Tengo siete años.'], ["What's = What is", '“What’s” es la forma corta de “What is”.']]),
         fi("My", "name's", 'Harry.', ['old','is'], 'w:Harry'), fi('How', 'old', 'are you?', ['name','is'], '🎂'), od("What's your name", ['old'], '❓'), od('How old are you', ['name'], '🎂'), sp("My name's Beth. I'm six.", 'w:Beth')]},
       {title:'Eleven to fifteen', kind:'Vocabulario', items:[...N15.map(f), NM('paper', N15, 'Listen and number.'), CH('park', ['Harry', 'Waldo'], 'Listen and sing.', 'Escucha la canción y cántala.', [["It's my birthday! Hip, hip, hooray! Clap, clap, clap!", '¡Es mi cumpleaños! ¡Hip, hip, hurra! ¡Aplaude!'], ["I'm twelve today! Stamp, stamp, stamp!", '¡Hoy cumplo doce! ¡Pisa fuerte!'], ["I'm eleven today! Jump, jump, jump!", '¡Hoy cumplo once! ¡Salta!']]), ma(['eleven','twelve','thirteen','fifteen']), wr('twelve')]},
-      {title:'Is it purple?', kind:'Gramática', items:[tp('Look!', [["Is it purple? Yes, it is.", '¿Es morado? Sí.'], ["No, it isn't.", 'No.'], ["What color is it? It's pink.", '¿De qué color es? Es rosado.']]), FD('park', ['car','sun','roses','balloon'], 'Look and say.', 'Toca la bocina y luego toca lo que escuchaste.'),
+      {title:'Is it purple?', kind:'Gramática', items:[tp('Look!', [["Is it purple? Yes, it is.", '¿Es morado? Sí.'], ["No, it isn't.", 'No.'], ["What color is it? It's pink.", '¿De qué color es? Es rosado.']]), FD('park', ['car','sun','roses','balloon'], 'Look and say.', 'Escucha y toca lo que oíste.'),
         fi('Is it pink? Yes, it', 'is', '.', ["isn't",'are'], 'sw:#FF6FB5'), fi("Is it brown? No, it", "isn't", '.', ['is','am'], 'sw:#3D86F0'), fi('What color is it? It\'s', 'orange', '.', ['old','eleven'], 'sw:#FF8A1F'), od('What color is it', ['are'], '🎨'), sp('Is it purple? Yes, it is.', 'sw:#8E44C9')]},
       {title:'Cuento: Prizes at the Fair', kind:'Cuento', items:[T1.scene, rs(T1.st, 'What does Harry have?', 'One blue ball', ['Three yellow ducks','Five cakes']), rs(T1.st, 'What does Cody have?', 'Two purple balloons', ['One blue ball','A cake']), rs(T1.st, 'How many cakes does Waldo have?', 'Five', ['Two','Three']), sp('One blue ball for you!', '⚽'), sp('Thank you!', '🙂')]},
       {title:"It's good to share", kind:'Valores', items:[DP('park', [['Harry', 'ball'], ['Beth', 'duck'], ['Cody', 'balloon'], ['Waldo', 'cake']], 'Read and match.', 'Pon debajo de cada amigo su premio.'), PK('park', [['🍰', true, 'share your cake'], ['🧸', true, 'share your toys'], ['😠', false, 'say “Mine!”']], "It's good to share.", 'Toca lo que es compartir.'), sp("It's good to share.", '🤝')]},
@@ -2467,8 +2471,8 @@ const V4_SEED = Object.fromEntries(Object.entries({
 }).map(([k, [img, es]]) => [k, {img, es}]));
 function level4Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
-  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
-  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Escucha y toca lo que oíste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Escucha y toca lo que oíste. Se le pone su número.', {bg, words});
   const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
   const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
   const SO = (bins, words, title, es) => sc('sort', title, es || 'Escucha cada palabra y ponla en su canasta.', {bins, words});
@@ -2772,8 +2776,8 @@ const V5_SEED = Object.fromEntries(Object.entries({
 }).map(([k, [img, es]]) => [k, {img, es}]));
 function level5Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
-  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
-  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Escucha y toca lo que oíste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Escucha y toca lo que oíste. Se le pone su número.', {bg, words});
   const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
   const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
   const SO = (bins, words, title, es) => sc('sort', title, es || 'Escucha cada palabra y ponla en su canasta.', {bins, words});
@@ -3048,8 +3052,8 @@ const V6_SEED = Object.fromEntries(Object.entries({
 }).map(([k, [img, es]]) => [k, {img, es}]));
 function level6Units({f, pw, li, ma, wr, sp, od, fi, me, tp, rs}){
   const sc = (mode, title, es, rest) => ({t:'scene', mode, title, es, ...rest});
-  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Toca la bocina y luego toca lo que escuchaste.', {bg, words});
-  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', {bg, words});
+  const FD = (bg, words, title, es) => sc('find', title || 'Listen and find.', es || 'Escucha y toca lo que oíste.', {bg, words});
+  const NM = (bg, words, title, es) => sc('number', title || 'Listen and number.', es || 'Escucha y toca lo que oíste. Se le pone su número.', {bg, words});
   const DP = (bg, words, title, es) => sc('drop', title || 'Look and match.', es || 'Toca una palabra y ponla debajo de su dibujo.', {bg, words});
   const PK = (bg, items, title, es) => sc('pick', title || 'Look and check.', es, {bg, items});
   const SO = (bins, words, title, es) => sc('sort', title, es || 'Escucha cada palabra y ponla en su canasta.', {bins, words});
@@ -3326,6 +3330,11 @@ function upgradeCourse(c){
     const fix = new Map([['Pon cada palabra en la parte de la cara que le toca.', 'Pon cada palabra en su lugar del dibujo.'], ['Pon cada animal donde está despierto: de día o de noche.', 'Pon cada animal en su canasta.'],
       ['Pon cada mascota en su canasta: tiene patas o no tiene patas.', 'Pon cada mascota en su canasta.'], ['Toca lo que hay en la lonchera de la primera niña.', 'Lee y toca lo que lleva la primera niña.'],
       ['Toca lo que hay en una cocina.', 'Escucha y toca las cosas correctas.'], ['Toca lo que trae un huracán.', 'Toca las respuestas correctas.']]);
+    c.units.forEach(u => u.lessons.forEach(l => (l.items || []).forEach(it => { if (it.t === 'scene' && fix.has(it.es)) it.es = fix.get(it.es); })));
+  }
+  if ((c.ver || 2) < 10){
+    // Las palabras ahora suenan solas: la instrucción ya no pide tocar la bocina primero
+    const fix = new Map([['Toca la bocina y luego toca lo que escuchaste.', 'Escucha y toca lo que oíste.'], ['Toca la bocina y luego toca lo que escuchaste. Se le pone su número.', 'Escucha y toca lo que oíste. Se le pone su número.']]);
     c.units.forEach(u => u.lessons.forEach(l => (l.items || []).forEach(it => { if (it.t === 'scene' && fix.has(it.es)) it.es = fix.get(it.es); })));
   }
   seedC.units.forEach((su, i) => {
@@ -3729,8 +3738,30 @@ function castVoice(name){
   const vs = enVoices(), mine = vs.find(v => k.g === 'f' ? FEM_RE.test(v.name) : !FEM_RE.test(v.name) && MALE_RE.test(v.name));
   return mine ? {voice:mine, pitch:k.pitch, rate:k.rate} : {voice:voice || vs[0] || null, pitch:k.alt, rate:k.rate};
 }
+// Audios de ElevenLabs (audio/indice.js, de tools/voces/generar.mjs): primero el del personaje, luego el de la voz general.
+// Si no hay audio para ese texto (por ejemplo, algo que escribió el profe), se usa la voz del teléfono.
+let clipNow = null;
+function sayClip(text, slow, done, who){
+  const A = window.PANDI_AUDIO; if (!A) return false;
+  const t = String(text || '').trim(), f = (who && A[who + '|' + t]) || A['|' + t];
+  if (!f) return false;
+  try { speechSynthesis.cancel(); } catch (e) {}
+  if (clipNow){ clipNow.onended = clipNow.onerror = null; clipNow.pause(); }
+  const a = new Audio('audio/' + f); clipNow = a;
+  a.playbackRate = slow ? 0.7 : 1; a.preservesPitch = true;
+  let over = false; const fin = () => { if (over) return; over = true; if (clipNow === a) clipNow = null; if (done) done(); };
+  a.onended = fin;
+  a.onerror = () => { if (clipNow !== a || over) return; over = true; clipNow = null; sayTTS(text, slow, done, who); };
+  a.play().catch(() => { if (!over && clipNow === a){ over = true; clipNow = null; sayTTS(text, slow, done, who); } });
+  return true;
+}
 function say(text, slow, done, who){
+  if (sayClip(text, slow, done, who)) return;
+  sayTTS(text, slow, done, who);
+}
+function sayTTS(text, slow, done, who){
   try {
+    if (clipNow){ clipNow.onended = clipNow.onerror = null; clipNow.pause(); clipNow = null; }
     if (!('speechSynthesis' in window)){ if (!ttsWarned){ ttsWarned = true; toast('Este teléfono no puede reproducir voz. Pide ayuda a tu profe.'); } return; }
     if (!voice) pickVoice();
     speechSynthesis.cancel(); try { speechSynthesis.resume(); } catch (e) {}
@@ -3808,6 +3839,8 @@ function audioTestSheet(){
     micInfo, SRC ? h('button', {class:'btn blue', type:'button', onclick:testMic}, 'Probar micrófono') : null,
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
 }
+// Lo que hay que escuchar suena solo al entrar al ejercicio; la bocina sirve para oírlo otra vez
+const autoSay = (el, fn, ms = 550) => setTimeout(() => { if (el.isConnected) fn(); }, ms);
 function audioBtn(text, slow, big, who){
   return h('button', {class:'abtn' + (slow ? ' slow' : '') + (big ? ' big' : ''), type:'button', 'aria-label': slow ? 'Escuchar lento' : 'Escuchar', html: ICON.speaker + (big ? '' : (slow ? 'Lento' : 'Escuchar')), onclick:() => say(text, slow, null, who)});
 }
@@ -5472,7 +5505,7 @@ const SCENE_MODES = {
     const order = shuffle(A.targets.map(t => t.a)), num = s.mode === 'number';
     let i = 0, heard = false;
     const info = h('div', {class:'speak-status', 'aria-live':'polite'});
-    const upd = () => { info.textContent = `Toca la bocina y luego toca lo que escuchaste (${i + 1} de ${order.length})`; };
+    const upd = () => { info.textContent = `Escucha y toca lo que oíste (${i + 1} de ${order.length}). Para oírlo otra vez, toca la bocina.`; };
     const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { if (i >= order.length) return; heard = true; say(order[i]); }});
     A.targets.forEach(t => {
       const b = pos(h('button', {class:'target', type:'button', 'aria-label':'Opción'}), t.x, t.y);
@@ -5484,10 +5517,10 @@ const SCENE_MODES = {
         if (t.a !== order[i]) return wrong(b);
         sfx(true); b.classList.add('ok'); if (box) box.textContent = String(i + 1);
         i++; heard = false;
-        if (i === order.length){ info.textContent = '¡Muy bien!'; end(); } else upd();
+        if (i === order.length){ info.textContent = '¡Muy bien!'; end(); } else { upd(); autoSay(spk, () => spk.click(), 750); }
       };
     });
-    upd(); ui.append(h('div', {class:'scene-listen'}, spk, info));
+    upd(); ui.append(h('div', {class:'scene-listen'}, spk, info)); autoSay(spk, () => spk.click());
   },
   // Canto: se lee y se escucha línea por línea
   chant(s, A, pos, ui, wrong, end, ctx){
@@ -5504,9 +5537,9 @@ const SCENE_MODES = {
 SCENE_MODES.number = SCENE_MODES.find;
 // Juegos animados para «escucha y toca»: se turnan con el dibujo del libro para que no se repita siempre igual
 const PLAY_HINT = {
-  parade:'¡Desfile! Los dibujos pasan de un lado al otro. Toca la bocina y atrapa el que escuchaste.',
-  rain:'¡Lluvia de dibujos! Caen en paracaídas. Toca la bocina y atrapa el que escuchaste.',
-  moles:'¡Topos! Los dibujos salen de los hoyos y se esconden. Toca la bocina y atrapa el que escuchaste.'
+  parade:'¡Desfile! Los dibujos pasan de un lado al otro. Escucha y atrapa el que oíste.',
+  rain:'¡Lluvia de dibujos! Caen en paracaídas. Escucha y atrapa el que oíste.',
+  moles:'¡Topos! Los dibujos salen de los hoyos y se esconden. Escucha y atrapa el que oíste.'
 };
 const playStyle = s => PLAY_HINT[s.game] ? s.game : 'book';
 function spritePic(w){
@@ -5522,7 +5555,7 @@ function playField(s, style, ui, wrong, end){
   const tray = h('div', {class:'play-tray'}, ...order.map(() => h('span', {class:'tray-it empty'})));
   const info = h('div', {class:'speak-status', 'aria-live':'polite'});
   const target = () => order[i];
-  const upd = () => { info.textContent = i < order.length ? `Toca la bocina y atrapa lo que escuchaste (${i + 1} de ${order.length})` : '¡Muy bien!'; };
+  const upd = () => { info.textContent = i < order.length ? `Escucha y atrapa lo que oíste (${i + 1} de ${order.length}). Para oírlo otra vez, toca la bocina.` : '¡Muy bien!'; };
   const N = Math.min(style === 'rain' ? 5 : 6, words.length);
   const SP = [];
   // La palabra que se busca siempre anda en la pantalla, y ningún dibujo se repite
@@ -5548,7 +5581,7 @@ function playField(s, style, ui, wrong, end){
     const slot = tray.children[i]; slot.className = 'tray-it'; slot.append(spritePic(p.w), h('b', {}, num ? String(i + 1) : '✓'));
     i++; heard = false; speed *= 1.12; upd();
     if (style === 'moles') setTimeout(() => { if (!field.isConnected) return; p.up = false; p.el.classList.remove('up'); p.next = now + 0.4; p.gone = false; p.el.classList.remove('gone'); }, 600);
-    if (i === order.length) end();
+    if (i === order.length) end(); else autoSay(spk, () => spk.click(), 750);
   };
   const W = () => field.clientWidth || 320, H = () => field.clientHeight || 330;
   const size = () => Math.max(62, Math.min(86, W() * 0.21));
@@ -5564,7 +5597,7 @@ function playField(s, style, ui, wrong, end){
     SP.push(p);
   }
   const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { if (i < order.length){ heard = true; say(target()); } }});
-  upd(); ui.append(tray, field, h('div', {class:'scene-listen'}, spk, info));
+  upd(); ui.append(tray, field, h('div', {class:'scene-listen'}, spk, info)); autoSay(spk, () => spk.click(), 900);
   requestAnimationFrame(() => {
     const w = W(), hh = H(), d = size();
     if (style === 'parade') [0.1, 0.56].forEach(t => field.prepend(h('div', {class:'lane', style:`top:${Math.round(hh * t + d - 6)}px`})));
@@ -5821,7 +5854,7 @@ function startLesson(unit, lesson, preview){
   $('#lprev').hidden = !preview;
   show('lesson'); nextStep();
 }
-function leaveLesson(){ try { speechSynthesis.cancel(); } catch (e) {} if (L && L.preview){ show('admin'); renderContent(); } else { show('home'); setTab('learn'); } }
+function leaveLesson(){ try { speechSynthesis.cancel(); } catch (e) {} if (clipNow){ clipNow.onended = clipNow.onerror = null; clipNow.pause(); clipNow = null; } if (L && L.preview){ show('admin'); renderContent(); } else { show('home'); setTab('learn'); } }
 function nextStep(){ if (!L.queue.length) return finishLesson(); L.cur = L.queue.shift(); renderStep(); }
 function renderStep(){
   const s = L.cur, body = $('#lbody'), foot = $('#lfoot'), btn = $('#lbtn');
@@ -5906,7 +5939,7 @@ const R = {
     ctx.hideBtn();
     const v = V[s.w], a1 = audioBtn(s.w), a2 = audioBtn(s.w, true);
     const card = h('div', {class:'flash pop'}, wpic(s.w, 'xl'), h('div', {class:'word'}, s.w), h('div', {class:'audio-row'}, a1, a2));
-    const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Toca Escuchar para oír la palabra.'), quiz = h('div', {class:'tip-quiz', hidden:true});
+    const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Escucha la palabra…'), quiz = h('div', {class:'tip-quiz', hidden:true});
     let started = false;
     const go = () => {
       if (started) return; started = true; info.textContent = '¡Muy bien! Mírala bien…';
@@ -5923,6 +5956,8 @@ const R = {
     };
     [a1, a2].forEach(b => b.addEventListener('click', go));
     ctx.body.append(card, info, quiz);
+    // suena sola; si la voz no avisa que terminó, se sigue igual a los 3 s
+    autoSay(card, () => { say(s.w, false, () => go()); setTimeout(() => { if (card.isConnected) go(); }, 3000); });
   },
   who(s, ctx){
     ctx.body.append(h('div', {class:'story'}, h('div', {style:'display:flex;align-items:center;gap:10px'}, h('p', {style:'flex:1;margin:0;font-size:19px;font-weight:700'}, '«' + s.text + '»'), audioBtn(s.text, false, true))));
@@ -5953,7 +5988,7 @@ const R = {
       info.textContent = left ? `¡Muy bien! Faltan ${left}.` : '¡Las volteaste todas! Ahora a jugar…';
       if (!left) setTimeout(play, 1600);
     };
-    const ask = () => { info.innerHTML = ''; info.append(h('span', {}, `(${r + 1}/${order.length}) Toca la carta de: `), h('b', {}, order[r]), audioBtn(order[r], false, true)); };
+    const ask = () => { info.innerHTML = ''; info.append(h('span', {}, `(${r + 1}/${order.length}) Toca la carta de: `), h('b', {}, order[r]), audioBtn(order[r], false, true)); const w = order[r]; autoSay(grid, () => { if (order[r] === w) say(w); }, 450); };
     const play = () => {
       if (!grid.isConnected) return;
       // cada palabra al menos una vez (hasta 6) y siempre 4 rondas o más; todas las cartas siguen en juego
@@ -5980,13 +6015,17 @@ const R = {
     ctx.hideBtn();
     const heard = new Set(), quiz = h('div', {class:'tip-quiz', hidden:true});
     const info = h('div', {class:'speak-status', 'aria-live':'polite'});
-    const upd = () => { const left = s.lines.length - heard.size; info.textContent = left ? `Toca la bocina de cada frase para escucharla (faltan ${left}).` : '¡Muy bien! Ahora demuestra lo que aprendiste.'; };
+    const upd = () => { const left = s.lines.length - heard.size; info.textContent = left ? `Escucha cada frase (faltan ${left}). Para oír una otra vez, toca su bocina.` : '¡Muy bien! Ahora demuestra lo que aprendiste.'; };
+    const mark = k => { if (heard.has(k)) return; heard.add(k); rows[k].classList.add('heard'); upd(); if (heard.size === s.lines.length) setTimeout(showQuiz, 400); };
     const rows = s.lines.map(([en, es], k) => {
       const hint = tipHint(es), b = audioBtn(en);
       const row = h('div', {class:'tip-row'}, h('div', {class:'t'}, h('div', {class:'en'}, en), hint ? h('div', {class:'es'}, '💡 ' + hint) : null), b);
-      b.addEventListener('click', () => { if (heard.has(k)) return; heard.add(k); row.classList.add('heard'); upd(); if (heard.size === s.lines.length) setTimeout(showQuiz, 400); });
+      b.addEventListener('click', () => mark(k));
       return row;
     });
+    // Las frases suenan solas una tras otra; la bocina de cada una sirve para repetirla
+    const playFrom = k => { if (k >= rows.length || !ctx.body.isConnected) return; rows[k].classList.add('on'); say(s.lines[k][0], false, () => { rows[k].classList.remove('on'); mark(k); setTimeout(() => playFrom(k + 1), 450); }); };
+    autoSay(info, () => playFrom(0), 600);
     const showQuiz = () => {
       if (!quiz.hidden || !ctx.body.isConnected) return;
       quiz.hidden = false; $('#lbtn').hidden = false; // «Comprobar» aparece, apagado hasta que respondan
@@ -6000,6 +6039,7 @@ const R = {
   },
   pickline(s, ctx){
     ctx.body.append(h('div', {class:'audio-row'}, audioBtn(s.target, false, true), audioBtn(s.target, true)));
+    autoSay(ctx.body, () => say(s.target), 700);
     const box = h('div', {class:'opts'}); let sel = null;
     shuffle(s.lines.slice()).forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; ctx.ready(() => ({ok:sel === s.target, correct:s.target})); })(b); box.append(b); });
     ctx.body.append(box);
@@ -6014,6 +6054,7 @@ const R = {
   listen(s, ctx){
     if (s.game && GAME_R[s.game]) return GAME_R[s.game](s, ctx);
     ctx.body.append(h('div', {class:'audio-row'}, audioBtn(s.w, false, true), audioBtn(s.w, true)));
+    autoSay(ctx.body, () => say(s.w));
     const box = h('div', {class:'opts grid2'}); let sel = null;
     s.options.forEach(o => { const b = h('button', {class:'opt tile', type:'button', 'aria-label':'Opción'}, wpic(o)); selectable(box, () => { sel = o; ctx.ready(() => ({ok: sel === s.w, correct: s.w})); })(b); box.append(b); });
     ctx.body.append(box);
@@ -6038,6 +6079,7 @@ const R = {
   write(s, ctx){
     const v = V[s.w];
     ctx.body.append(h('div', {class:'flash'}, wpic(s.w, 'xl'), h('div', {class:'audio-row'}, audioBtn(s.w), audioBtn(s.w, true))));
+    autoSay(ctx.body, () => say(s.w));
     const inp = h('input', {class:'write-in', id:'writeIn', autocomplete:'off', autocapitalize:'off', spellcheck:'false', 'aria-label':'Escribe la palabra en inglés', placeholder: s.w.split('').map((c, i) => i === 0 ? c : (c === ' ' ? ' ' : '_')).join(' ')});
     inp.addEventListener('input', () => inp.value.trim() ? ctx.ready(() => ({ok: norm(inp.value) === norm(s.w), correct: s.w})) : ctx.unready());
     inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) $('#lbtn').click(); });
@@ -6223,7 +6265,7 @@ const GAME_R = {
     const field = h('div', {class:'game-field basket-field'});
     const items = opts.map(w => { const el = h('div', {class:'faller', 'aria-hidden':'true', style:'transform:translate(0,-90px)'}, wpic(w, 'sm')); field.append(el); return {w, el, lane:0, y:-80}; });
     const bask = h('div', {class:'bask', 'aria-hidden':'true'}, '🧺'); field.append(bask);
-    const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Toca la bocina para empezar. Mueve la canasta para atrapar lo que escuchaste.');
+    const info = h('div', {class:'speak-status', 'aria-live':'polite'}, 'Escucha bien… ¡ya empieza!');
     const W = () => field.clientWidth || 320, H = () => field.clientHeight || 300, lw = () => W() / n;
     const place = () => { bask.style.transform = `translateX(${(lane * lw() + lw() / 2 - 34).toFixed(1)}px)`; };
     const wave = () => { const lanes = shuffle([...Array(n).keys()]); items.forEach((it, k) => { it.lane = lanes[k]; it.y = -70 - k * 95 - Math.random() * 40; }); };
@@ -6233,9 +6275,9 @@ const GAME_R = {
     const arrows = h('div', {class:'bask-arrows'},
       h('button', {class:'btn ghost small', type:'button', 'aria-label':'Mover a la izquierda', onclick:() => { lane = Math.max(0, lane - 1); place(); }}, '◀'),
       h('button', {class:'btn ghost small', type:'button', 'aria-label':'Mover a la derecha', onclick:() => { lane = Math.min(n - 1, lane + 1); place(); }}, '▶'));
-    const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { say(s.w); if (!started){ started = true; info.textContent = 'Mueve la canasta debajo de lo que escuchaste.'; wave(); requestAnimationFrame(tick); } }});
+    const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { say(s.w); if (!started){ started = true; info.textContent = 'Mueve la canasta debajo de lo que oíste. Para oírlo otra vez, toca la bocina.'; wave(); requestAnimationFrame(tick); } }});
     ctx.body.append(h('p', {class:'muted', style:'margin:-6px 0 4px'}, '¡Canasta! Los dibujos caen del cielo.'), field, arrows, h('div', {class:'scene-listen'}, spk, info));
-    requestAnimationFrame(place);
+    requestAnimationFrame(place); autoSay(field, () => spk.click(), 700);
     function tick(t){
       if (!field.isConnected || done) return;
       const dt = Math.min(0.05, last ? (t - last) / 1000 : 0); last = t;
@@ -6272,7 +6314,7 @@ const GAME_R = {
         await wait(Math.max(260, 460 - r * 35));
         if (!field.isConnected) return;
       }
-      go.remove(); ready = true; info.textContent = 'Toca la bocina y busca debajo de qué vaso está lo que escuchaste.';
+      go.remove(); ready = true; info.textContent = 'Escucha y busca debajo de qué vaso está lo que oíste. Para oírlo otra vez, toca la bocina.'; spk.click();
     };
     const pick = c => {
       if (!ready || over) return;
@@ -6474,6 +6516,7 @@ Object.assign(R, {
     slots.onclick = () => { const x = got.pop(); if (x){ x.b.classList.remove('used'); draw(); } };
     ctx.body.append(h('div', {class:'flash'}, wpic(s.w, 'xl'), h('div', {class:'audio-row'}, audioBtn(s.w))), slots, h('p', {class:'muted', style:'margin:0;text-align:center;font-size:14px'}, 'Toca las letras en orden. Para borrar, toca los espacios.'), bank);
     draw();
+    autoSay(ctx.body, () => say(s.w));
   },
   pop(s, ctx){
     ctx.hideBtn();
@@ -6484,7 +6527,7 @@ Object.assign(R, {
     const field = h('div', {class:'pop-field'});
     const target = () => s.ask[round];
     const upd = () => {
-      info.textContent = round < s.ask.length ? `Ronda ${round + 1} de ${s.ask.length}: toca la bocina y atrapa la burbuja que escuchaste` : '¡Atrapaste todas!';
+      info.textContent = round < s.ask.length ? `Ronda ${round + 1} de ${s.ask.length}: escucha y atrapa la burbuja que oíste` : '¡Atrapaste todas!';
       score.textContent = s.ask.map((w, k) => k < round ? '🫧' : '⚪').join(' ');
     };
     const size = () => Math.max(64, Math.min(96, field.clientWidth * 0.22));
@@ -6519,7 +6562,7 @@ Object.assign(R, {
       if (b.w !== target()){ errs++; sfx(false); b.el.classList.remove('shake'); void b.el.offsetWidth; b.el.classList.add('shake'); return; }
       sfx(true); b.gone = true; b.el.classList.add('gone'); round++; heard = false; speed *= 1.25; upd();
       setTimeout(() => { if (field.isConnected) launch(b, true); }, 700);
-      if (round === s.ask.length) setTimeout(() => ctx.finish(errs === 0, s.ask.join(', ')), 700);
+      if (round === s.ask.length) setTimeout(() => ctx.finish(errs === 0, s.ask.join(', ')), 700); else autoSay(field, () => spk.click(), 800);
     };
     const tick = t => {
       if (!field.isConnected) return;
@@ -6548,7 +6591,7 @@ Object.assign(R, {
       requestAnimationFrame(tick);
     };
     const spk = h('button', {class:'mic scene-say', type:'button', 'aria-label':'Escuchar', html:ICON.speaker, onclick:() => { if (round < s.ask.length){ heard = true; say(target()); } }});
-    upd(); ctx.body.append(score, field, h('div', {class:'scene-listen'}, spk, info));
+    upd(); ctx.body.append(score, field, h('div', {class:'scene-listen'}, spk, info)); autoSay(field, () => spk.click(), 900);
     // Primeras burbujas repartidas en altura para que la pantalla no empiece vacía
     requestAnimationFrame(() => {
       const H = field.clientHeight || 340;
