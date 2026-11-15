@@ -1,6 +1,6 @@
 # Publica la función "admin-users" en Supabase.
 # Necesita estos secrets en Settings → Secrets and variables → Actions:
-#   SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF, PANDI_SETUP_TOKEN
+#   SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF, PANDI_SETUP_TOKEN (y VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY para los recordatorios)
 name: Publicar función de cuentas (Supabase)
 on:
   push:
@@ -27,8 +27,15 @@ jobs:
       - name: Guardar el código de configuración
         run: supabase secrets set --project-ref "$PROJECT_REF" PANDI_SETUP_TOKEN="${{ secrets.PANDI_SETUP_TOKEN }}"
       - name: Guardar las llaves de los recordatorios (VAPID)
-        if: ${{ secrets.VAPID_PRIVATE_KEY != '' }}
-        run: supabase secrets set --project-ref "$PROJECT_REF" VAPID_PUBLIC_KEY="${{ secrets.VAPID_PUBLIC_KEY }}" VAPID_PRIVATE_KEY="${{ secrets.VAPID_PRIVATE_KEY }}"
+        env:
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+        run: |
+          if [ -z "$VAPID_PRIVATE_KEY" ]; then
+            echo "::warning::Faltan los secrets VAPID_PUBLIC_KEY y VAPID_PRIVATE_KEY: los recordatorios push no funcionarán hasta agregarlos (README, paso 4)."
+          else
+            supabase secrets set --project-ref "$PROJECT_REF" VAPID_PUBLIC_KEY="$VAPID_PUBLIC_KEY" VAPID_PRIVATE_KEY="$VAPID_PRIVATE_KEY"
+          fi
       - name: Publicar admin-users
         run: supabase functions deploy admin-users --project-ref "$PROJECT_REF"
       - name: Publicar remind (recordatorios; la llama GitHub con el código, no un usuario)
