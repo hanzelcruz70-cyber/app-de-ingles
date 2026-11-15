@@ -38,6 +38,7 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 - **Perfil:** se quitaron los botones «Probar audio y micrófono» (sigue en el login) y «Reiniciar demo» (pedido del dueño).
 - **Aclaración al dueño:** la app sí está en Supabase y publicada; lo no subido eran solo los cambios del 14 y 15, que se suben hoy con este commit.
 - **Pruebas (navegador, demo, 390 px):** logros con niveles y barras, medallas, tira de ligas con escudos y zonas del ranking, tienda con todas las secciones, cuadrícula de las 21 prendas nuevas, pantalla final con Doble XP (+60), medalla Imparable y «Voz de oro · Nivel 3». Sin desbordes a 390 px. No se probó el push real (necesita servidor publicado).
+- **Workflow de la función:** fallaba por dos cosas: GitHub no permite `secrets` en el `if` de un paso (ahora se revisa con una variable de entorno) y la CLI nueva de Supabase pide confirmación (`--yes`). Ya publica `admin-users` y `remind`; mientras no estén los secrets VAPID, avisa y sigue.
 - **Subido:** con el visto bueno del dueño se subió todo lo del 14 y 15 de noviembre en un solo commit. Falta que el dueño configure los secrets VAPID, corra el workflow de la función y vuelva a correr `schema.sql` (README, paso 4) para que los recordatorios push funcionen.
 
 ## 2026-11-15 · Cuentos al estilo Duolingo y detalles de las lecciones (puntos 3 y 4; local, sin subir)
