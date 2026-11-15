@@ -25,7 +25,7 @@ jobs:
         with:
           version: latest
       - name: Guardar el código de configuración
-        run: supabase secrets set --project-ref "$PROJECT_REF" PANDI_SETUP_TOKEN="${{ secrets.PANDI_SETUP_TOKEN }}"
+        run: supabase secrets set --yes --project-ref "$PROJECT_REF" PANDI_SETUP_TOKEN="${{ secrets.PANDI_SETUP_TOKEN }}"
       - name: Guardar las llaves de los recordatorios (VAPID)
         env:
           VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
@@ -34,9 +34,9 @@ jobs:
           if [ -z "$VAPID_PRIVATE_KEY" ]; then
             echo "::warning::Faltan los secrets VAPID_PUBLIC_KEY y VAPID_PRIVATE_KEY: los recordatorios push no funcionarán hasta agregarlos (README, paso 4)."
           else
-            supabase secrets set --project-ref "$PROJECT_REF" VAPID_PUBLIC_KEY="$VAPID_PUBLIC_KEY" VAPID_PRIVATE_KEY="$VAPID_PRIVATE_KEY"
+            supabase secrets set --yes --project-ref "$PROJECT_REF" VAPID_PUBLIC_KEY="$VAPID_PUBLIC_KEY" VAPID_PRIVATE_KEY="$VAPID_PRIVATE_KEY"
           fi
       - name: Publicar admin-users
-        run: supabase functions deploy admin-users --project-ref "$PROJECT_REF"
+        run: supabase functions deploy admin-users --yes --project-ref "$PROJECT_REF"
       - name: Publicar remind (recordatorios; la llama GitHub con el código, no un usuario)
-        run: supabase functions deploy remind --no-verify-jwt --project-ref "$PROJECT_REF"
+        run: supabase functions deploy remind --no-verify-jwt --yes --project-ref "$PROJECT_REF"
