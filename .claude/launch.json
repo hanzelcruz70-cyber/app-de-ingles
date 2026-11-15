@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pandi-demo",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["tools/servir-demo.mjs", "4320"],
+      "port": 4320
+    }
+  ]
+}

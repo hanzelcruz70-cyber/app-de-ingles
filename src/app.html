@@ -255,6 +255,20 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .stat{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
 .stat b{display:block;font-family:var(--display);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;color:var(--ink-2)}
+.month-card{border-color:var(--purple)}
+.month-card.done{border-color:var(--green)}
+.month-card .mg{font-size:40px;line-height:1}
+.medal.month .m{background:color-mix(in srgb,var(--purple) 30%,transparent);border-color:var(--purple)}
+.achvs{display:flex;flex-direction:column;gap:8px}
+.achv{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:var(--surface);border:2px solid var(--line)}
+.achv .ab{position:relative;width:56px;height:56px;flex:none;border-radius:16px;display:grid;place-items:center;font-size:28px;background:var(--ac,var(--surface-2));border:3px solid var(--ac,var(--line));box-shadow:inset 0 -4px 0 rgba(0,0,0,.18)}
+.achv.off .ab{filter:grayscale(1);opacity:.5}
+.achv .ab i{position:absolute;right:-7px;bottom:-7px;min-width:22px;height:22px;padding:0 5px;border-radius:999px;background:var(--ink);color:var(--surface);font-style:normal;font-family:var(--display);font-size:13px;display:grid;place-items:center;border:2px solid var(--surface);box-sizing:border-box}
+.achv .at{flex:1;min-width:0}
+.achv .at b{display:block;font-size:16px;line-height:1.2}
+.achv .at b small{font-weight:700;color:var(--ink-2);font-size:13px}
+.achv .at .bar{margin:6px 0 4px}
+.achv .at>small{font-size:12px;color:var(--ink-2);font-weight:700}
 .medals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .medal{text-align:center;padding:12px 6px;border-radius:16px;background:var(--surface);border:2px solid var(--line)}
 .medal .m{width:58px;height:58px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:color-mix(in srgb,var(--yellow) 30%,transparent);border:3px solid var(--yellow)}
@@ -356,6 +370,11 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .prog i{display:block;height:100%;width:0;background:var(--green);border-radius:10px;transition:width .35s;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
 .lbody{flex:1;overflow-y:auto;padding:8px 16px 24px;display:flex;flex-direction:column;gap:18px}
 .lbody.locked{pointer-events:none}
+/* cada paso entra deslizándose desde la derecha, como pasa en Duolingo */
+@keyframes stepIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+.lbody.enter > *{animation:stepIn .32s cubic-bezier(.2,.8,.3,1) both}
+.lbody.enter > *:nth-child(2){animation-delay:.05s}.lbody.enter > *:nth-child(3){animation-delay:.1s}.lbody.enter > *:nth-child(n+4){animation-delay:.14s}
+@media (prefers-reduced-motion: reduce){.lbody.enter > *{animation:none}}
 .prompt{font-size:24px}
 .lfoot{padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));border-top:2px solid var(--line);background:var(--bg);display:flex;flex-direction:column;gap:10px}
 .lfoot.ok{background:var(--ok-bg);border-color:transparent}
@@ -363,6 +382,18 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .lfoot.bad .btn{background:var(--red);box-shadow:0 4px 0 var(--red-d)}
 .fb{display:flex;flex-direction:column;gap:2px;font-size:15px}
 .fb:empty{display:none}
+/* Pandi reacciona al acertar y al fallar (expresiones en icons/pandi/mood-*.png) */
+.fb-row{display:flex;align-items:center;gap:10px}
+.fb-row .fb{flex:1;min-width:0}
+.pmood{flex:none;width:86px;height:86px;object-fit:contain;object-position:bottom;transform-origin:50% 100%;user-select:none;-webkit-user-drag:none}
+@keyframes moodCheer{0%{transform:translateY(40px) scale(.6);opacity:0}45%{transform:translateY(-14px) scale(1.08);opacity:1}65%{transform:translateY(0) scale(.96)}80%{transform:translateY(-6px) scale(1.02)}100%{transform:translateY(0) scale(1)}}
+@keyframes moodSad{0%{transform:translateY(40px);opacity:0}40%{transform:translateY(0) rotate(0);opacity:1}55%{transform:rotate(-5deg)}70%{transform:rotate(4deg)}85%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
+@keyframes moodIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.02,.98)}}
+.pmood.cheer{animation:moodCheer .7s cubic-bezier(.3,1.4,.5,1) both,moodIdle 1.6s ease-in-out .7s infinite}
+.pmood.sad{animation:moodSad .7s ease-out both}
+.pmood.big{width:170px;height:170px}
+.pmood.hot{width:104px;height:104px;filter:drop-shadow(0 0 10px var(--yellow))}
+@media (prefers-reduced-motion: reduce){.pmood{animation:none !important}}
 .fb strong{font-family:var(--display);font-size:22px;font-weight:600}
 .lfoot.ok .fb{color:var(--ok-ink)} .lfoot.bad .fb{color:var(--bad-ink)}
 .pic{display:grid;place-items:center;line-height:1}
@@ -504,12 +535,35 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .stage-bg svg{width:100%;height:100%}
 .stage-bg.fade{animation:fadeIn .5s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.actor{position:absolute;bottom:4%;left:-40%;width:36%;aspect-ratio:1;transition:left .6s cubic-bezier(.3,1.35,.6,1);filter:drop-shadow(0 5px 0 rgba(0,0,0,.18));transform-origin:50% 100%}
+.actor{position:absolute;bottom:2%;left:-40%;width:30%;aspect-ratio:3/5;transition:left .6s cubic-bezier(.3,1.35,.6,1);filter:drop-shadow(0 5px 0 rgba(0,0,0,.18));transform-origin:50% 100%}
 .actor svg{width:100%;height:100%}
 .actor.idle{animation:breathe 2.6s ease-in-out infinite}
 .actor.talk{animation:talk .42s ease-in-out infinite}
 .actor.jump{animation:hop .55s ease-out 2}
 .actor.tilt{animation:tilt .8s ease-in-out}
+/* personaje de cuerpo entero (actorSVG, 120×200): boca que se abre con el audio, brazos y piernas que se mueven */
+.actor .av-mo{opacity:0}
+.actor.talk .av-mc{animation:flapC .26s steps(1) infinite}
+.actor.talk .av-mo{animation:flapO .26s steps(1) infinite}
+@keyframes flapO{0%,50%{opacity:1}51%,100%{opacity:0}}
+@keyframes flapC{0%,50%{opacity:0}51%,100%{opacity:1}}
+.actor .arm,.actor .leg{transform-box:view-box}
+.actor .arm.l{transform-origin:24px 104px}.actor .arm.r{transform-origin:96px 104px}
+.actor .leg.l{transform-origin:48px 150px}.actor .leg.r{transform-origin:72px 150px}
+.actor.talk .arm.r{animation:armTalk .7s ease-in-out infinite}
+.actor.talk .arm.l{animation:armTalkL 1.1s ease-in-out infinite}
+@keyframes armTalk{0%,100%{transform:rotate(0)}50%{transform:rotate(-55deg)}}
+@keyframes armTalkL{0%,100%{transform:rotate(0)}50%{transform:rotate(28deg)}}
+.actor.jump .arm.l{animation:armUpL .55s ease-out 2}.actor.jump .arm.r{animation:armUpR .55s ease-out 2}
+@keyframes armUpL{0%,100%{transform:rotate(0)}40%{transform:rotate(150deg)}}
+@keyframes armUpR{0%,100%{transform:rotate(0)}40%{transform:rotate(-150deg)}}
+.actor.walk .leg.l{animation:legSwing .32s ease-in-out 3 alternate}.actor.walk .leg.r{animation:legSwing .32s ease-in-out 3 alternate-reverse}
+.actor.walk .arm.l{animation:legSwing .32s ease-in-out 3 alternate-reverse}.actor.walk .arm.r{animation:legSwing .32s ease-in-out 3 alternate}
+@keyframes legSwing{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+.actor.shiver{animation:shiverX .12s ease-in-out 8}
+@keyframes shiverX{0%,100%{transform:translateX(0)}50%{transform:translateX(-4px)}}
+.actor[data-mood="sad"]{filter:drop-shadow(0 5px 0 rgba(0,0,0,.18)) saturate(.85)}
+@media (prefers-reduced-motion: reduce){.actor,.actor .arm,.actor .leg,.actor .av-mo,.actor .av-mc{animation:none !important}}
 @keyframes talk{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5%) scale(1.04,.96)}}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
 @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-20%)}}
@@ -661,9 +715,20 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .legal{font-size:14px;color:var(--ink-2);text-align:center;margin:12px 0 0;line-height:1.5}
 .legal a{color:var(--blue);font-weight:700}
 .chip.gem{color:var(--blue)}
-.league-badge{font-size:16px}
+.lshield{display:inline-block;vertical-align:middle;line-height:0}
+.lshield svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15))}
+.lshield.locked{filter:grayscale(1);opacity:.35}
+.league-badge{width:18px;height:18px}
 .league-card{margin:4px 0 14px}
-.league-big{font-size:46px;line-height:1}
+.lstrip{display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 2px}
+.lstrip::-webkit-scrollbar{display:none}
+.lstrip .ls{flex:none}
+.lstrip .ls.cur{animation:bob 1.6s ease-in-out infinite}
+.zone{font-size:12px;font-weight:900;letter-spacing:.06em;padding:8px 12px 4px}
+.zone.up{color:var(--green)}
+.zone.safe{color:var(--ink-2)}
+.zone.down{color:var(--red)}
+.rank-row .pos{font-size:16px}
 .review-card{margin-bottom:14px;border-color:var(--purple)}
 .gem-earned{font-family:var(--display);font-size:18px;color:var(--blue);font-weight:600}
 .streak-up{display:flex;align-items:center;gap:12px;text-align:left;border-color:var(--orange)}
@@ -871,7 +936,7 @@ const plural = (n, one, many) => `${n} ${n === 1 ? one : (many || one + 's')}`;
 // EN tiene los textos fijos y EN_RE los que llevan números o nombres. Lo que escriben profes y estudiantes no se toca.
 // Se guarda en el curso de la escuela (DB.course.lang) y en este dispositivo (pandi-lang) para la pantalla de entrada.
 let LANG = (() => { try { return localStorage.getItem('pandi-lang') === 'en' ? 'en' : 'es'; } catch (e) { return 'es'; } })();
-const LEAGUE_EN = {Bronce:'Bronze', Plata:'Silver', Oro:'Gold', Zafiro:'Sapphire', Diamante:'Diamond'};
+const LEAGUE_EN = {Bronce:'Bronze', Plata:'Silver', Oro:'Gold', Zafiro:'Sapphire', Rubí:'Ruby', Esmeralda:'Emerald', Amatista:'Amethyst', Perla:'Pearl', Obsidiana:'Obsidian', Diamante:'Diamond'};
 const EN = {
   // Entrada, barra de abajo y encabezado
   'Usuario':'Username', 'Contraseña':'Password', 'Tu usuario':'Your username', 'Tu contraseña':'Your password', 'Iniciar sesión':'Log in', 'Entrando…':'Logging in…',
@@ -927,7 +992,19 @@ const EN = {
   // Perfil, medallas, recordatorio y voz
   'Termina tu primera lección':'Finish your first lesson', 'Completa la Unidad 1':'Complete Unit 1', '¡A la escuela!':'To school!', 'Completa la Unidad 2':'Complete Unit 2', 'Una lección sin errores':'A lesson with no mistakes', 'Voz de oro':'Golden voice',
   'Racha de 3':'3-day streak', 'Practica 3 días seguidos':'Practice 3 days in a row', 'Tarea lista':'Homework done', 'Envía tu tarea escrita':'Send your written homework', 'Termina una lectura':'Finish a reading', '¡Hello!':'Hello!', 'Lector':'Reader', 'Perfecto':'Perfect',
-  'Medallas':'Medals', 'Mis medallas':'My medals', 'Recordatorio diario':'Daily reminder', 'Hora del recordatorio':'Reminder time', 'Activar':'Turn on', 'Desactivar':'Turn off', 'Probar':'Test',
+  'Medallas':'Medals', 'Mis medallas':'My medals', 'Logros':'Achievements', 'Reto del mes':'Monthly challenge', '¡Reto cumplido! Insignia ganada.':'Challenge complete! Badge earned.', 'Queda 1 día':'1 day left', 'Termina 20 lecciones este mes':'Finish 20 lessons this month', 'Gana 600 XP este mes':'Earn 600 XP this month', 'Practica 12 días este mes':'Practice 12 days this month', 'Haz 8 lecciones sin errores este mes':'Do 8 perfect lessons this month', 'lecciones perfectas':'perfect lessons', 'días':'days', 'Suben de nivel mientras practicas. ¡Llega al nivel máximo de cada uno!':'They level up as you practice. Reach the top level of each one!',
+  'Fuego':'Wildfire', 'Sabio':'Sage', 'Estudioso':'Scholar', 'Perfecto':'Perfect', 'Voz de oro':'Golden voice', 'Lector':'Reader', 'Explorador':'Explorer', 'Campeón':'Champion', 'Amigable':'Friendly', 'Responsable':'Responsible', 'Coleccionista':'Collector',
+  '¡Logro nuevo!':'New achievement!', '¡Logro subió de nivel!':'Achievement leveled up!', 'Madrugador':'Early bird', 'Búho':'Night owl', 'Fin de semana':'Weekend', 'Imparable':'Unstoppable', '¡Nivel completo!':'Level complete!',
+  'Termina una lección antes de las 8 am':'Finish a lesson before 8 am', 'Termina una lección después de las 8 pm':'Finish a lesson after 8 pm', 'Practica un sábado o domingo':'Practice on a Saturday or Sunday', '8 respuestas seguidas sin fallar':'8 correct answers in a row', 'Termina todas las unidades de un nivel':'Finish every unit of a level',
+  '▲ ZONA DE ASCENSO':'▲ PROMOTION ZONE', '● ZONA SEGURA':'● SAFE ZONE', '▼ ZONA DE DESCENSO':'▼ DEMOTION ZONE', 'menos de 1 hora':'less than 1 hour',
+  '⚡ Potenciadores':'⚡ Power-ups', 'Doble XP':'Double XP', 'Activo':'Active', '⚡ ¡Doble XP activo!':'⚡ Double XP active!', 'Cofre de Pandi':"Pandi's chest", 'un cofre de Pandi':"a Pandi's chest", 'Una sorpresa: una prenda nueva o entre 10 y 50 gemas.':'A surprise: a new item or 10 to 50 gems.', '🎁 ¡Sorpresa!':'🎁 Surprise!', '¡Genial!':'Awesome!',
+  'días seguidos':'days in a row', 'lecciones':'lessons', 'lecciones sin errores':'perfect lessons', 'frases dichas en voz alta':'sentences said out loud', 'cuentos leídos':'stories read', 'unidades completas':'units completed', 'ligas alcanzadas':'leagues reached', 'amigos':'friends', 'tareas enviadas':'homework sent', 'cosas de la tienda':'shop items',
+  'Camiseta de rayas':'Striped tee', 'Overol':'Overalls', 'Traje de superhéroe':'Superhero suit', 'Traje de astronauta':'Astronaut suit', 'Chaleco pirata':'Pirate vest', 'Sudadera de gato':'Cat hoodie', 'Sudadera de dinosaurio':'Dino hoodie', 'Traje de gato':'Cat costume', 'Traje de dinosaurio':'Dino costume',
+  'Gorro de fiesta':'Party hat', 'Moño':'Bow', 'Sombrero pirata':'Pirate hat', 'Sombrero de mago':'Wizard hat', 'Aureola':'Halo', 'Gorro de chef':'Chef hat', 'Casco vikingo':'Viking helmet', 'Capucha de gato':'Cat hood', 'Capucha de dinosaurio':'Dino hood',
+  'Lentes de corazón':'Heart glasses', 'Antifaz':'Mask', 'Parche pirata':'Eye patch', 'Monóculo':'Monocle', 'Cara pintada':'Face paint',
+  '🧢 Gorros y sombreros':'🧢 Caps and hats', '🕶️ Lentes y caras':'🕶️ Glasses and faces', '👕 Ropa':'👕 Clothes',
+  'Recordatorio activado: te avisará aunque la app esté cerrada':'Reminder on: it will notify you even with the app closed', 'Recordatorio activado solo en este dispositivo (no se pudo registrar en el servidor)':'Reminder on only on this device (could not register on the server)',
+  'Pandi te manda una notificación a esta hora si ese día todavía no has practicado, aunque la app esté cerrada. Instálala en tu pantalla de inicio para que el aviso llegue siempre.':"Pandi sends you a notification at this time if you haven't practiced that day, even with the app closed. Install it on your home screen so it always arrives.", 'Recordatorio diario':'Daily reminder', 'Hora del recordatorio':'Reminder time', 'Activar':'Turn on', 'Desactivar':'Turn off', 'Probar':'Test',
   'Este navegador no puede mostrar avisos. Instala la app en tu pantalla de inicio.':"This browser can't show notifications. Install the app on your home screen.", 'Permite las notificaciones de Pandi English en los ajustes del teléfono.':'Allow Pandi English notifications in your phone settings.',
   '¡Listo! 🐼':'Done! 🐼', 'Así se verá tu recordatorio de Pandi English.':'This is how your Pandi English reminder will look.',
   'Pandi te avisa a esta hora si ese día todavía no has practicado. Funciona con la app instalada en tu pantalla de inicio; si el teléfono la cierra, el aviso sale al volver a abrirla.':"Pandi reminds you at this time if you haven't practiced that day. It works with the app installed on your home screen; if the phone closes it, the reminder shows when you open it again.",
@@ -1118,6 +1195,22 @@ const EN_RE = [
   [/^Hace (\d+) días$/, (m, n) => `${n} days ago`],
   [/^Nivel (\d+), (.+)$/, (m, n, u) => `Level ${n}, ${tr(u)}`],
   [/^Nivel (\d+)$/, (m, n) => `Level ${n}`],
+  [/^ · Nivel (\d+)$/, (m, n) => ` · Level ${n}`],
+  [/^(.+) · Nivel (\d+)$/, (m, a, n) => `${tr(a)} · Level ${n}`],
+  [/^¡Nivel máximo! (\d+) (.+)$/, (m, n, w) => `Top level! ${n} ${tr(w)}`],
+  [/^(\d+) \/ (\d+) (.+)$/, (m, a, b, w) => `${a} / ${b} ${tr(w)}`],
+  [/^Termina en (.+)$/, (m, x) => `Ends in ${tr(x)}`],
+  [/^Quedan (\d+) días · premio (\d+) 💎$/, (m, n, g) => `${n} days left · prize ${g} 💎`],
+  [/^Queda 1 día · premio (\d+) 💎$/, (m, g) => `1 day left · prize ${g} 💎`],
+  [/^¡Reto del mes cumplido! \+(\d+) 💎$/, (m, g) => `Monthly challenge complete! +${g} 💎`],
+  [/^Reto de (\S+) (\d{4})$/, (m, mes, y) => `${MONTHS[MES.indexOf(mes)] || mes} ${y} challenge`],
+  [/^(\d+) días?$/, (m, n) => `${n} day${n === '1' ? '' : 's'}`],
+  [/^(\d+) horas?$/, (m, n) => `${n} hour${n === '1' ? '' : 's'}`],
+  [/^¡Activo! Te quedan (\d+) min\.$/, (m, n) => `Active! ${n} min left.`],
+  [/^Durante (\d+) minutos, cada lección da el doble de XP\.$/, (m, n) => `For ${n} minutes, every lesson gives double XP.`],
+  [/^Si un día no practicas, salva tu racha\. Hasta 2\. Tienes (\d+)\.$/, (m, n) => `If you skip a day, it saves your streak. Up to 2. You have ${n}.`],
+  [/^¡Te salió: (.+)!$/, (m, x) => `You got: ${tr(x)}!`],
+  [/^¡Te salieron (\d+) gemas!$/, (m, n) => `You got ${n} gems!`],
   [/^NIVEL (\d+)$/, (m, n) => `LEVEL ${n}`],
   [/^Unidad (\d+)$/, (m, n) => `Unit ${n}`],
   [/^Unidad (\d+) · (.+)$/, (m, n, t) => `Unit ${n} · ${t}`],
@@ -1131,7 +1224,7 @@ const EN_RE = [
   [/^(.+) \(tú\)$/, (m, n) => `${n} (you)`],
   [/^(\d+) días? seguidos? · Liga (\S+)$/, (m, n, l) => `${n === '1' ? '1 day' : n + ' days'} in a row · ${LEAGUE_EN[l] || l} League`],
   [/^Liga (\S+)$/, (m, l) => `${LEAGUE_EN[l] || l} League`],
-  [/^(Bronce|Plata|Oro|Zafiro|Diamante)$/, (m, l) => LEAGUE_EN[l]],
+  [/^(Bronce|Plata|Oro|Zafiro|Rubí|Esmeralda|Amatista|Perla|Obsidiana|Diamante)$/, (m, l) => LEAGUE_EN[l]],
   [/^Te faltan (\d+) 💎\. Gana gemas practicando\.$/, (m, n) => `You need ${n} more 💎. Earn gems by practicing.`],
   [/^¿Comprar (.+)\?$/, (m, x) => `Buy ${tr(x)}?`],
   [/^Comprar por (\d+) 💎$/, (m, n) => `Buy for ${n} 💎`],
@@ -1213,6 +1306,7 @@ const EN_RE = [
   [/^Toca la bocina de cada frase para escucharla \(faltan (\d+)\)\.$/, (m, n) => `Tap the speaker on each sentence to hear it (${n} left).`],
   [/^Pista: empieza con “(.+)” y tiene (\d+) letras$/, (m, l, n) => `Hint: it starts with “${l}” and has ${n} letters`],
   [/^Ayuda a (.+): ¿qué respuesta va con la pregunta\?$/, (m, n) => `Help ${n}: which answer goes with the question?`],
+  [/^¡(\d+) seguidas! 🔥$/, (m, n) => `${n} in a row! 🔥`],
   [/^Escucha y toca lo que oíste \((\d+) de (\d+)\)\. Para oírlo otra vez, toca la bocina\.$/, (m, a, b) => `Listen and tap what you heard (${a} of ${b}). To hear it again, tap the speaker.`],
   [/^Escucha y atrapa lo que oíste \((\d+) de (\d+)\)\. Para oírlo otra vez, toca la bocina\.$/, (m, a, b) => `Listen and catch what you heard (${a} of ${b}). To hear it again, tap the speaker.`],
   [/^Escucha cada frase \(faltan (\d+)\)\. Para oír una otra vez, toca su bocina\.$/, (m, n) => `Listen to each sentence (${n} left). To hear one again, tap its speaker.`],
@@ -1275,13 +1369,16 @@ const AV = {
   eyes: [{id:'normal', n:'Normales'}, {id:'happy', n:'Felices'}, {id:'big', n:'Brillantes'}, {id:'wink', n:'Guiño'}],
   mouth: [{id:'smile', n:'Sonrisa'}, {id:'laugh', n:'Risa'}, {id:'grin', n:'Dientes'}, {id:'soft', n:'Tranquila'}],
   top: [{id:'tee', n:'Camiseta'}, {id:'hoodie', n:'Sudadera'}, {id:'collar', n:'Camisa'}, {id:'jersey', n:'Camiseta de fútbol', cost:30}, {id:'explorer', n:'Camisa de explorador', cost:25},
-        {id:'panda', n:'Sudadera de panda', set:'panda'}, {id:'bear', n:'Sudadera de oso', set:'bear'}, {id:'bunny', n:'Sudadera de conejo', set:'bunny'}],
+        {id:'stripes', n:'Camiseta de rayas', cost:25}, {id:'overalls', n:'Overol', cost:35}, {id:'hero', n:'Traje de superhéroe', cost:50}, {id:'astro', n:'Traje de astronauta', cost:55}, {id:'pirateTop', n:'Chaleco pirata', cost:35},
+        {id:'panda', n:'Sudadera de panda', set:'panda'}, {id:'bear', n:'Sudadera de oso', set:'bear'}, {id:'bunny', n:'Sudadera de conejo', set:'bunny'}, {id:'cat', n:'Sudadera de gato', set:'cat'}, {id:'dino', n:'Sudadera de dinosaurio', set:'dino'}],
   head: [{id:'none', n:'Nada'}, {id:'flower', n:'Diadema con flor'}, {id:'cap', n:'Gorra', cost:20}, {id:'capback', n:'Gorra al revés', cost:20}, {id:'beanie', n:'Gorro de lana', cost:25},
          {id:'bandana', n:'Pañoleta', cost:20}, {id:'headphones', n:'Audífonos', cost:30}, {id:'grad', n:'Birrete', cost:40}, {id:'crown', n:'Corona', cost:80},
-         {id:'panda', n:'Capucha de panda', set:'panda'}, {id:'bear', n:'Capucha de oso', set:'bear'}, {id:'bunny', n:'Capucha de conejo', set:'bunny'}],
-  face: [{id:'none', n:'Nada'}, {id:'round', n:'Lentes redondos'}, {id:'square', n:'Lentes cuadrados'}, {id:'sun', n:'Lentes de sol', cost:25}, {id:'star', n:'Lentes de estrella', cost:35}]
+         {id:'party', n:'Gorro de fiesta', cost:20}, {id:'bow', n:'Moño', cost:15}, {id:'pirate', n:'Sombrero pirata', cost:45}, {id:'wizard', n:'Sombrero de mago', cost:50}, {id:'halo', n:'Aureola', cost:40}, {id:'chef', n:'Gorro de chef', cost:30}, {id:'viking', n:'Casco vikingo', cost:60},
+         {id:'panda', n:'Capucha de panda', set:'panda'}, {id:'bear', n:'Capucha de oso', set:'bear'}, {id:'bunny', n:'Capucha de conejo', set:'bunny'}, {id:'cat', n:'Capucha de gato', set:'cat'}, {id:'dino', n:'Capucha de dinosaurio', set:'dino'}],
+  face: [{id:'none', n:'Nada'}, {id:'round', n:'Lentes redondos'}, {id:'square', n:'Lentes cuadrados'}, {id:'sun', n:'Lentes de sol', cost:25}, {id:'star', n:'Lentes de estrella', cost:35},
+         {id:'heart', n:'Lentes de corazón', cost:35}, {id:'mask', n:'Antifaz', cost:30}, {id:'patch', n:'Parche pirata', cost:20}, {id:'monocle', n:'Monóculo', cost:30}, {id:'paint', n:'Cara pintada', cost:25}]
 };
-const AV_SETS = {panda:{n:'Traje de panda', cost:60}, bear:{n:'Traje de oso', cost:60}, bunny:{n:'Traje de conejo', cost:60}};
+const AV_SETS = {panda:{n:'Traje de panda', cost:60}, bear:{n:'Traje de oso', cost:60}, bunny:{n:'Traje de conejo', cost:60}, cat:{n:'Traje de gato', cost:70}, dino:{n:'Traje de dinosaurio', cost:80}};
 const AV_DEFAULT = {v:2, skin:1, hair:'short', hc:1, eyes:'normal', mouth:'smile', top:'tee', tc:4, head:'none', face:'none', bg:0};
 const AV_PRESETS = [
   {skin:2, hair:'curly', hc:1, eyes:'happy', mouth:'laugh', top:'tee', tc:0, head:'none', face:'round', bg:0},
@@ -1301,19 +1398,23 @@ function avNorm(a){
     top:avPick(AV.top, a.top, 'tee'), tc:avIdx(AV.topColor, a.tc), head:avPick(AV.head, a.head, 'none'), face:avPick(AV.face, a.face, 'none'), bg:avIdx(AV.bg, a.bg)};
 }
 let avSeq = 0;
-function avatarSVG(raw){
+// opts.bare: sin fondo ni círculo (para el personaje de cuerpo entero); opts.mood: happy | laugh | sad | scared | surprised | angry | curious
+function avatarSVG(raw, opts = {}){
   const a = avNorm(raw) || AV_DEFAULT, O = '#2A2230', W = 'stroke="' + O + '" stroke-width="2.2" stroke-linejoin="round"';
+  const mood = opts.mood || 'happy';
   const [sk, skd] = AV.skin[a.skin], hc = AV.hairColor[a.hc], tc = AV.topColor[a.tc];
-  const hood = ['panda', 'bear', 'bunny'].includes(a.head) ? a.head : null;
-  const HOOD = {panda:{c:'#FFFFFF', e:'#2A2230', i:'#2A2230'}, bear:{c:'#9A6440', e:'#9A6440', i:'#D9A77A'}, bunny:{c:'#FFFFFF', e:'#FFFFFF', i:'#F7A8C4'}};
+  const hood = ['panda', 'bear', 'bunny', 'cat', 'dino'].includes(a.head) ? a.head : null;
+  const HOOD = {panda:{c:'#FFFFFF', e:'#2A2230', i:'#2A2230'}, bear:{c:'#9A6440', e:'#9A6440', i:'#D9A77A'}, bunny:{c:'#FFFFFF', e:'#FFFFFF', i:'#F7A8C4'}, cat:{c:'#FF8A1F', e:'#FF8A1F', i:'#FBD3E2'}, dino:{c:'#3CB45A', e:'#3CB45A', i:'#FFC83D'}};
   const id = 'avc' + (++avSeq);
   const s = [];
-  s.push(`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})">`);
-  s.push(`<rect width="120" height="120" fill="${AV.bg[a.bg]}"/>`);
+  if (opts.bare) s.push(`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g>`);
+  else s.push(`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#${id})"><rect width="120" height="120" fill="${AV.bg[a.bg]}"/>`);
   // capucha (parte de atrás y orejas)
   if (hood){
     const H = HOOD[hood];
     if (hood === 'bunny') s.push(`<ellipse cx="45" cy="14" rx="8" ry="20" fill="${H.e}" ${W}/><ellipse cx="75" cy="14" rx="8" ry="20" fill="${H.e}" ${W}/><ellipse cx="45" cy="16" rx="4" ry="14" fill="${H.i}"/><ellipse cx="75" cy="16" rx="4" ry="14" fill="${H.i}"/>`);
+    else if (hood === 'cat') s.push(`<path d="M30 40 L28 12 L52 26 Z" fill="${H.e}" ${W}/><path d="M90 40 L92 12 L68 26 Z" fill="${H.e}" ${W}/><path d="M34 34 L33 19 L47 27 Z" fill="${H.i}"/><path d="M86 34 L87 19 L73 27 Z" fill="${H.i}"/>`);
+    else if (hood === 'dino') s.push([[60, 12], [44, 18], [76, 18], [32, 32], [88, 32]].map(([x, y]) => `<path d="M${x - 8} ${y + 12} L${x} ${y - 2} L${x + 8} ${y + 12} Z" fill="${H.i}" ${W}/>`).join(''));
     else s.push(`<circle cx="33" cy="25" r="11" fill="${H.e}" ${W}/><circle cx="87" cy="25" r="11" fill="${H.e}" ${W}/>` + (hood === 'bear' ? `<circle cx="33" cy="25" r="5.5" fill="${H.i}"/><circle cx="87" cy="25" r="5.5" fill="${H.i}"/>` : ''));
     s.push(`<ellipse cx="60" cy="55" rx="34" ry="35" fill="${H.c}" ${W}/>`);
   }
@@ -1321,7 +1422,7 @@ function avatarSVG(raw){
   if (!hood){
     if (a.hair === 'long') s.push(`<path d="M34 50 C29 76 31 96 39 106 L81 106 C89 96 91 76 86 50 Z" fill="${hc}" ${W}/>`);
     if (a.hair === 'bob') s.push(`<path d="M33 48 C30 64 32 78 39 82 L81 82 C88 78 90 64 87 48 Z" fill="${hc}" ${W}/>`);
-    if (a.hair === 'buns' && !['cap', 'capback', 'beanie', 'bandana', 'grad'].includes(a.head)) s.push(`<circle cx="39" cy="28" r="11" fill="${hc}" ${W}/><circle cx="81" cy="28" r="11" fill="${hc}" ${W}/>`);
+    if (a.hair === 'buns' && !['cap', 'capback', 'beanie', 'bandana', 'grad', 'pirate', 'wizard', 'chef', 'viking', 'party'].includes(a.head)) s.push(`<circle cx="39" cy="28" r="11" fill="${hc}" ${W}/><circle cx="81" cy="28" r="11" fill="${hc}" ${W}/>`);
     if (a.hair === 'braids') [36, 84].forEach(x => { for (let y = 70; y <= 98; y += 9) s.push(`<ellipse cx="${x}" cy="${y}" rx="5.5" ry="6" fill="${hc}" ${W}/>`); s.push(`<circle cx="${x}" cy="106" r="3" fill="#F06BAA" ${W}/>`); });
   }
   // ropa (cuello, cuerpo)
@@ -1332,10 +1433,17 @@ function avatarSVG(raw){
   if (a.top === 'panda') s.push(`<path d="${body}" fill="#2A2230" ${W}/><path d="M42 124 C43 106 50 97 60 97 C70 97 77 106 78 124 Z" fill="#FFFFFF" ${W}/>`);
   else if (a.top === 'bear') s.push(`<path d="${body}" fill="#9A6440" ${W}/><path d="M42 124 C43 106 50 97 60 97 C70 97 77 106 78 124 Z" fill="#D9A77A" ${W}/>`);
   else if (a.top === 'bunny') s.push(`<path d="${body}" fill="#FFFFFF" ${W}/><path d="M44 124 C45 108 51 99 60 99 C69 99 75 108 76 124 Z" fill="#FBD3E2" ${W}/>`);
+  else if (a.top === 'cat') s.push(`<path d="${body}" fill="#FF8A1F" ${W}/><path d="M44 124 C45 108 51 99 60 99 C69 99 75 108 76 124 Z" fill="#FFE0C7" ${W}/>`);
+  else if (a.top === 'dino') s.push(`<path d="${body}" fill="#3CB45A" ${W}/><path d="M44 124 C45 108 51 99 60 99 C69 99 75 108 76 124 Z" fill="#C9F0D6" ${W}/><path d="M14 112 L10 100 L20 106 Z M106 112 L110 100 L100 106 Z" fill="#FFC83D" ${W}/>`);
+  else if (a.top === 'hero') s.push(`<path d="${body}" fill="#3D86F0" ${W}/><path d="M12 124 C8 108 20 96 34 92 L44 124 Z M108 124 C112 108 100 96 86 92 L76 124 Z" fill="#E8463C" ${W}/><path d="M60 100 L68 104 L68 112 Q60 118 52 112 L52 104 Z" fill="#FFC83D" ${W}/><text x="60" y="113" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="9" fill="#E8463C">P</text>`);
+  else if (a.top === 'astro') s.push(`<path d="${body}" fill="#F3F3F7" ${W}/><path d="M46 92 Q60 100 74 92 L74 100 Q60 108 46 100 Z" fill="#8C96A8" ${W}/><rect x="50" y="106" width="20" height="10" rx="3" fill="#3D86F0" ${W}/><circle cx="36" cy="110" r="4" fill="#E8463C" ${W}/><path d="M16 120 L104 120" stroke="#8C96A8" stroke-width="3"/>`);
+  else if (a.top === 'pirateTop') s.push(`<path d="${body}" fill="#FFFFFF" ${W}/><path d="M22 124 C22 104 36 94 49 89 Q54 100 52 124 Z M98 124 C98 104 84 94 71 89 Q66 100 68 124 Z" fill="#2A2230" ${W}/><path d="M28 100 L112 110 M8 110 L92 100" stroke="#E8463C" stroke-width="3" opacity=".9"/><path d="M8 118 L112 118" stroke="#E8463C" stroke-width="5"/>`);
   else {
     const col = a.top === 'explorer' ? '#B8A777' : tc;
     s.push(`<path d="${body}" fill="${col}" ${W}/>`);
-    if (a.top === 'tee' || a.top === 'jersey') s.push(`<path d="M49 89 Q60 101 71 89" fill="none" stroke="${O}" stroke-width="2.2"/><path d="M50 90.5 Q60 99 70 90.5" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="3"/>`);
+    if (a.top === 'stripes') s.push(`<path d="M14 104 L106 104 M12 114 L108 114" stroke="#FFFFFF" stroke-width="5" opacity=".9"/>`);
+    if (a.top === 'overalls') s.push(`<path d="M36 90 L40 124 M84 90 L80 124" stroke="#3D86F0" stroke-width="7"/><path d="M40 108 L80 108 L80 124 L40 124 Z" fill="#3D86F0" ${W}/><rect x="52" y="112" width="16" height="9" rx="2" fill="#1F5FBF" ${W}/><circle cx="40" cy="106" r="2.2" fill="#FFC83D" ${W}/><circle cx="80" cy="106" r="2.2" fill="#FFC83D" ${W}/>`);
+    if (a.top === 'tee' || a.top === 'jersey' || a.top === 'stripes') s.push(`<path d="M49 89 Q60 101 71 89" fill="none" stroke="${O}" stroke-width="2.2"/><path d="M50 90.5 Q60 99 70 90.5" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="3"/>`);
     if (a.top === 'jersey') s.push(`<path d="M30 124 L33 100 M90 124 L87 100" stroke="#FFFFFF" stroke-width="4"/><text x="60" y="117" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="15" fill="#FFFFFF" stroke="${O}" stroke-width=".8">10</text>`);
     if (a.top === 'hoodie') s.push(`<path d="M55 96 L54 112 M65 96 L66 112" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/><circle cx="54" cy="113" r="2" fill="#FFFFFF" ${W}/><circle cx="66" cy="113" r="2" fill="#FFFFFF" ${W}/>`);
     if (a.top === 'collar' || a.top === 'explorer') s.push(`<path d="M49 89 L57 101 L50 104 L43 93 Z" fill="${col}" ${W}/><path d="M71 89 L63 101 L70 104 L77 93 Z" fill="${col}" ${W}/><path d="M60 100 L60 124" stroke="${O}" stroke-width="1.6"/><circle cx="60" cy="108" r="1.4" fill="${O}"/><circle cx="60" cy="116" r="1.4" fill="${O}"/>`);
@@ -1347,19 +1455,31 @@ function avatarSVG(raw){
   // cara
   s.push(`<ellipse cx="44" cy="66" rx="4.6" ry="2.7" fill="#F2847C" opacity=".45"/><ellipse cx="76" cy="66" rx="4.6" ry="2.7" fill="#F2847C" opacity=".45"/>`);
   const brow = a.hair === 'buzz' || a.hc === 0 ? hc : hc;
-  s.push(`<path d="M45 48 Q50 45.5 55 48 M65 48 Q70 45.5 75 48" fill="none" stroke="${brow}" stroke-width="2.4" stroke-linecap="round"/>`);
+  // cejas según el ánimo: tristes (suben por dentro), asustadas o sorprendidas (altas), enojadas (bajan por dentro)
+  const BROWS = {sad:'M45 47 Q50 46.5 55 49.5 M65 49.5 Q70 46.5 75 47', scared:'M45 45 Q50 42 55 45 M65 45 Q70 42 75 45', surprised:'M45 44.5 Q50 41.5 55 44.5 M65 44.5 Q70 41.5 75 44.5',
+    angry:'M45 45 Q50 46 55 49.5 M65 49.5 Q70 46 75 45', curious:'M45 48 Q50 45.5 55 48 M65 45.5 Q70 42.5 75 45.5'};
+  s.push(`<path d="${BROWS[mood] || 'M45 48 Q50 45.5 55 48 M65 48 Q70 45.5 75 48'}" fill="none" stroke="${brow}" stroke-width="2.4" stroke-linecap="round"/>`);
   const eye = (x) => `<ellipse cx="${x}" cy="57" rx="3.3" ry="4.1" fill="${O}"/><circle cx="${x + 1.1}" cy="55.6" r="1.2" fill="#FFFFFF"/>`;
   const happy = (x) => `<path d="M${x - 4.5} 58.5 Q${x} 53 ${x + 4.5} 58.5" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/>`;
-  if (a.eyes === 'normal') s.push(eye(50) + eye(70));
-  if (a.eyes === 'happy') s.push(happy(50) + happy(70));
-  if (a.eyes === 'wink') s.push(eye(50) + happy(70));
-  if (a.eyes === 'big') s.push([50, 70].map(x => `<ellipse cx="${x}" cy="57" rx="4.4" ry="5.2" fill="${O}"/><circle cx="${x + 1.4}" cy="55" r="1.8" fill="#FFFFFF"/><circle cx="${x - 1.3}" cy="59.2" r=".9" fill="#FFFFFF"/>`).join(''));
-  if (a.mouth === 'smile') s.push(`<path d="M52 67 Q60 74 68 67" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`);
-  if (a.mouth === 'soft') s.push(`<path d="M54.5 68 Q60 71.5 65.5 68" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`);
-  if (a.mouth === 'laugh') s.push(`<path d="M51 66 Q60 67.5 69 66 Q67 77 60 77 Q53 77 51 66 Z" fill="#8E2A2A" ${W}/><path d="M55 74.5 Q60 71 65 74.5 Q63 77 60 77 Q57 77 55 74.5 Z" fill="#F07A7A"/>`);
-  if (a.mouth === 'grin') s.push(`<path d="M50 65.5 Q60 67.5 70 65.5 Q68 76 60 76 Q52 76 50 65.5 Z" fill="#FFFFFF" ${W}/><path d="M51.5 69.5 Q60 71 68.5 69.5" fill="none" stroke="${O}" stroke-width="1.3"/>`);
+  const eyes = {sad:'normal', scared:'big', surprised:'big', laugh:'happy', angry:'normal', curious:'normal'}[mood] || a.eyes;
+  if (eyes === 'normal') s.push(eye(50) + eye(70));
+  if (eyes === 'happy') s.push(happy(50) + happy(70));
+  if (eyes === 'wink') s.push(eye(50) + happy(70));
+  if (eyes === 'big') s.push([50, 70].map(x => `<ellipse cx="${x}" cy="57" rx="4.4" ry="5.2" fill="${O}"/><circle cx="${x + 1.4}" cy="55" r="1.8" fill="#FFFFFF"/><circle cx="${x - 1.3}" cy="59.2" r=".9" fill="#FFFFFF"/>`).join(''));
+  if (mood === 'sad') s.push(`<path d="M46 62 q1.5 4 0 7 q-1.5 -3 0 -7 Z" fill="#5BC0EB" ${W.replace('2.2', '1')}/>`); // una lágrima
+  // boca: la cerrada (según el ánimo) y la abierta, que el escenario alterna mientras el personaje habla (.talking)
+  const MOUTH = {smile:`<path d="M52 67 Q60 74 68 67" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`,
+    soft:`<path d="M54.5 68 Q60 71.5 65.5 68" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`,
+    laugh:`<path d="M51 66 Q60 67.5 69 66 Q67 77 60 77 Q53 77 51 66 Z" fill="#8E2A2A" ${W}/><path d="M55 74.5 Q60 71 65 74.5 Q63 77 60 77 Q57 77 55 74.5 Z" fill="#F07A7A"/>`,
+    grin:`<path d="M50 65.5 Q60 67.5 70 65.5 Q68 76 60 76 Q52 76 50 65.5 Z" fill="#FFFFFF" ${W}/><path d="M51.5 69.5 Q60 71 68.5 69.5" fill="none" stroke="${O}" stroke-width="1.3"/>`,
+    frown:`<path d="M52 72 Q60 65.5 68 72" fill="none" stroke="${O}" stroke-width="2.4" stroke-linecap="round"/>`,
+    o:`<ellipse cx="60" cy="70" rx="4" ry="5" fill="#8E2A2A" ${W}/>`,
+    flat:`<path d="M53 70 L67 70" fill="none" stroke="${O}" stroke-width="2.6" stroke-linecap="round"/>`};
+  const closed = {sad:'frown', scared:'o', surprised:'o', laugh:'laugh', angry:'flat'}[mood] || a.mouth;
+  const open = mood === 'sad' || mood === 'angry' ? `<path d="M53 68 Q60 66.5 67 68 Q66 75 60 75 Q54 75 53 68 Z" fill="#8E2A2A" ${W}/>` : `<path d="M52 66.5 Q60 68 68 66.5 Q67 77.5 60 77.5 Q53 77.5 52 66.5 Z" fill="#8E2A2A" ${W}/><path d="M55 75 Q60 72 65 75 Q63 77.5 60 77.5 Q57 77.5 55 75 Z" fill="#F07A7A"/>`;
+  s.push(`<g class="av-m"><g class="av-mc">${MOUTH[closed] || MOUTH.smile}</g><g class="av-mo">${open}</g></g>`);
   // pelo de adelante (con gorra, gorro, pañoleta o birrete el pelo queda metido debajo)
-  const tucked = ['cap', 'capback', 'beanie', 'bandana', 'grad'].includes(a.head);
+  const tucked = ['cap', 'capback', 'beanie', 'bandana', 'grad', 'pirate', 'wizard', 'chef', 'viking', 'party'].includes(a.head);
   if (!hood && tucked){
     s.push(`<path d="M34 57 C32 49 33 44 36 41 L84 41 C87 44 88 49 86 57 C82 50 74 47 60 47 C46 47 38 50 34 57 Z" fill="${hc}" ${W}/>`);
   } else if (!hood){
@@ -1386,6 +1506,8 @@ function avatarSVG(raw){
     if (hood === 'panda') s.push(`<ellipse cx="49" cy="27.5" rx="5.2" ry="4" transform="rotate(-18 49 27.5)" fill="#2A2230"/><ellipse cx="71" cy="27.5" rx="5.2" ry="4" transform="rotate(18 71 27.5)" fill="#2A2230"/><circle cx="50" cy="27" r="1.4" fill="#FFFFFF"/><circle cx="72" cy="27" r="1.4" fill="#FFFFFF"/><ellipse cx="60" cy="30.5" rx="2.4" ry="1.6" fill="#2A2230"/>`);
     if (hood === 'bear') s.push(`<circle cx="50" cy="27" r="1.8" fill="#2A2230"/><circle cx="70" cy="27" r="1.8" fill="#2A2230"/><ellipse cx="60" cy="30" rx="3" ry="2" fill="#2A2230"/>`);
     if (hood === 'bunny') s.push(`<circle cx="50" cy="27" r="1.8" fill="#2A2230"/><circle cx="70" cy="27" r="1.8" fill="#2A2230"/><path d="M58 29.5 L62 29.5 L60 31.5 Z" fill="#F7A8C4"/>`);
+    if (hood === 'cat') s.push(`<ellipse cx="50" cy="27" rx="2.2" ry="3" fill="#2A2230"/><ellipse cx="70" cy="27" rx="2.2" ry="3" fill="#2A2230"/><path d="M58 30 L62 30 L60 32 Z" fill="#F06BAA"/><path d="M40 30 L52 31 M40 34 L52 33 M80 30 L68 31 M80 34 L68 33" stroke="#2A2230" stroke-width="1.2"/>`);
+    if (hood === 'dino') s.push(`<circle cx="50" cy="27" r="2.6" fill="#FFFFFF" ${W}/><circle cx="70" cy="27" r="2.6" fill="#FFFFFF" ${W}/><circle cx="50.5" cy="27.5" r="1.2" fill="#2A2230"/><circle cx="70.5" cy="27.5" r="1.2" fill="#2A2230"/><path d="M54 32 L58 30 L62 32 L66 30" fill="none" stroke="#FFFFFF" stroke-width="2"/>`);
   }
   // gorros y diademas (encima del pelo, pegados a la cabeza)
   const hd = a.head;
@@ -1397,12 +1519,24 @@ function avatarSVG(raw){
   if (hd === 'headphones') s.push(`<path d="M33 54 C31 22 89 22 87 54" fill="none" stroke="${O}" stroke-width="7" stroke-linecap="round"/><path d="M33 54 C31 22 89 22 87 54" fill="none" stroke="#17A7A7" stroke-width="4" stroke-linecap="round"/><rect x="26" y="47" width="12" height="20" rx="5" fill="#17A7A7" ${W}/><rect x="82" y="47" width="12" height="20" rx="5" fill="#17A7A7" ${W}/>`);
   if (hd === 'grad') s.push(`<path d="M41 30 L41 39 Q60 46 79 39 L79 30 Z" fill="#2A2230" ${W}/><path d="M60 14 L95 25 L60 36 L25 25 Z" fill="#3A3346" ${W}/><circle cx="60" cy="25" r="2" fill="#FFC83D"/><path d="M60 25 L88 31 L88 43" fill="none" stroke="#FFC83D" stroke-width="2"/><rect x="85.5" y="42" width="5" height="7" rx="1.5" fill="#FFC83D"/>`);
   if (hd === 'crown') s.push(`<path d="M38 34 L41 14 L51 26 L60 9 L69 26 L79 14 L82 34 Z" fill="#FFC83D" ${W}/><circle cx="60" cy="27" r="3" fill="#E8463C" ${W}/><circle cx="47" cy="30" r="2.2" fill="#3D86F0" ${W}/><circle cx="73" cy="30" r="2.2" fill="#3CB45A" ${W}/>`);
+  if (hd === 'party') s.push(`<path d="M44 44 L60 4 L76 44 Z" fill="#F06BAA" ${W}/><path d="M50 30 L70 30 M47 38 L73 38" stroke="#FFC83D" stroke-width="3"/><circle cx="60" cy="5" r="4" fill="#FFC83D" ${W}/>`);
+  if (hd === 'bow') s.push(`<path d="M80 30 L68 36 L80 42 Z M80 30 L92 24 L92 48 L80 42 Z" fill="#E8463C" ${W}/><path d="M68 36 L54 30 L54 42 Z" fill="#E8463C" ${W}/><circle cx="68" cy="36" r="3.5" fill="#FFC83D" ${W}/>`);
+  if (hd === 'pirate') s.push(`<path d="M22 46 C28 26 48 14 60 14 C72 14 92 26 98 46 C84 40 36 40 22 46 Z" fill="#2A2230" ${W}/><path d="M22 46 C40 36 80 36 98 46" fill="none" stroke="#FFC83D" stroke-width="2.4"/><circle cx="60" cy="28" r="4" fill="#FFFFFF"/><path d="M53 34 L67 38 M53 38 L67 34" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>`);
+  if (hd === 'wizard') s.push(`<path d="M28 46 L60 44 L92 46 L82 40 L66 -2 L38 40 Z" fill="#8E5BD8" ${W}/><path d="M28 46 Q60 38 92 46 Q60 52 28 46 Z" fill="#5E36A0" ${W}/><path d="M56 20 l2 -5 l2 5 l5 1 l-4 3 l1 5 l-4 -3 l-4 3 l1 -5 l-4 -3 Z" fill="#FFC83D"/>`);
+  if (hd === 'halo') s.push(`<ellipse cx="60" cy="14" rx="20" ry="6" fill="none" stroke="#FFC83D" stroke-width="5"/><ellipse cx="60" cy="14" rx="20" ry="6" fill="none" stroke="${O}" stroke-width="1" opacity=".5"/>`);
+  if (hd === 'chef') s.push(`<path d="M38 46 L38 34 C24 32 26 14 40 16 C44 4 76 4 80 16 C94 14 96 32 82 34 L82 46 Z" fill="#FFFFFF" ${W}/><path d="M38 40 L82 40" stroke="${O}" stroke-width="1.5" opacity=".4"/>`);
+  if (hd === 'viking') s.push(`<path d="M34 47 C33 27 46 19 60 19 C75 19 87 27 86 47 Z" fill="#8C96A8" ${W}/><path d="M32 46 L88 46" stroke="#FFC83D" stroke-width="4"/><path d="M36 36 C24 36 18 24 22 12 C30 20 34 24 40 28 Z" fill="#F5F0E6" ${W}/><path d="M84 36 C96 36 102 24 98 12 C90 20 86 24 80 28 Z" fill="#F5F0E6" ${W}/>`);
   // lentes
   const fc = a.face;
   if (fc === 'round') s.push(`<circle cx="50" cy="57" r="7.5" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><circle cx="70" cy="57" r="7.5" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><path d="M57.5 56 Q60 54 62.5 56 M42.5 56 L36 54 M77.5 56 L84 54" fill="none" stroke="${O}" stroke-width="2.4"/>`);
   if (fc === 'square') s.push(`<rect x="41" y="51" width="17" height="12" rx="3" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><rect x="62" y="51" width="17" height="12" rx="3" fill="rgba(255,255,255,.18)" stroke="${O}" stroke-width="2.6"/><path d="M58 56 L62 56 M41 55 L35 53 M79 55 L85 53" stroke="${O}" stroke-width="2.4"/>`);
   if (fc === 'sun') s.push(`<path d="M40 52 L58 52 L57 60 Q49 66 42 60 Z" fill="#2A2230" ${W}/><path d="M62 52 L80 52 L78 60 Q71 66 63 60 Z" fill="#2A2230" ${W}/><path d="M58 53 L62 53 M40 53 L35 52 M80 53 L85 52" stroke="${O}" stroke-width="2.4"/><path d="M44 55 L48 55 M66 55 L70 55" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`);
   if (fc === 'star'){ const st = (cx, cy) => { let d = ''; for (let i = 0; i < 10; i++){ const r = i % 2 ? 4.2 : 9, t = -Math.PI / 2 + i * Math.PI / 5; d += (i ? 'L' : 'M') + (cx + Math.cos(t) * r).toFixed(1) + ' ' + (cy + Math.sin(t) * r).toFixed(1); } return `<path d="${d}Z" fill="#F06BAA" ${W}/>`; }; s.push(st(50, 57) + st(70, 57) + `<path d="M58 56 L62 56" stroke="${O}" stroke-width="2.4"/>`); }
+  if (fc === 'heart'){ const ht = (cx, cy) => `<path d="M${cx} ${cy + 7} C${cx - 10} ${cy - 1} ${cx - 6} ${cy - 9} ${cx} ${cy - 4} C${cx + 6} ${cy - 9} ${cx + 10} ${cy - 1} ${cx} ${cy + 7} Z" fill="#E8463C" opacity=".85" ${W}/>`; s.push(ht(50, 56) + ht(70, 56) + `<path d="M58 55 L62 55" stroke="${O}" stroke-width="2.4"/>`); }
+  if (fc === 'mask') s.push(`<path d="M36 50 C44 46 54 48 60 52 C66 48 76 46 84 50 C86 58 78 66 70 64 C66 63 62 60 60 58 C58 60 54 63 50 64 C42 66 34 58 36 50 Z" fill="#2A2230" ${W}/><ellipse cx="50" cy="56" rx="4" ry="3.5" fill="#FFFFFF"/><ellipse cx="70" cy="56" rx="4" ry="3.5" fill="#FFFFFF"/><circle cx="50" cy="56" r="1.8" fill="${O}"/><circle cx="70" cy="56" r="1.8" fill="${O}"/>`);
+  if (fc === 'patch') s.push(`<ellipse cx="70" cy="57" rx="7" ry="6" fill="#2A2230" ${W}/><path d="M36 48 L64 53 M76 53 L86 50" stroke="${O}" stroke-width="2"/>`);
+  if (fc === 'monocle') s.push(`<circle cx="70" cy="57" r="8" fill="rgba(255,255,255,.18)" stroke="#FFC83D" stroke-width="2.6"/><circle cx="70" cy="57" r="8" fill="none" stroke="${O}" stroke-width="1" opacity=".4"/><path d="M76 63 Q82 72 78 80" fill="none" stroke="${O}" stroke-width="1.6"/>`);
+  if (fc === 'paint') s.push(`<path d="M42 64 L46 60 L50 64 L54 60 L58 64" fill="none" stroke="#3D86F0" stroke-width="2.4" stroke-linecap="round"/><path d="M62 64 L66 60 L70 64 L74 60 L78 64" fill="none" stroke="#E8463C" stroke-width="2.4" stroke-linecap="round"/><circle cx="60" cy="47" r="3" fill="#FFC83D" ${W.replace('2.2', '1.2')}/>`);
   s.push('</g></svg>');
   return s.join('');
 }
@@ -3488,24 +3622,79 @@ const fridayKey = (weeks = 0) => { const d = new Date(); const add = (5 - d.getD
 const fmtDay = k => new Date(k + 'T12:00').toLocaleDateString(LANG === 'en' ? 'en-US' : 'es-NI', {weekday:'long', day:'numeric', month:'long'});
 const A1_DEFAULT = () => ({id:'a1', title:'Semana 1 · My birthday', due:fridayKey(0), lessons:['n1u1l1','n1u1l2','n1u1l3','n1u1l5'], writing:{title:'Mi cumpleaños', prompt:'Escribe 3 oraciones en inglés sobre ti. Usa “My name’s…”, “I’m… (tu edad)” y tu color favorito.'}});
 
+// Insignias de una sola vez (se guardan en progress.medals). Las marcadas `old` son de versiones anteriores:
+// ya no se ganan (ahora son logros con niveles), pero siguen teniendo dibujo para quien ya las tenía.
 const MEDALS = [
   {id:'first', g:'🌱', name:'Primer paso', desc:'Termina tu primera lección'},
   {id:'u1', g:'👋', name:'¡Hello!', desc:'Completa la Unidad 1'},
   {id:'u2', g:'🏫', name:'¡A la escuela!', desc:'Completa la Unidad 2'},
-  {id:'perfect', g:'💯', name:'Perfecto', desc:'Una lección sin errores'},
-  {id:'voice', g:'🎤', name:'Voz de oro', desc:'Di 5 frases en voz alta'},
-  {id:'xp100', g:'⭐', name:'100 XP', desc:'Junta 100 puntos'},
-  {id:'streak3', g:'🔥', name:'Racha de 3', desc:'Practica 3 días seguidos'},
-  {id:'homework', g:'📒', name:'Tarea lista', desc:'Envía tu tarea escrita'},
-  {id:'reader', g:'📖', name:'Lector', desc:'Termina una lectura'}
+  {id:'early', g:'🌅', name:'Madrugador', desc:'Termina una lección antes de las 8 am'},
+  {id:'owl', g:'🦉', name:'Búho', desc:'Termina una lección después de las 8 pm'},
+  {id:'weekend', g:'🎉', name:'Fin de semana', desc:'Practica un sábado o domingo'},
+  {id:'combo8', g:'⚡', name:'Imparable', desc:'8 respuestas seguidas sin fallar'},
+  {id:'level', g:'🚀', name:'¡Nivel completo!', desc:'Termina todas las unidades de un nivel'},
+  {id:'perfect', g:'💯', name:'Perfecto', desc:'Una lección sin errores', old:true},
+  {id:'voice', g:'🎤', name:'Voz de oro', desc:'Di 5 frases en voz alta', old:true},
+  {id:'xp100', g:'⭐', name:'100 XP', desc:'Junta 100 puntos', old:true},
+  {id:'streak3', g:'🔥', name:'Racha de 3', desc:'Practica 3 días seguidos', old:true},
+  {id:'homework', g:'📒', name:'Tarea lista', desc:'Envía tu tarea escrita', old:true},
+  {id:'reader', g:'📖', name:'Lector', desc:'Termina una lectura', old:true}
 ];
+// Logros con niveles (como los de Duolingo): cada uno sube de nivel al llegar a la siguiente meta de `tiers`.
+// El nivel alcanzado se guarda en progress.ach = {id: nivel}; el valor se calcula del progreso (`val`).
+const ACHV = [
+  {id:'fire', g:'🔥', name:'Fuego', what:'días seguidos', tiers:[3, 7, 14, 30, 60, 100, 365], val:p => Math.max(streakOf(p), p.best || 0)},
+  {id:'sage', g:'⭐', name:'Sabio', what:'XP', tiers:[100, 500, 1000, 2500, 5000, 10000, 25000], val:p => p.xp || 0},
+  {id:'scholar', g:'📚', name:'Estudioso', what:'lecciones', tiers:[5, 20, 50, 100, 200, 400, 610], val:p => doneOf(p)},
+  {id:'perfect', g:'💯', name:'Perfecto', what:'lecciones sin errores', tiers:[1, 5, 15, 30, 60, 100], val:p => p.perfects || 0},
+  {id:'voice', g:'🎤', name:'Voz de oro', what:'frases dichas en voz alta', tiers:[5, 25, 75, 150, 300, 600], val:p => p.spoken || 0},
+  {id:'reader', g:'📖', name:'Lector', what:'cuentos leídos', tiers:[1, 5, 15, 30, 60], val:p => units().reduce((n, u) => n + u.lessons.filter(l => l.kind === 'Cuento' && p.done[l.id]).length, 0)},
+  {id:'explorer', g:'🗺️', name:'Explorador', what:'unidades completas', tiers:[1, 4, 8, 16, 32, 48], val:p => units().filter(u => unitDone(u, p)).length},
+  {id:'champion', g:'🏆', name:'Campeón', what:'ligas alcanzadas', tiers:[1, 2, 3, 5, 7, 9], val:p => Math.max(leagueOf(p).lvl, p.bestLeague || 0)},
+  {id:'friendly', g:'🤝', name:'Amigable', what:'amigos', tiers:[1, 3, 5, 10], val:p => p === S && U ? friendIds(U.id).length : 0},
+  {id:'homework', g:'📒', name:'Responsable', what:'tareas enviadas', tiers:[1, 5, 10, 25, 50], val:p => Object.values(p.hw || {}).filter(x => x && x.sentAt).length},
+  {id:'collector', g:'💎', name:'Coleccionista', what:'cosas de la tienda', tiers:[1, 3, 6, 10, 15], val:p => (p.owned || []).length}
+];
+// Reto del mes (como los retos mensuales de Duolingo): cada mes hay una meta distinta; al cumplirla se gana
+// una insignia con el mes y el año que queda para siempre en Medallas (progress.monthly = {'2026-11': 1}),
+// así nunca se acaban los incentivos. Lecciones y lecciones perfectas del mes se cuentan en progress.months.
+const MONTH_G = ['❄️', '💘', '🌸', '🌧️', '🌼', '☀️', '🏖️', '🌻', '🍂', '🎃', '🍁', '🎄'];
+const MONTH_Q = [
+  {t:'lessons', goal:20, what:'lecciones', desc:'Termina 20 lecciones este mes'},
+  {t:'xp', goal:600, what:'XP', desc:'Gana 600 XP este mes'},
+  {t:'days', goal:12, what:'días', desc:'Practica 12 días este mes'},
+  {t:'perfect', goal:8, what:'lecciones perfectas', desc:'Haz 8 lecciones sin errores este mes'}
+];
+const MONTH_GEMS = 30;
+const monthKey = () => today().slice(0, 7);
+const monthQuest = k => { const [y, m] = k.split('-').map(Number); return {...MONTH_Q[(y * 12 + m) % MONTH_Q.length], g:MONTH_G[m - 1], name:`Reto de ${MES[m - 1]} ${y}`, k}; };
+function monthVal(p, q){
+  const k = q.k, mm = (p.months || {})[k] || {};
+  if (q.t === 'lessons') return mm.lessons || 0;
+  if (q.t === 'perfect') return mm.perfect || 0;
+  if (q.t === 'xp') return Object.entries(p.xpDays || {}).filter(([d]) => d.startsWith(k)).reduce((a, [, v]) => a + v, 0);
+  return (p.days || []).filter(d => d.startsWith(k)).length;
+}
+const monthBadges = p => Object.keys(p.monthly || {}).sort().reverse().map(k => monthQuest(k));
+function monthCard(){
+  const q = monthQuest(monthKey()), v = monthVal(S, q), done = !!(S.monthly || {})[q.k];
+  const pct = Math.min(100, Math.round(v / q.goal * 100));
+  const [y, m] = q.k.split('-').map(Number), left = new Date(y, m, 0).getDate() - Number(today().slice(8, 10));
+  return h('div', {class:'card month-card' + (done ? ' done' : '')},
+    h('div', {style:'display:flex;align-items:center;gap:12px'}, h('div', {class:'mg'}, q.g), h('div', {style:'flex:1;min-width:0'}, h('div', {class:'lbl'}, 'Reto del mes'), h('b', {style:'font-size:18px;display:block'}, q.desc), h('small', {class:'muted', style:'font-weight:700'}, done ? '¡Reto cumplido! Insignia ganada.' : (left === 1 ? 'Queda 1 día' : `Quedan ${left} días`) + ` · premio ${MONTH_GEMS} 💎`))),
+    h('div', {class:'bar', style:'margin-top:10px'}, h('i', {style:`width:${pct}%;background:var(--purple)`})),
+    h('small', {class:'muted', style:'font-weight:700;font-size:12px'}, `${Math.min(v, q.goal)} / ${q.goal} ${q.what}`));
+}
+const ACH_COLORS = ['', '#CD7F32', '#9DB0C8', '#FFC83D', '#3D86F0', '#8E5BD8', '#E8463C', '#17A7A7'];
+// Nivel que da el valor: cuántas metas ya se cumplieron
+const achTier = (a, v) => a.tiers.filter(t => v >= t).length;
 
 /* ---------- data (demo: saved in this browser) ---------- */
 const KEY = 'pandi-english-v2';
 // El progreso de cada estudiante lo escribe él mismo (y en modo servidor llega tal cual de la base de datos).
 // Cada campo conocido se usa solo si tiene el tipo esperado: un dato raro (por ejemplo days como texto)
 // no rompe las pantallas de los compañeros ni las del profe. La clave __proto__ se ignora.
-const P_DEF = () => ({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, gems:0, owned:[], freezes:0, frozen:[], claimed:{}, hw:null});
+const P_DEF = () => ({xp:0, xpDays:{}, done:{}, days:[], medals:[], spoken:0, miss:{}, gems:0, owned:[], freezes:0, frozen:[], claimed:{}, hw:null, ach:{}, perfects:0, best:0, bestLeague:0, boost:0, chests:0, months:{}, monthly:{}});
 const kindOf = v => Array.isArray(v) ? 'array' : v === null ? 'null' : typeof v;
 // xpDays: solo fechas AAAA-MM-DD con un número (una fecha rara como «-271800-01-01» congelaba el Ranking de los compañeros)
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -3645,14 +3834,37 @@ const streak = () => streakOf(S);
 const doneCount = () => doneOf(S);
 function unitDone(u, p){ if (!u) return false; const ls = playLessons(u); return ls.length > 0 && ls.every(l => (p || S).done[l.id]); }
 function checkMedals(extra){
-  const got = [];
+  const got = [], hr = new Date().getHours(), wd = new Date().getDay();
   const test = {
     first: () => doneCount() >= 1, u1: () => unitDone(findUnit('n1u1')), u2: () => unitDone(findUnit('n1u2')),
-    perfect: () => extra && extra.perfect, voice: () => S.spoken >= 5, xp100: () => S.xp >= 100,
-    streak3: () => streak() >= 3, homework: () => Object.values(S.hw || {}).some(x => x.sentAt), reader: () => units().some(u => u.lessons.some(l => l.kind === 'Cuento' && S.done[l.id]))
+    early: () => extra && extra.lesson && hr < 8, owl: () => extra && extra.lesson && hr >= 20, weekend: () => extra && extra.lesson && (wd === 0 || wd === 6),
+    combo8: () => extra && extra.combo >= 8, level: () => [1, 2, 3, 4, 5, 6].some(lv => { const us = units().filter(u => (u.level || 1) === lv && !u.tag); return us.length && us.every(u => unitDone(u)); })
   };
-  for (const m of MEDALS){ if (!S.medals.includes(m.id) && test[m.id] && test[m.id]()){ S.medals.push(m.id); got.push(m); } }
+  for (const m of MEDALS){ if (!m.old && !S.medals.includes(m.id) && test[m.id] && test[m.id]()){ S.medals.push(m.id); got.push(m); } }
+  // logros con niveles: guarda el nivel y avisa cuando sube
+  S.best = Math.max(S.best || 0, streak()); S.bestLeague = Math.max(S.bestLeague || 0, leagueOf(S).lvl);
+  const ach = S.ach && typeof S.ach === 'object' ? S.ach : (S.ach = {});
+  for (const a of ACHV){ const t = achTier(a, a.val(S)); if (t > (ach[a.id] || 0)){ const first = !ach[a.id]; ach[a.id] = t; got.push({id:a.id, g:a.g, name:a.name, tier:t, first}); } }
+  // reto del mes
+  const q = monthQuest(monthKey()), mo = S.monthly && typeof S.monthly === 'object' ? S.monthly : (S.monthly = {});
+  if (!mo[q.k] && monthVal(S, q) >= q.goal){ mo[q.k] = 1; S.gems = (S.gems || 0) + MONTH_GEMS; got.push({id:'month', g:q.g, name:q.name, monthly:true}); }
   return got;
+}
+// Tarjeta de un logro con su nivel, barra y lo que falta para el siguiente
+function achCard(a, p){
+  const v = a.val(p), t = achTier(a, v), next = a.tiers[t], prev = t ? a.tiers[t - 1] : 0;
+  const pct = next ? Math.min(100, Math.round((v - prev) / (next - prev) * 100)) : 100;
+  return h('div', {class:'achv' + (t ? '' : ' off')},
+    h('div', {class:'ab', style:t ? `--ac:${ACH_COLORS[Math.min(t, ACH_COLORS.length - 1)]}` : ''}, h('span', {}, a.g), t ? h('i', {}, t) : null),
+    h('div', {class:'at'}, h('b', {}, a.name, t ? h('small', {}, ` · Nivel ${t}`) : null),
+      h('div', {class:'bar'}, h('i', {style:`width:${pct}%;background:${t ? 'var(--green)' : 'var(--blue)'}`})),
+      h('small', {}, next ? `${v} / ${next} ${a.what}` : `¡Nivel máximo! ${v} ${a.what}`)));
+}
+// Texto corto con los logros de un estudiante (panel del profe)
+function achSummary(p){
+  const ms = [...monthBadges(p).map(q => q.g), ...(p.medals || []).map(id => (MEDALS.find(m => m.id === id) || {}).g).filter(Boolean)];
+  const as = ACHV.map(a => { const t = achTier(a, a.val(p)); return t ? a.g + t : ''; }).filter(Boolean);
+  return [...ms, ...as].join(' ');
 }
 
 /* ---------- recordatorios ---------- */
@@ -3677,24 +3889,53 @@ function remCheck(){
 }
 setInterval(remCheck, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) remCheck(); });
+// Notificaciones push: con la app cerrada, el servidor (función remind, cada 15 min) manda el aviso a la hora elegida.
+// Hace falta la llave pública VAPID en config.js (vapidPublicKey) y la tabla push_subs. En modo demo solo queda el aviso local.
+const PUSH_OK = () => REMOTE && CFG.vapidPublicKey && 'serviceWorker' in navigator && 'PushManager' in window;
+function b64ToU8(b64){ const s = atob((b64 + '='.repeat((4 - b64.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(s, c => c.charCodeAt(0)); }
+async function pushSub(create){
+  const reg = await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub && create) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64ToU8(CFG.vapidPublicKey)});
+  return sub;
+}
+// Guarda (o actualiza) la suscripción de este teléfono en el servidor con la hora elegida
+async function pushSave(time){
+  if (!PUSH_OK() || !U) return false;
+  try {
+    const sub = await pushSub(true); if (!sub) return false;
+    const j = sub.toJSON();
+    const r = await SB.from('push_subs').upsert({endpoint:sub.endpoint, user_id:U.id, school_id:SCHOOL, p256dh:j.keys.p256dh, auth:j.keys.auth, remind_at:time, tz_offset:new Date().getTimezoneOffset(), last_sent:null});
+    if (r.error) throw r.error;
+    return true;
+  } catch (e) { console.warn('push:', e); return false; }
+}
+async function pushDrop(){
+  if (!PUSH_OK()) return;
+  try { const sub = await pushSub(false); if (!sub) return; await SB.from('push_subs').delete().eq('endpoint', sub.endpoint); await sub.unsubscribe(); } catch (e) { console.warn('push:', e); }
+}
 function remindCard(){
   const r = remGet();
   const supported = 'Notification' in window;
   const time = h('input', {class:'in', id:'remTime', type:'time', value:r.time, style:'max-width:160px', 'aria-label':'Hora del recordatorio'});
-  time.addEventListener('change', () => { const x = remGet(); x.time = time.value || '17:00'; x.last = ''; remSet(x); toast('Hora guardada'); });
+  time.addEventListener('change', async () => { const x = remGet(); x.time = time.value || '17:00'; x.last = ''; remSet(x); if (x.on) await pushSave(x.time); toast('Hora guardada'); });
   const btn = h('button', {class:'btn' + (r.on ? ' ghost' : ''), type:'button', onclick:async () => {
     const x = remGet();
-    if (x.on){ x.on = false; remSet(x); renderMe(); return toast('Recordatorio apagado'); }
+    if (x.on){ x.on = false; remSet(x); await pushDrop(); renderMe(); return toast('Recordatorio apagado'); }
     if (!supported) return toast('Este navegador no puede mostrar avisos. Instala la app en tu pantalla de inicio.');
     let perm = Notification.permission;
     if (perm === 'default') perm = await Notification.requestPermission();
     if (perm !== 'granted') return toast('Permite las notificaciones de Pandi English en los ajustes del teléfono.');
     x.on = true; x.last = ''; x.time = time.value || x.time; remSet(x);
-    notifyNow('¡Listo! 🐼', 'Así se verá tu recordatorio de Pandi English.'); renderMe(); toast('Recordatorio activado');
+    const srv = await pushSave(x.time);
+    notifyNow('¡Listo! 🐼', 'Así se verá tu recordatorio de Pandi English.'); renderMe();
+    toast(srv ? 'Recordatorio activado: te avisará aunque la app esté cerrada' : PUSH_OK() ? 'Recordatorio activado solo en este dispositivo (no se pudo registrar en el servidor)' : 'Recordatorio activado');
   }}, r.on ? 'Apagar recordatorio' : 'Activar recordatorio');
+  const how = PUSH_OK() ? 'Pandi te manda una notificación a esta hora si ese día todavía no has practicado, aunque la app esté cerrada. Instálala en tu pantalla de inicio para que el aviso llegue siempre.'
+    : 'Pandi te avisa a esta hora si ese día todavía no has practicado. Funciona con la app instalada en tu pantalla de inicio; si el teléfono la cierra, el aviso sale al volver a abrirla.';
   return h('div', {class:'card', style:'margin-top:18px;display:flex;flex-direction:column;gap:10px'},
     h('h3', {style:'font-size:19px'}, '⏰ Recordatorio diario'),
-    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Pandi te avisa a esta hora si ese día todavía no has practicado. Funciona con la app instalada en tu pantalla de inicio; si el teléfono la cierra, el aviso sale al volver a abrirla.'),
+    h('p', {class:'muted', style:'margin:0;font-size:14px'}, how),
     h('div', {class:'field'}, h('label', {for:'remTime'}, 'Hora'), time), btn);
 }
 
@@ -3741,6 +3982,15 @@ function castVoice(name){
 // Audios de ElevenLabs (audio/indice.js, de tools/voces/generar.mjs): primero el del personaje, luego el de la voz general.
 // Si no hay audio para ese texto (por ejemplo, algo que escribió el profe), se usa la voz del teléfono.
 let clipNow = null;
+// Aviso de «está hablando»: el escenario de los cuentos lo usa para mover la boca del personaje mientras suena el audio
+let SAY_HOOK = null;
+const sayHook = (on, who) => { try { if (SAY_HOOK) SAY_HOOK(on, who); } catch (e) {} };
+// Dice algo y luego sigue; si la voz no avisa que terminó (no hay voz, o falló), sigue igual pasado un tiempo según el largo del texto
+function sayThen(text, who, cb){
+  let over = false; const fin = () => { if (over) return; over = true; cb(); };
+  say(text, false, fin, who);
+  setTimeout(fin, 2000 + String(text || '').length * 110);
+}
 function sayClip(text, slow, done, who){
   const A = window.PANDI_AUDIO; if (!A) return false;
   const t = String(text || '').trim(), f = (who && A[who + '|' + t]) || A['|' + t];
@@ -3749,13 +3999,15 @@ function sayClip(text, slow, done, who){
   if (clipNow){ clipNow.onended = clipNow.onerror = null; clipNow.pause(); }
   const a = new Audio('audio/' + f); clipNow = a;
   a.playbackRate = slow ? 0.7 : 1; a.preservesPitch = true;
-  let over = false; const fin = () => { if (over) return; over = true; if (clipNow === a) clipNow = null; if (done) done(); };
+  let over = false; const fin = () => { if (over) return; over = true; sayHook(false, who); if (clipNow === a) clipNow = null; if (done) done(); };
   a.onended = fin;
+  a.onplay = () => { if (!over) sayHook(true, who); };
   a.onerror = () => { if (clipNow !== a || over) return; over = true; clipNow = null; sayTTS(text, slow, done, who); };
   a.play().catch(() => { if (!over && clipNow === a){ over = true; clipNow = null; sayTTS(text, slow, done, who); } });
   return true;
 }
 function say(text, slow, done, who){
+  sayHook(false); // lo que sonaba antes ya no habla
   if (sayClip(text, slow, done, who)) return;
   sayTTS(text, slow, done, who);
 }
@@ -3769,8 +4021,9 @@ function sayTTS(text, slow, done, who){
     u.lang = 'en-US'; if (voice) u.voice = voice; u.rate = slow ? 0.6 : 0.92; u.pitch = kidVoice(voice) ? 1.12 : 1.35; u.volume = 1;
     const cv = who ? castVoice(who) : null;
     if (cv){ if (cv.voice) u.voice = cv.voice; u.pitch = cv.pitch; u.rate = cv.rate * (slow ? 0.62 : 0.92); }
-    if (done){ u.onend = () => done(); }
-    u.onerror = ev => { if (done) done(); const er = ev && ev.error; if (er && er !== 'canceled' && er !== 'interrupted' && !ttsWarned && Date.now() - lastTap < 4000){ ttsWarned = true; toast('No se oyó la voz. Sube el volumen o quita el modo silencio.'); } };
+    u.onstart = () => sayHook(true, who);
+    u.onend = () => { sayHook(false, who); if (done) done(); };
+    u.onerror = ev => { sayHook(false, who); if (done) done(); const er = ev && ev.error; if (er && er !== 'canceled' && er !== 'interrupted' && !ttsWarned && Date.now() - lastTap < 4000){ ttsWarned = true; toast('No se oyó la voz. Sube el volumen o quita el modo silencio.'); } };
     setTimeout(() => { try { speechSynthesis.speak(u); } catch (e) {} }, 30);
   } catch (e) {}
 }
@@ -3779,12 +4032,14 @@ function sfx(ok){
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if (actx.state === 'suspended') actx.resume();
-    (ok ? [660, 880] : [300, 220]).forEach((f, i) => {
+    // acierto: arpegio alegre (do-mi-sol); racha: arpegio largo que sube; error: dos notas suaves hacia abajo
+    const notes = ok === 'combo' ? [523, 659, 784, 1047, 1319] : ok ? [523, 659, 784] : [330, 262];
+    notes.forEach((f, i) => {
       const o = actx.createOscillator(), g = actx.createGain();
-      o.type = ok ? 'triangle' : 'sawtooth'; o.frequency.value = f;
-      const t = actx.currentTime + i * 0.12;
-      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(ok ? 0.18 : 0.06, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-      o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.2);
+      o.type = ok ? 'triangle' : 'sine'; o.frequency.value = f;
+      const t = actx.currentTime + i * (ok === 'combo' ? 0.09 : 0.1), len = ok ? 0.22 : 0.26;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(ok ? 0.16 : 0.08, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t + len + 0.02);
     });
   } catch (e) {}
 }
@@ -3876,6 +4131,7 @@ $('#loginForm').addEventListener('submit', async e => {
 async function logout(){
   if (REMOTE){
     try { await syncNow(); } catch (e) {}
+    try { if (U && U.role === 'student') await pushDrop(); } catch (e) {} // el próximo usuario del teléfono no debe recibir avisos de este
     let failed = false;
     try { const r = await SB.auth.signOut(); failed = !!(r && r.error); } catch (e) { failed = true; }
     if (failed){ try { await SB.auth.signOut({scope:'local'}); } catch (e) {} }
@@ -4068,7 +4324,7 @@ function renderWork(){
         h('button', {class:'btn blue', type:'button', disabled:!!hw.sentAt, onclick:() => {
           if (ta.value.trim().split(/\s+/).length < 5) return toast('Escribe al menos una oración completa en inglés.');
           S.hw[a.id] = {text:ta.value.trim(), sentAt:today(), note:'', reviewed:false};
-          S.gems = (S.gems || 0) + 10; const got = checkMedals(); save(); renderWork(); renderStats(); celebrate(got.length ? 'big' : 'small'); toast(got.length ? '¡Enviada! Ganaste la medalla “Tarea lista” y 10 💎.' : '¡Tarea enviada a tu profe! +10 💎');
+          S.gems = (S.gems || 0) + 10; const got = checkMedals(); save(); renderWork(); renderStats(); celebrate(got.length ? 'big' : 'small'); toast(got.length ? `¡Enviada! Logro “${got[0].name}”${got[0].tier ? ' nivel ' + got[0].tier : ''} y 10 💎.` : '¡Tarea enviada a tu profe! +10 💎');
         }}, hw.sentAt ? 'Enviada a tu profe' : 'Enviar a mi profe'),
         hw.reviewed ? gradeView(hw, false)
           : hw.sentAt ? h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Tu profe la revisará y te dejará una nota aquí.') : null));
@@ -4091,12 +4347,20 @@ function renderRank(){
     h('button', {type:'button', 'aria-pressed': String(rankMode === 'all'), onclick:() => { rankMode = 'all'; renderRank(); }}, 'Desde el inicio'));
   const top = list.slice(0, 3);
   const podOrder = [top[1], top[0], top[2]].map((r, i) => r ? h('div', {class:'pod p' + [2, 1, 3][i]}, avatar(r.u), h('div', {class:'name'}, r.u.id === U.id ? 'Tú' : r.u.name), h('div', {class:'pts'}, r.pts + ' XP'), h('div', {class:'block'}, [2, 1, 3][i])) : h('div'));
-  root.append(h('h2', {class:'section-title'}, 'Ranking de la clase'), leagueCard(), seg,
-    h('div', {class:'panda-say', style:'margin-bottom:6px'}, panda('head'), h('div', {class:'bubble'}, myPos === 1 ? '¡Vas en primer lugar! Sigue así.' : `Vas en el lugar ${myPos}. Termina lecciones para ganar XP y subir.`)),
-    h('div', {class:'podium'}, ...podOrder),
-    h('div', {class:'card', style:'padding:8px'}, ...list.map((r, i) => h('div', {class:'rank-row' + (r.u.id === U.id ? ' me' : '')},
-      h('div', {class:'pos'}, i + 1), avatar(r.u), h('div', {class:'nm'}, r.u.id === U.id ? `${r.u.name} (tú)` : r.u.name, ' ', leagueBadge(r.p), h('small', {}, (streakOf(r.p) === 1 ? '1 día seguido' : `${streakOf(r.p)} días seguidos`) + ' · Liga ' + LEAGUES[leagueOf(r.p).lvl].n)), h('div', {class:'xpv'}, r.pts + ' XP')))),
-    list.some(r => r.u.example) ? h('p', {class:'muted', style:'font-size:13px;margin:12px 0 0'}, 'En esta demo, Sofía, Diego, Valeria y los demás compañeros son cuentas de muestra.') : null);
+  const row = (r, i) => h('div', {class:'rank-row' + (r.u.id === U.id ? ' me' : '')},
+    h('div', {class:'pos'}, i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1), avatar(r.u), h('div', {class:'nm'}, r.u.id === U.id ? `${r.u.name} (tú)` : r.u.name, ' ', leagueBadge(r.p), h('small', {}, (streakOf(r.p) === 1 ? '1 día seguido' : `${streakOf(r.p)} días seguidos`) + ' · Liga ' + LEAGUES[leagueOf(r.p).lvl].n)), h('div', {class:'xpv'}, r.pts + ' XP'));
+  root.append(h('h2', {class:'section-title'}, 'Ranking de la clase'), leagueCard(), seg);
+  if (rankMode === 'week'){
+    // Zonas como en Duolingo: con LEAGUE_UP XP se sube; con menos de LEAGUE_DOWN se baja; en medio, zona segura
+    const up = list.filter(r => r.pts >= LEAGUE_UP), mid = list.filter(r => r.pts < LEAGUE_UP && r.pts >= LEAGUE_DOWN), down = list.filter(r => r.pts < LEAGUE_DOWN);
+    const zone = (cls, label, rows, off) => rows.length ? [h('div', {class:'zone ' + cls}, label), ...rows.map((r, i) => row(r, off + i))] : [];
+    root.append(h('div', {class:'panda-say', style:'margin-bottom:6px'}, panda('head'), h('div', {class:'bubble'}, myPos === 1 ? '¡Vas en primer lugar! Sigue así.' : `Vas en el lugar ${myPos}. Termina lecciones para ganar XP y subir.`)),
+      h('div', {class:'card', style:'padding:8px'},
+        ...zone('up', '▲ ZONA DE ASCENSO', up, 0), ...zone('safe', '● ZONA SEGURA', mid, up.length), ...zone('down', '▼ ZONA DE DESCENSO', down, up.length + mid.length)));
+  } else {
+    root.append(h('div', {class:'podium'}, ...podOrder), h('div', {class:'card', style:'padding:8px'}, ...list.map(row)));
+  }
+  root.append(list.some(r => r.u.example) ? h('p', {class:'muted', style:'font-size:13px;margin:12px 0 0'}, 'En esta demo, Sofía, Diego, Valeria y los demás compañeros son cuentas de muestra.') : null);
 }
 /* ---------- ligas, gemas, tienda, desafíos, repaso y celebraciones ---------- */
 // Semanas de lunes a domingo (fecha local)
@@ -4106,7 +4370,13 @@ const xpInWeek = (p, mon) => { const sun = addDays(mon, 6); return Object.entrie
 const thisMonday = () => mondayOf(today());
 const lastMonday = () => addDays(thisMonday(), -7);
 // Ligas: se sube con LEAGUE_UP XP en una semana, se baja con menos de LEAGUE_DOWN
-const LEAGUES = [{n:'Bronce', g:'🥉'}, {n:'Plata', g:'🥈'}, {n:'Oro', g:'🥇'}, {n:'Zafiro', g:'🔷'}, {n:'Diamante', g:'💠'}];
+const LEAGUES = [{n:'Bronce', g:'🥉', c:'#CD7F32', d:'#8F5420'}, {n:'Plata', g:'🥈', c:'#B8C0CC', d:'#7D8FA6'}, {n:'Oro', g:'🥇', c:'#FFC83D', d:'#C98F00'}, {n:'Zafiro', g:'🔷', c:'#3D86F0', d:'#1F5FBF'}, {n:'Rubí', g:'❤️', c:'#E8463C', d:'#A8261E'},
+  {n:'Esmeralda', g:'💚', c:'#3CB45A', d:'#22813B'}, {n:'Amatista', g:'💜', c:'#8E5BD8', d:'#5E36A0'}, {n:'Perla', g:'🤍', c:'#F3E9F7', d:'#B9A6C4'}, {n:'Obsidiana', g:'🖤', c:'#3A3346', d:'#15111F'}, {n:'Diamante', g:'💠', c:'#7EE0F0', d:'#2FA6BC'}];
+// Escudo de liga dibujado (los emojis de medallas se ven distintos en cada teléfono)
+function leagueShield(i, size, locked){
+  const L_ = LEAGUES[i], ink = i === 7 ? '#5E36A0' : '#FFFFFF';
+  return h('span', {class:'lshield' + (locked ? ' locked' : ''), style:`width:${size}px;height:${size}px`, html:`<svg viewBox="0 0 60 66" aria-hidden="true"><path d="M30 2 L55 11 L55 34 C55 48 44 59 30 64 C16 59 5 48 5 34 L5 11 Z" fill="${L_.c}" stroke="${L_.d}" stroke-width="3" stroke-linejoin="round"/><path d="M30 10 L47 16 L47 34 C47 44 39 52 30 56 C21 52 13 44 13 34 L13 16 Z" fill="none" stroke="${ink}" stroke-width="2" opacity=".55"/><text x="30" y="40" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="22" fill="${ink}">${i + 1}</text></svg>`});
+}
 const LEAGUE_UP = 150, LEAGUE_DOWN = 30, LEAGUE_WEEKS = 104;
 function leagueOf(p){
   // Solo cuentan las semanas cerradas de los últimos 2 años: así el cálculo nunca da más de 104 vueltas,
@@ -4122,7 +4392,7 @@ function leagueOf(p){
   }
   return {lvl, change};
 }
-const leagueBadge = p => { const l = LEAGUES[leagueOf(p).lvl]; return h('span', {class:'league-badge', title:'Liga ' + l.n}, l.g); };
+const leagueBadge = p => { const i = leagueOf(p).lvl; const b = leagueShield(i, 18, false); b.title = 'Liga ' + LEAGUES[i].n; b.classList.add('league-badge'); return b; };
 // Gemas
 function addGems(n, why){ S.gems = (S.gems || 0) + n; save(); renderStats(); if (why) toast(`+${n} 💎 ${why}`); }
 const refreshAv = () => { if (!$('#tab-me').hidden) renderMe(); if (!$('#tab-rank').hidden) renderRank(); };
@@ -4155,7 +4425,7 @@ function avatarEditor(start){
     opts.innerHTML = '';
     const colors = {skin:AV.skin.map(c => c[0]), hc:AV.hairColor, tc:AV.topColor, bg:AV.bg}[tab];
     if (colors){
-      if (tab === 'tc' && ['panda', 'bear', 'bunny'].includes(cur.top)) opts.append(h('p', {class:'muted', style:'margin:0 0 8px;font-size:14px'}, 'Esta sudadera tiene su propio color. Elige otra ropa para cambiar el color.'));
+      if (tab === 'tc' && ['panda', 'bear', 'bunny', 'cat', 'dino', 'hero', 'astro', 'pirateTop'].includes(cur.top)) opts.append(h('p', {class:'muted', style:'margin:0 0 8px;font-size:14px'}, 'Esta sudadera tiene su propio color. Elige otra ropa para cambiar el color.'));
       opts.append(h('div', {class:'swatches av-sw'}, ...colors.map((c, i) => h('button', {type:'button', style:'background:' + c, 'aria-label':`Color ${i + 1}`, 'aria-pressed':String(cur[tab] === i), onclick:() => { cur[tab] = i; draw(); }}))));
       return;
     }
@@ -4186,7 +4456,23 @@ function avatarWelcome(){
     h('button', {class:'btn blue', type:'button', onclick:() => { sh.remove(); avatarEditor(AV_PRESETS[pick]); }}, '🎨 Personalizarlo'),
     h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Ahora no'));
 }
-// Tienda: trajes, prendas y protector de racha
+// Doble XP: `S.boost` guarda hasta cuándo (ms). Dura 15 minutos desde la compra.
+const BOOST_MIN = 15, BOOST_COST = 30;
+const boostOn = () => !!S && S.boost > Date.now();
+const boostLeft = () => Math.max(0, Math.ceil((S.boost - Date.now()) / 60000));
+// Cofre de Pandi: una sorpresa (una prenda que no tengas o gemas)
+function openChest(draw){
+  const pool = ['head', 'face', 'top'].flatMap(cat => AV[cat].filter(it => it.cost && !avOwned(cat, it)).map(it => ({cat, it})));
+  const prize = pool.length && Math.random() < 0.5 ? pool[Math.floor(Math.random() * pool.length)] : null;
+  const gems = [10, 15, 20, 30, 50][Math.floor(Math.random() * 5)];
+  if (prize) S.owned = [...(S.owned || []), avKey(prize.cat, prize.it)]; else S.gems = (S.gems || 0) + gems;
+  S.chests = (S.chests || 0) + 1; save(); renderStats(); celebrate('big');
+  const sh = sheet(h('h2', {style:'font-size:24px;text-align:center'}, '🎁 ¡Sorpresa!'),
+    prize ? h('div', {class:'av-preview', html:avatarSVG({...myAvatar(), [prize.cat]:prize.it.id})}) : h('div', {style:'font-size:64px;text-align:center'}, '💎'),
+    h('p', {style:'margin:0;text-align:center;font-size:18px;font-weight:800'}, prize ? `¡Te salió: ${prize.it.n}!` : `¡Te salieron ${gems} gemas!`),
+    h('button', {class:'btn', type:'button', onclick:() => { sh.remove(); draw(); }}, '¡Genial!'));
+}
+// Tienda: potenciadores, trajes, prendas y cofre
 function shopSheet(){
   const body = h('div', {class:'stack', style:'gap:12px'});
   const wear = (cat, it) => { const a = myAvatar(); if (it.set){ a.head = it.set; a.top = it.set; } else a[cat] = it.id; S.avatar = a; save(); toast('¡Te lo pusiste!'); draw(); };
@@ -4199,13 +4485,22 @@ function shopSheet(){
     const a = myAvatar();
     body.append(h('div', {class:'gem-balance'}, '💎 ', h('b', {}, S.gems || 0), ' gemas'),
       h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Ganas gemas al terminar lecciones (más con 3 estrellas), al enviar tareas, al subir de liga y al ganar desafíos a tus amigos.'),
+      h('h3', {style:'font-size:19px'}, '⚡ Potenciadores'),
+      h('div', {class:'shop-grid'},
+        (() => { const full = (S.freezes || 0) >= 2; return h('div', {class:'shop-item'}, h('div', {class:'g'}, '🧊'), h('b', {}, 'Protector de racha'), h('small', {}, `Si un día no practicas, salva tu racha. Hasta 2. Tienes ${S.freezes || 0}.`),
+          h('button', {class:'btn small' + (!full && (S.gems || 0) >= 40 ? '' : ' ghost'), type:'button', disabled:full, onclick:() => buySheet('un protector de racha', 40, null, () => { S.freezes = (S.freezes || 0) + 1; toast('🧊 Protector de racha listo'); draw(); })}, full ? 'Ya tienes 2' : '💎 40')); })(),
+        (() => { const on = boostOn(); return h('div', {class:'shop-item' + (on ? ' owned' : '')}, h('div', {class:'g'}, '⚡'), h('b', {}, 'Doble XP'), h('small', {}, on ? `¡Activo! Te quedan ${boostLeft()} min.` : `Durante ${BOOST_MIN} minutos, cada lección da el doble de XP.`),
+          h('button', {class:'btn small' + (!on && (S.gems || 0) >= BOOST_COST ? '' : ' ghost'), type:'button', disabled:on, onclick:() => buySheet('Doble XP', BOOST_COST, null, () => { S.boost = Date.now() + BOOST_MIN * 60000; toast('⚡ ¡Doble XP por ' + BOOST_MIN + ' minutos!'); draw(); })}, on ? 'Activo' : `💎 ${BOOST_COST}`)); })(),
+        h('div', {class:'shop-item'}, h('div', {class:'g'}, '🎁'), h('b', {}, 'Cofre de Pandi'), h('small', {}, 'Una sorpresa: una prenda nueva o entre 10 y 50 gemas.'),
+          h('button', {class:'btn small' + ((S.gems || 0) >= 25 ? '' : ' ghost'), type:'button', onclick:() => buySheet('un cofre de Pandi', 25, null, () => openChest(draw))}, '💎 25'))),
       h('h3', {style:'font-size:19px'}, '🧸 Trajes'),
       h('div', {class:'shop-grid'}, ...Object.keys(AV_SETS).map(k => { const it = AV.head.find(x => x.id === k); return card(AV_SETS[k].n, {...a, head:k, top:k}, avOwned('head', it), AV_SETS[k].cost, () => buyAvItem('head', it, draw), () => wear('head', it), a.head === k && a.top === k); })),
-      h('h3', {style:'font-size:19px'}, '🧢 Ropa y accesorios'),
-      h('div', {class:'shop-grid'}, ...['head', 'face', 'top'].flatMap(cat => AV[cat].filter(it => it.cost).map(it => card(it.n, {...a, [cat]:it.id}, avOwned(cat, it), it.cost, () => buyAvItem(cat, it, draw), () => wear(cat, it), a[cat] === it.id)))),
-      h('h3', {style:'font-size:19px'}, '🧊 Protector de racha'),
-      (() => { const full = (S.freezes || 0) >= 2; return h('div', {class:'shop-item'}, h('div', {class:'g'}, '🧊'), h('b', {}, 'Protector de racha'), h('small', {}, `Si un día no practicas, salva tu racha. Puedes tener hasta 2. Tienes ${S.freezes || 0}.`),
-        h('button', {class:'btn small' + (!full && (S.gems || 0) >= 40 ? '' : ' ghost'), type:'button', disabled:full, onclick:() => buySheet('un protector de racha', 40, null, () => { S.freezes = (S.freezes || 0) + 1; toast('🧊 Protector de racha listo'); draw(); })}, full ? 'Ya tienes 2' : '💎 40')); })());
+      h('h3', {style:'font-size:19px'}, '🧢 Gorros y sombreros'),
+      h('div', {class:'shop-grid'}, ...AV.head.filter(it => it.cost).map(it => card(it.n, {...a, head:it.id}, avOwned('head', it), it.cost, () => buyAvItem('head', it, draw), () => wear('head', it), a.head === it.id))),
+      h('h3', {style:'font-size:19px'}, '🕶️ Lentes y caras'),
+      h('div', {class:'shop-grid'}, ...AV.face.filter(it => it.cost).map(it => card(it.n, {...a, face:it.id}, avOwned('face', it), it.cost, () => buyAvItem('face', it, draw), () => wear('face', it), a.face === it.id))),
+      h('h3', {style:'font-size:19px'}, '👕 Ropa'),
+      h('div', {class:'shop-grid'}, ...AV.top.filter(it => it.cost).map(it => card(it.n, {...a, top:it.id}, avOwned('top', it), it.cost, () => buyAvItem('top', it, draw), () => wear('top', it), a.top === it.id))));
   };
   draw();
   const sh = sheet(h('h2', {style:'font-size:24px'}, '💎 Tienda'), body, h('button', {class:'btn ghost', type:'button', onclick:() => { sh.remove(); if (U && U.role === 'student') renderMe(); }}, 'Cerrar'));
@@ -4229,14 +4524,22 @@ function claimWeekly(){
   friendIds(U.id).forEach(fid => { const k = 'ch-' + fid + '-' + lm; if (c[k]) return; const theirs = xpInWeek(prog(fid), lm); if (mine > theirs && mine > 0){ c[k] = 1; addGems(10); toast(`⚔️ Ganaste el desafío contra ${(DB.users.find(u => u.id === fid) || {name:'tu amigo'}).name.split(' ')[0]}! +10 💎`); } else c[k] = 1; });
   save();
 }
+// Cuánto falta para que termine la semana (domingo a medianoche)
+function weekLeft(){
+  const end = new Date(addDays(thisMonday(), 7) + 'T00:00'), ms = end - Date.now();
+  const d = Math.floor(ms / 86400000), hh = Math.floor(ms % 86400000 / 3600000);
+  return d >= 1 ? `${d} día${d > 1 ? 's' : ''}` : hh >= 1 ? `${hh} hora${hh > 1 ? 's' : ''}` : 'menos de 1 hora';
+}
 function leagueCard(){
   const lg = leagueOf(S), L_ = LEAGUES[lg.lvl], next = LEAGUES[lg.lvl + 1], w = xpInWeek(S, thisMonday());
   const pct = Math.min(100, Math.round(w / LEAGUE_UP * 100));
-  return h('div', {class:'card league-card'},
-    h('div', {style:'display:flex;align-items:center;gap:12px'}, h('div', {class:'league-big'}, L_.g), h('div', {style:'flex:1;min-width:0'}, h('div', {class:'lbl'}, 'Tu liga'), h('b', {style:'font-size:22px'}, 'Liga ' + L_.n))),
+  const strip = h('div', {class:'lstrip'}, ...LEAGUES.map((x, i) => h('div', {class:'ls' + (i === lg.lvl ? ' cur' : ''), 'aria-label':'Liga ' + x.n + (i > lg.lvl ? ' (bloqueada)' : '')}, leagueShield(i, i === lg.lvl ? 54 : 38, i > lg.lvl))));
+  setTimeout(() => { const c = strip.querySelector('.cur'); if (c) strip.scrollLeft = Math.max(0, c.offsetLeft - strip.clientWidth / 2 + c.offsetWidth / 2); }, 0);
+  return h('div', {class:'card league-card'}, strip,
+    h('div', {style:'text-align:center;margin-top:8px'}, h('b', {style:'font-size:24px;font-family:var(--display)'}, 'Liga ' + L_.n), h('div', {class:'muted', style:'font-size:14px;font-weight:700'}, `Termina en ${weekLeft()}`)),
     h('div', {class:'bar', style:'margin-top:12px'}, h('i', {style:`width:${pct}%;background:var(--green)`})),
-    h('p', {class:'muted', style:'margin:6px 0 0;font-size:14px'}, next ? (w >= LEAGUE_UP ? `¡Listo! El lunes subes a la liga ${next.n} ${next.g}` : `Esta semana: ${w} de ${LEAGUE_UP} XP para subir a ${next.n} ${next.g}`) : `¡Estás en la liga más alta! Gana ${LEAGUE_UP} XP por semana para quedarte.`),
-    h('p', {class:'muted', style:'margin:2px 0 0;font-size:13px'}, `Si haces menos de ${LEAGUE_DOWN} XP en la semana, bajas una liga. Se decide cada domingo a medianoche.`));
+    h('p', {class:'muted', style:'margin:6px 0 0;font-size:14px;text-align:center'}, next ? (w >= LEAGUE_UP ? `¡Listo! El lunes subes a la liga ${next.n}` : `Esta semana: ${w} de ${LEAGUE_UP} XP para subir a ${next.n}`) : `¡Estás en la liga más alta! Gana ${LEAGUE_UP} XP por semana para quedarte.`),
+    h('p', {class:'muted', style:'margin:2px 0 0;font-size:13px;text-align:center'}, `Con menos de ${LEAGUE_DOWN} XP en la semana, bajas una liga.`));
 }
 // Repaso inteligente con las palabras que más falla
 const reviewWords = () => Object.entries(S.miss || {}).filter(([w, n]) => V[w] && n > 0).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]);
@@ -4393,15 +4696,17 @@ function renderMe(){
       h('div', {class:'stat'}, h('b', {}, S.xp), h('span', {}, 'XP total')),
       h('div', {class:'stat'}, h('b', {}, streak()), h('span', {}, 'Días seguidos')),
       h('div', {class:'stat'}, h('b', {}, doneCount()), h('span', {}, 'Lecciones'))),
-    h('h2', {class:'section-title'}, 'Medallas'),
-    h('div', {class:'medals'}, ...MEDALS.map(m => h('div', {class:'medal' + (S.medals.includes(m.id) ? '' : ' off')}, h('div', {class:'m'}, m.g), h('b', {}, m.name), h('small', {}, m.desc)))),
+    monthCard(),
+    h('h2', {class:'section-title', style:'margin-top:18px'}, 'Logros'),
+    h('p', {class:'muted', style:'margin:-6px 0 10px;font-size:14px'}, 'Suben de nivel mientras practicas. ¡Llega al nivel máximo de cada uno!'),
+    h('div', {class:'achvs'}, ...ACHV.map(a => achCard(a, S))),
+    h('h2', {class:'section-title', style:'margin-top:22px'}, 'Medallas'),
+    h('div', {class:'medals'}, ...monthBadges(S).map(q => h('div', {class:'medal month'}, h('div', {class:'m'}, q.g), h('b', {}, q.name), h('small', {}, q.desc))), ...MEDALS.filter(m => !m.old || S.medals.includes(m.id)).map(m => h('div', {class:'medal' + (S.medals.includes(m.id) ? '' : ' off')}, h('div', {class:'m'}, m.g), h('b', {}, m.name), h('small', {}, m.desc)))),
     friendsCard(),
     remindCard(),
     h('div', {class:'stack', style:'margin-top:24px'},
-      h('button', {class:'btn ghost', type:'button', onclick:audioTestSheet}, 'Probar audio y micrófono'),
       h('p', {class:'legal'}, h('a', {href:'privacidad.html'}, 'Aviso de privacidad'), ' · ', h('a', {href:'terminos.html'}, 'Términos y condiciones')),
-      h('button', {class:'btn ghost', type:'button', onclick:() => confirmSheet('¿Cerrar sesión?', 'Volverás a la pantalla de inicio de sesión.', 'Cerrar sesión', logout)}, 'Cerrar sesión'),
-      REMOTE ? null : h('button', {class:'btn ghost', type:'button', style:'color:var(--ink-2)', onclick:() => confirmSheet('¿Reiniciar la demo?', 'Se borran todas las cuentas creadas y el progreso guardado en este dispositivo.', 'Reiniciar demo', () => { DB = seed(); migrate(); route(); })}, 'Reiniciar demo')));
+      h('button', {class:'btn ghost', type:'button', onclick:() => confirmSheet('¿Cerrar sesión?', 'Volverás a la pantalla de inicio de sesión.', 'Cerrar sesión', logout)}, 'Cerrar sesión')));
 }
 
 /* ---------- admin panel ---------- */
@@ -4609,7 +4914,7 @@ function studentSheet(u){
       h('div', {class:'stat'}, h('b', {}, streakOf(p)), h('span', {}, 'Racha'))),
     h('div', {}, h('div', {class:'lbl', style:'margin-bottom:4px'}, 'Avance por unidad'),
       ...units().filter(x => playLessons(x).length && (unitOpenFor(groupById(u.groupId), x, p) && levelOf(x) === groupLevel(groupById(u.groupId)) || playLessons(x).some(l => p.done[l.id]))).map(x => { const ls = playLessons(x), d = ls.filter(l => p.done[l.id]).length; return h('div', {class:'unit-prog c-' + x.c}, h('div', {class:'nm'}, unitFull(x)), h('div', {class:'bar'}, h('i', {style:`width:${Math.round(d / ls.length * 100)}%;background:var(--uc)`})), h('div', {class:'v'}, `${d}/${ls.length}`)); })),
-    h('div', {}, h('div', {class:'lbl', style:'margin-bottom:6px'}, 'Medallas'), h('div', {style:'font-size:26px;letter-spacing:4px'}, p.medals.length ? p.medals.map(id => (MEDALS.find(m => m.id === id) || {}).g).join('') : h('span', {class:'muted', style:'font-size:15px;letter-spacing:0'}, 'Todavía no tiene medallas'))),
+    h('div', {}, h('div', {class:'lbl', style:'margin-bottom:6px'}, 'Medallas'), h('div', {style:'font-size:22px;letter-spacing:2px;line-height:1.5'}, achSummary(p) || h('span', {class:'muted', style:'font-size:15px;letter-spacing:0'}, 'Todavía no tiene medallas'))),
     h('div', {class:'muted', style:'font-size:14px'}, 'Última práctica: ' + lastSeen(p)),
     Object.keys(p.miss || {}).length ? h('div', {}, h('div', {class:'lbl', style:'margin-bottom:4px'}, 'Le cuesta'), h('div', {style:'font-size:16px'}, Object.entries(p.miss).sort((a, b) => b[1] - a[1]).slice(0, 5).map(x => x[0]).join(' · '))) : null,
     h('button', {class:'btn blue', type:'button', onclick:() => { sh.remove(); reportSheet(u); }}, 'Reporte para padres'),
@@ -5407,6 +5712,36 @@ function friendSVG(name){
   const s = avatarSVG(FRIENDS[name]);
   return name === 'Uncle Dan' || name === 'Captain Conrad' || name === 'Uncle James' || name === 'Hector Frost' || name === 'Zeb' ? s.replace('</g></svg>', `<path d="M48 64 Q54 58.5 60 62.5 Q66 58.5 72 64 Q66 67.5 60 65.5 Q54 67.5 48 64 Z" fill="#2B2523" ${SW}/></g></svg>`) : s;
 }
+// Personaje de cuerpo entero para los cuentos y cantos (120×200): el busto del avatar arriba y, abajo, brazos, piernas y zapatos
+// que se mueven por separado (.arm, .leg). Los animales y robots (Ola, Gizmo, PROD…) ya son figuras completas y se usan tal cual.
+const MUSTACHE = `<path d="M48 64 Q54 58.5 60 62.5 Q66 58.5 72 64 Q66 67.5 60 65.5 Q54 67.5 48 64 Z" fill="#2B2523" ${SW}/>`;
+const HAS_MUSTACHE = ['Uncle Dan', 'Captain Conrad', 'Uncle James', 'Hector Frost', 'Zeb'];
+function actorSVG(name, mood){
+  if (!FRIENDS[name]) return friendSVG(name).replace('viewBox="0 0 120 120"', 'viewBox="0 -80 120 200"'); // el animal o robot, parado en el piso
+  const a = avNorm(FRIENDS[name]) || AV_DEFAULT, [sk, skd] = AV.skin[a.skin], tc = {panda:'#2A2230', bear:'#9A6440', bunny:'#FFFFFF', explorer:'#B8A777'}[a.top] || AV.topColor[a.tc];
+  const pants = ['#3D5A99', '#6B4A33', '#2F6F4E', '#8E5BD8', '#B85C10'][a.tc % 5], shoe = ['#E8463C', '#2A2230', '#3D86F0', '#FFFFFF', '#FFC83D'][a.hc % 5];
+  let bust = avatarSVG(a, {bare:true, mood});
+  if (HAS_MUSTACHE.includes(name)) bust = bust.replace('</g></svg>', MUSTACHE + '</g></svg>');
+  const arm = (side) => { const x0 = side === 'l' ? 24 : 96, x1 = side === 'l' ? 14 : 106; return `<g class="arm ${side}"><path d="M${x0} 104 L${x1} 142" stroke="${SO}" stroke-width="16" stroke-linecap="round"/><path d="M${x0} 104 L${x1} 142" stroke="${tc}" stroke-width="12" stroke-linecap="round"/><circle cx="${x1 - (side === 'l' ? 1 : -1)}" cy="146" r="7.5" fill="${sk}" ${SW}/></g>`; };
+  const leg = (side) => `<g class="leg ${side}"><path d="M${side === 'l' ? 48 : 72} 150 L${side === 'l' ? 46 : 74} 180" stroke="${pants}" stroke-width="14" stroke-linecap="round"/><path d="M${side === 'l' ? 36 : 64} 186 h22 a5 5 0 0 1 5 5 v2 h-32 v-2 a5 5 0 0 1 5 -5 z" fill="${shoe}" ${SW}/></g>`;
+  return `<svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">`
+    + leg('l') + leg('r')
+    + `<path d="M22 118 L98 118 L92 156 L28 156 Z" fill="${tc}" ${SW}/><path d="M28 156 L92 156 L90 166 L30 166 Z" fill="${pants}" ${SW}/>`
+    + arm('l') + arm('r')
+    + placeSVG(bust, 0, 0, 120)
+    + '</svg>';
+}
+// Ánimo que pide una frase (para la cara de quien la dice)
+function moodOf(text){
+  const t = String(text || '').toLowerCase();
+  if (/\b(oh no|uh-oh|help|scared|afraid|run|quick|ouch|eek|argh|aaah|careful|watch out|hide)\b/.test(t)) return 'scared';
+  if (/\b(stop|grr|angry|go away|get away|mine)\b/.test(t) || /\bno!/.test(t)) return 'angry';
+  if (/\b(sad|sorry|poor|cry|miss you|tired|sleepy|lost|hungry|can't|don't know|too bad)\b/.test(t)) return 'sad';
+  if (/\b(wow|amazing|whoa|incredible|really|look at|what is that|strange)\b/.test(t) || /!\?|\?!/.test(t)) return 'surprised';
+  if (/\?\s*$/.test(t)) return 'curious';
+  if (/!/.test(t) || /\b(great|love|yes|yay|cool|fun|hooray|thank|good job|delicious|happy)\b/.test(t)) return 'laugh';
+  return 'happy';
+}
 const placeSVG = (svg, x, y, size) => svg.replace('<svg ', `<svg x="${x}" y="${y}" width="${size}" height="${size}" `);
 const SCENE_OPEN = '<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">';
 const beachBG = () => `<rect width="400" height="300" fill="#BFE3FA"/><circle cx="352" cy="44" r="24" fill="#FFC83D" ${SW}/>`
@@ -5752,13 +6087,11 @@ Object.assign(SCENE_MODES, {
     // y a la mitad se pregunta quién lo dijo (s.qAt): sin responder no se puede seguir.
     const beats = storyBeats(s.panels), cast = uniq(beats.flatMap(b => b.who)), blanks = s.blanks || {}, qAt = s.qAt === undefined ? -1 : s.qAt;
     const st = stage(beats[0].bg);
-    let i = -1, asked = false, auto = false, pending = false, over = false;
+    // El cuento se reproduce solo, como en Duolingo: cada globo se oye y pasa al siguiente; se detiene solo para preguntar
+    let i = -1, asked = false, auto = true, pending = false, over = false;
     const dots = h('div', {class:'story-dots', 'aria-hidden':'true'}, ...beats.map(() => h('i')));
     const quiz = h('div', {class:'story-quiz', hidden:true});
-    const nextB = h('button', {class:'btn small', type:'button'}, 'Siguiente ▶');
-    const autoB = h('button', {class:'btn blue small', type:'button'}, '▶ Escuchar todo');
-    const ctl = h('div', {class:'story-ctl'}, autoB, nextB);
-    const finish = () => { if (over) return; over = true; auto = false; nextB.disabled = true; nextB.textContent = '¡Fin!'; setTimeout(() => { if (!st.el.isConnected) return; st.party(); end(); }, 900); };
+    const finish = () => { if (over) return; over = true; auto = false; setTimeout(() => { if (!st.el.isConnected) return; st.party(); end(); }, 900); };
     const maybeEnd = () => { if (i === beats.length - 1 && !pending && (qAt !== i || asked)) finish(); };
     const go = () => {
       if (pending || over) return;
@@ -5768,46 +6101,44 @@ Object.assign(SCENE_MODES, {
       st.show(b.bg, b.who, b.sp, b.text, false, f ? blankText(f) : null);
       [...dots.children].forEach((d, k) => d.classList.toggle('on', k <= i));
       if (f) askBlank(f, b);
-      if (auto) say(b.text, false, () => setTimeout(() => { if (auto && !pending && st.el.isConnected) go(); }, 500), b.sp);
+      if (auto) sayThen(b.text, b.sp, () => setTimeout(() => { if (auto && !pending && st.el.isConnected) go(); }, 600));
       maybeEnd();
     };
     // Completar lo que dijo (o escoger la frase que se escuchó)
     const askBlank = (f, b) => {
-      pending = true; nextB.disabled = true; quiz.hidden = false; quiz.innerHTML = '';
+      pending = true; quiz.hidden = false; quiz.innerHTML = '';
       quiz.append(h('b', {}, f.pick ? '¿Qué dijo' + (b.sp ? ' ' + b.sp : '') + '? Toca la bocina del globo.' : 'Completa lo que dice' + (b.sp ? ' ' + b.sp : '') + ':'));
       const row = h('div', {class:'opts story-opts'}, ...f.options.map(o => { const btn = h('button', {class:'opt', type:'button'}, o);
         btn.onclick = () => {
           if (o !== (f.pick ? f.line : f.answer)) return wrong(btn);
           sfx(true); celebrateMini(btn); st.reveal(b.text);
-          setTimeout(() => { quiz.hidden = true; pending = false; nextB.disabled = over; maybeEnd(); if (auto && !over) setTimeout(go, 500); }, 650);
+          setTimeout(() => { quiz.hidden = true; pending = false; maybeEnd(); if (auto && !over) setTimeout(go, 500); }, 650);
         };
         return btn; }));
       quiz.append(row);
     };
     // A la mitad, una pregunta rápida: ¿quién lo dijo?
     const askWho = () => {
-      asked = true; auto = false; pending = true; const b = beats[qAt]; ctl.hidden = true; quiz.hidden = false; quiz.innerHTML = '';
+      asked = true; auto = false; pending = true; const b = beats[qAt]; quiz.hidden = false; quiz.innerHTML = '';
       st.el.classList.add('asking'); // sin el globo ni quien habla, para que la respuesta no se vea
       quiz.append(h('b', {}, '¿Quién dijo esto?'), h('p', {}, '«' + b.text + '»'));
       const row = h('div', {class:'who-row'}, ...shuffle([b.sp, ...shuffle(cast.filter(n => n !== b.sp)).slice(0, 3)]).map(n => { const btn = h('button', {class:'who-btn', type:'button', 'aria-label':n}, h('span', {html:friendSVG(n)}), h('small', {}, n));
-        btn.onclick = () => { if (n !== b.sp) return wrong(btn); sfx(true); celebrateMini(btn); setTimeout(() => { st.el.classList.remove('asking'); quiz.hidden = true; ctl.hidden = false; pending = false; go(); }, 650); };
+        btn.onclick = () => { if (n !== b.sp) return wrong(btn); sfx(true); celebrateMini(btn); setTimeout(() => { st.el.classList.remove('asking'); quiz.hidden = true; pending = false; auto = true; go(); }, 650); };
         return btn; }));
       quiz.append(row);
     };
-    nextB.onclick = () => { auto = false; go(); };
-    autoB.onclick = () => { auto = true; const b = beats[i]; say(b.text, false, () => setTimeout(() => { if (auto && !pending && st.el.isConnected) go(); }, 500), b.sp); };
-    ui.append(st.el, dots, ctl, quiz);
+    ui.append(st.el, dots, quiz);
     go();
   },
   // Canto: los personajes cantan línea por línea; algunas líneas hay que completarlas para seguir cantando
   chant(s, A, pos, ui, wrong, end, ctx){
     const who = (s.who || ['Charlie', 'Rose']).filter(isFriend), st = stage(s.bg || 'park'), blanks = s.blanks || {}, last = s.lines.length - 1;
-    let i = -1, pending = false, over = false, singing = false;
+    let i = -1, pending = false, over = false, singing = true; // el canto se canta solo, línea por línea
     const spk = k => who[k % Math.max(1, who.length)];
     const quiz = h('div', {class:'story-quiz', hidden:true});
     // las líneas aparecen en la lista solo cuando ya se cantaron (así la lista no da la respuesta)
     const rows = s.lines.map(([en], k) => { const r = h('button', {class:'tip-row chant-row', type:'button', hidden:true}, h('div', {class:'t'}, h('div', {class:'en'}, en))); r.onclick = () => say(en, false, null, spk(k)); return r; });
-    const maybeEnd = () => { if (i === last && !pending && !over){ over = true; singing = false; nextL.disabled = true; setTimeout(() => { if (st.el.isConnected){ st.party(true); end(); } }, 700); } };
+    const maybeEnd = () => { if (i === last && !pending && !over){ over = true; singing = false; setTimeout(() => { if (st.el.isConnected){ st.party(true); end(); } }, 700); } };
     const show = k => {
       i = k; const f = blanks[k];
       st.show(s.bg || 'park', who, spk(k), s.lines[k][0], true, f ? blankText(f) : null);
@@ -5815,22 +6146,20 @@ Object.assign(SCENE_MODES, {
       if (f) askBlank(k, f); else { rows[k].hidden = false; maybeEnd(); }
     };
     const askBlank = (k, f) => {
-      pending = true; nextL.disabled = true; quiz.hidden = false; quiz.innerHTML = '';
+      pending = true; quiz.hidden = false; quiz.innerHTML = '';
       quiz.append(h('b', {}, f.pick ? '¿Qué cantaron? Toca la bocina del globo.' : 'Completa el canto:'));
       quiz.append(h('div', {class:'opts story-opts'}, ...f.options.map(o => { const btn = h('button', {class:'opt', type:'button'}, o);
         btn.onclick = () => {
           if (o !== (f.pick ? f.line : f.answer)) return wrong(btn);
           sfx(true); celebrateMini(btn); st.reveal(s.lines[k][0], true); rows[k].hidden = false;
-          setTimeout(() => { quiz.hidden = true; pending = false; nextL.disabled = false; maybeEnd(); if (singing && !over) setTimeout(next, 400); }, 650);
+          setTimeout(() => { quiz.hidden = true; pending = false; maybeEnd(); if (singing && !over) setTimeout(next, 400); }, 650);
         };
         return btn; })));
     };
-    const sing1 = () => { if (!st.el.isConnected || over) return; say(s.lines[i][0], false, () => setTimeout(() => { if (singing && !pending && !over && i < last){ show(i + 1); sing1(); } else if (i >= last) singing = false; }, 300), spk(i)); };
+    const sing1 = () => { if (!st.el.isConnected || over) return; sayThen(s.lines[i][0], spk(i), () => setTimeout(() => { if (singing && !pending && !over && i < last){ show(i + 1); sing1(); } else if (i >= last) singing = false; }, 350)); };
     const next = () => { if (pending || over || i >= last) return; show(i + 1); if (singing) sing1(); };
-    const all = h('button', {class:'btn blue small', type:'button', onclick:() => { singing = true; sing1(); }}, '▶ Escuchar el canto completo');
-    const nextL = h('button', {class:'btn small', type:'button', onclick:() => { singing = false; next(); }}, 'Siguiente línea ▶');
-    ui.append(st.el, h('div', {class:'story-ctl'}, all, nextL), quiz, h('div', {class:'tip chant-list'}, ...rows));
-    show(0);
+    ui.append(st.el, quiz, h('div', {class:'tip chant-list'}, ...rows));
+    show(0); sing1();
   }
 });
 // Unidad 4, lección 1: la cara grande para poner hair, eyes, ears, nose, mouth y face
@@ -5845,6 +6174,14 @@ ART.face = {
 /* ---------- lesson engine ---------- */
 const PROMPTS = {deck:'Palabras nuevas', pickline:'¿Cuál frase escuchas?', who:'¿Quién lo dijo en el cuento?', fix:'Encuentra el error', chat:'Responde a tu amigo', tf:'¿Verdadero o falso?', seq:'Ordena el cuento', spell:'Arma la palabra', pop:'Atrapa la burbuja', flash:'Palabra nueva', pickword:'¿Cómo se dice en inglés?', listen:'Escucha y toca la imagen correcta', match:'Une cada palabra con su imagen', write:'Escribe en inglés', speak:'Escucha y repite en voz alta', order:'Ordena la oración', fill:'Completa la oración', memory:'Memoria: encuentra las parejas', tip:'Mini clase', read:'Lee y responde'};
 const PRAISE = ['¡Excelente!', '¡Muy bien!', '¡Genial!', '¡Perfecto!', '¡Así se hace!', '¡Súper!'];
+// Expresiones de Pandi (icons/pandi/mood-*.png: cheer, sad, wow, think), generadas a partir de la imagen original
+const pandiMood = (k, cls) => h('img', {class:'pmood ' + (cls || k), src:'icons/pandi/mood-' + k + '.png', alt:'', draggable:'false'});
+// Un número que sube hasta su valor (los XP de la pantalla final)
+function countUp(el, to, prefix = '', ms = 900){
+  const t0 = performance.now(); el.textContent = prefix + '0';
+  const step = t => { const p = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - p, 3); el.textContent = prefix + Math.round(to * e); if (p < 1 && el.isConnected) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
 let L = null;
 function startLesson(unit, lesson, preview){
   const queue = buildSteps(lesson, unit);
@@ -5858,9 +6195,11 @@ function leaveLesson(){ try { speechSynthesis.cancel(); } catch (e) {} if (clipN
 function nextStep(){ if (!L.queue.length) return finishLesson(); L.cur = L.queue.shift(); renderStep(); }
 function renderStep(){
   const s = L.cur, body = $('#lbody'), foot = $('#lfoot'), btn = $('#lbtn');
-  body.innerHTML = ''; body.classList.remove('locked'); body.scrollTop = 0;
+  body.innerHTML = ''; body.classList.remove('locked', 'enter'); body.scrollTop = 0;
+  void body.offsetWidth; body.classList.add('enter'); // reinicia la animación de entrada
   $('#lprog').style.width = Math.round(L.done / (L.done + L.queue.length + 1) * 100) + '%';
   foot.className = 'lfoot'; $('#fbMsg').innerHTML = '';
+  { const row = foot.querySelector('.fb-row'); if (row){ foot.prepend($('#fbMsg')); row.remove(); } }
   btn.hidden = false; btn.disabled = true; btn.textContent = 'Comprobar';
   let checker = null;
   btn.onclick = () => { if (checker){ const r = checker(); grade(r.ok, r.correct); } };
@@ -5883,7 +6222,13 @@ function grade(ok, correct){
   else { L.mistakes++; sfx(false); noteMiss(s); if (!L.requeued.has(s)){ const again = s.t === 'tip' && s.quiz ? {...s.quiz, game:null} : {...s, game:null}; if (Array.isArray(again.options)) again.options = shuffle(again.options.slice()); /* otro orden: que no se responda de memoria por la posición */ L.requeued.add(s); L.requeued.add(again); L.queue.push(again); } }
   foot.className = 'lfoot ' + (ok ? 'ok' : 'bad');
   const fb = $('#fbMsg'); fb.innerHTML = '';
-  fb.append(h('strong', {}, ok ? rnd(PRAISE) : 'Casi… ¡tú puedes!'));
+  // Pandi reacciona: celebra si acertó, se lamenta si no
+  const row = h('div', {class:'fb-row'}, pandiMood(ok ? 'cheer' : 'sad'), fb); foot.prepend(row);
+  // racha dentro de la lección: a las 3, 5, 8 y 12 seguidas, festejo extra
+  L.combo = ok ? (L.combo || 0) + 1 : 0; L.bestCombo = Math.max(L.bestCombo || 0, L.combo);
+  const hot = ok && [3, 5, 8, 12].includes(L.combo);
+  if (hot){ sfx('combo'); celebrate('small'); row.querySelector('.pmood').classList.add('hot'); }
+  fb.append(h('strong', {}, hot ? `¡${L.combo} seguidas! 🔥` : ok ? rnd(PRAISE) : 'Casi… ¡tú puedes!'));
   if (!ok && correct) fb.append(h('span', {}, 'Respuesta correcta: ', h('b', {}, correct)));
   fb.append(h('span', {}, ok ? '+10 XP' : 'La repetiremos al final.'));
   $('#lbody').classList.add('locked');
@@ -5894,7 +6239,8 @@ function grade(ok, correct){
 function finishLesson(){
   const acc = L.graded ? Math.max(0, Math.round((L.graded - L.mistakes) / L.graded * 100)) : 100;
   const stars = acc >= 90 ? 3 : acc >= 70 ? 2 : 1;
-  const gained = L.xp + 10;
+  const boosted = !L.preview && boostOn();
+  const gained = (L.xp + 10) * (boosted ? 2 : 1);
   if (L.preview) return finishPreview(acc, stars, gained);
   const firstToday = !S.days.includes(today());
   const gems = 5 + (stars === 3 ? 3 : 0);
@@ -5902,20 +6248,26 @@ function finishLesson(){
   S.xpDays[today()] = (S.xpDays[today()] || 0) + gained;
   if (!L.review) S.done[L.lesson.id] = Math.max(S.done[L.lesson.id] || 0, stars);
   if (firstToday) S.days.push(today());
-  const medals = checkMedals({perfect: L.mistakes === 0 && L.graded > 0});
+  if (L.mistakes === 0 && L.graded > 0) S.perfects = (S.perfects || 0) + 1;
+  const mm = (S.months = S.months && typeof S.months === 'object' ? S.months : {}), mk = monthKey(); mm[mk] = mm[mk] || {lessons:0, perfect:0};
+  mm[mk].lessons++; if (L.mistakes === 0 && L.graded > 0) mm[mk].perfect++;
+  const medals = checkMedals({lesson:true, combo:L.bestCombo || 0});
   save();
   const r = $('#rbody'); r.innerHTML = '';
   const big = h('div', {class:'big-stars'});
   for (let i = 0; i < 3; i++) big.append(h('span', {class:'pop', html:ICON.star, style:`color:${i < stars ? 'var(--yellow)' : 'var(--locked)'};animation-delay:${i * 0.15}s;display:inline-block`}));
-  const lp = panda('full'); lp.style.cssText = 'width:150px;margin:0 auto;animation:bob 2.4s ease-in-out infinite';
+  // Pandi celebra; si hubo medalla nueva o se encendió la racha, se sorprende
+  const lp = pandiMood(medals.length || (firstToday && streak() > 1) ? 'wow' : 'cheer', 'cheer big'); lp.style.cssText = 'margin:0 auto;display:block';
+  const xpEl = h('b', {style:'color:var(--yellow-d)'}, '+' + gained); setTimeout(() => countUp(xpEl, gained, '+'), 350);
   r.append(lp, h('h1', {}, '¡Lección completada!'), h('p', {class:'muted', style:'margin:-8px 0 0;font-size:17px'}, L.lesson.title + ' · ' + L.unit.title), big,
     h('div', {class:'stats'},
-      h('div', {class:'stat'}, h('b', {style:'color:var(--yellow-d)'}, '+' + gained), h('span', {}, 'XP ganados')),
+      h('div', {class:'stat'}, xpEl, h('span', {}, 'XP ganados')),
       h('div', {class:'stat'}, h('b', {style:'color:var(--green)'}, acc + '%'), h('span', {}, 'Precisión')),
       h('div', {class:'stat'}, h('b', {style:'color:var(--orange)'}, streak()), h('span', {}, 'Días seguidos'))),
     h('div', {class:'gem-earned pop'}, `+${gems} 💎 gemas` + (stars === 3 ? ' (¡bonus por 3 estrellas!)' : '')),
+    boosted ? h('div', {class:'gem-earned pop', style:'color:var(--purple)'}, '⚡ ¡Doble XP activo!') : null,
     firstToday && streak() > 1 ? h('div', {class:'card streak-up pop'}, h('div', {class:'flame'}, '🔥'), h('div', {}, h('div', {class:'lbl'}, '¡Racha encendida!'), h('b', {style:'font-size:18px'}, `${streak()} días seguidos`))) : null,
-    ...medals.map(m => h('div', {class:'card new-medal pop'}, h('div', {class:'m'}, m.g), h('div', {}, h('div', {class:'lbl'}, 'Nueva medalla'), h('b', {style:'font-size:18px'}, m.name)))),
+    ...medals.map(m => h('div', {class:'card new-medal pop'}, h('div', {class:'m', style:m.tier ? `background:${ACH_COLORS[Math.min(m.tier, ACH_COLORS.length - 1)]};border-color:${ACH_COLORS[Math.min(m.tier, ACH_COLORS.length - 1)]}` : ''}, m.g), h('div', {}, h('div', {class:'lbl'}, m.monthly ? `¡Reto del mes cumplido! +${MONTH_GEMS} 💎` : m.tier ? (m.first ? '¡Logro nuevo!' : '¡Logro subió de nivel!') : 'Nueva medalla'), h('b', {style:'font-size:18px'}, m.tier ? `${m.name} · Nivel ${m.tier}` : m.name)))),
     h('button', {class:'btn', type:'button', onclick:() => { show('home'); setTab('learn'); }}, 'Continuar'));
   show('result'); celebrate(stars === 3 || medals.length || (firstToday && streak() > 1) ? 'big' : 'normal');
 }
@@ -6147,7 +6499,7 @@ const R = {
     const blank = h('span', {class:'blank'}, ' ');
     ctx.body.append(h('div', {class:'flash'}, pic(s.img, 'xl'), h('div', {class:'sentence'}, s.before + ' ', blank, s.after)));
     const box = h('div', {class:'opts grid2'}); let sel = null;
-    s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; blank.textContent = o; ctx.ready(() => ({ok: sel === s.answer, correct: `${s.before} ${s.answer}${s.after}`})); })(b); box.append(b); });
+    s.options.forEach(o => { const b = h('button', {class:'opt', type:'button'}, o); selectable(box, () => { sel = o; blank.textContent = o; ctx.ready(() => ({ok: sel === s.answer, correct: `${s.before} ${s.answer} ${s.after}`.replace(/\s+([.,?!;:])/g, '$1').trim()})); })(b); box.append(b); });
     ctx.body.append(box);
   },
   memory(s, ctx){
@@ -6218,7 +6570,11 @@ function stage(bg0){
   const actors = {};
   let curBg = null, typing = 0;
   const setBg = b => { if (b === curBg) return; curBg = b; bgL.innerHTML = SCENE_OPEN + (BG[b] || BG.park)() + '</svg>'; bgL.classList.remove('fade'); void bgL.offsetWidth; bgL.classList.add('fade'); };
-  const actor = n => actors[n] || (actors[n] = (() => { const a = h('div', {class:'actor out', html:friendSVG(n)}); el.insertBefore(a, bub); return a; })());
+  const actor = n => actors[n] || (actors[n] = (() => { const a = h('div', {class:'actor out', 'data-name':n, 'data-mood':'happy', html:actorSVG(n, 'happy')}); el.insertBefore(a, bub); return a; })());
+  // cara según el ánimo de la frase (quien habla); los demás se sorprenden si hay susto
+  const setMood = (a, n, m) => { if (a.dataset.mood === m) return; a.dataset.mood = m; a.innerHTML = actorSVG(n, m); };
+  // la boca se mueve mientras suena el audio de quien habla (sayHook); al dejar de hablar vuelve al reposo
+  SAY_HOOK = (on, who) => { if (!el.isConnected){ SAY_HOOK = null; return; } Object.values(actors).forEach(a => { const me = on && (a.dataset.name === who || (!who && a.classList.contains('sp'))); a.classList.toggle('talk', me); if (!me && !a.classList.contains('out')) a.classList.add('idle'); }); };
   // dibujos de lo que se dice
   const setProps = (text, sing) => {
     props.innerHTML = '';
@@ -6232,20 +6588,25 @@ function stage(bg0){
       setBg(b);
       const spots = who.length === 1 ? [32] : who.length === 2 ? [8, 56] : [2, 33, 64];
       Object.entries(actors).forEach(([n, a]) => { if (!who.includes(n)){ a.classList.add('out'); a.style.left = a.style.left && parseFloat(a.style.left) > 40 ? '110%' : '-40%'; } });
+      const mood = sing ? 'laugh' : moodOf(text);
       who.slice(0, 3).forEach((n, k) => {
         const a = actor(n);
-        if (a.classList.contains('out')){ a.style.transition = 'none'; a.style.left = spots[k] > 40 ? '110%' : '-40%'; void a.offsetWidth; a.style.transition = ''; }
+        const entering = a.classList.contains('out');
+        if (entering){ a.style.transition = 'none'; a.style.left = spots[k] > 40 ? '110%' : '-40%'; void a.offsetWidth; a.style.transition = ''; }
         a.classList.remove('out'); a.style.left = spots[k] + '%';
-        a.classList.toggle('talk', sing ? true : n === sp); a.classList.toggle('idle', !(sing || n === sp));
-        a.classList.remove('jump', 'tilt'); void a.offsetWidth;
-        if (n === sp && /!/.test(text)) a.classList.add('jump'); else if (n === sp && /\?/.test(text)) a.classList.add('tilt');
+        a.classList.toggle('sp', n === sp);
+        setMood(a, n, n === sp ? mood : mood === 'scared' ? 'surprised' : mood === 'sad' ? 'sad' : 'happy');
+        a.classList.toggle('idle', !(sing || n === sp));
+        a.classList.remove('jump', 'tilt', 'walk', 'shiver'); void a.offsetWidth;
+        if (entering) a.classList.add('walk');
+        if (n === sp && mood === 'laugh') a.classList.add('jump'); else if (n === sp && mood === 'curious') a.classList.add('tilt'); else if (n === sp && mood === 'scared') a.classList.add('shiver');
       });
       if (/\b(oh no|uh-oh|help|roar|scared)\b/i.test(text)){ el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
       // globo que se escribe solo, con la cola hacia quien habla
       const k = who.indexOf(sp); bub.hidden = false; bub.style.setProperty('--tail', (k < 0 ? 50 : spots[k] + 16) + '%');
       au.innerHTML = ''; au.append(audioBtn(text, false, true, sp));
       const my = ++typing; let c = 0; en.textContent = '';
-      const step = () => { if (my !== typing) return; c += 2; en.textContent = disp.slice(0, c); if (c < disp.length) setTimeout(step, 28); else setTimeout(() => { if (my === typing) Object.values(actors).forEach(a => { if (!sing){ a.classList.remove('talk'); if (!a.classList.contains('out')) a.classList.add('idle'); } }); }, 600); };
+      const step = () => { if (my !== typing) return; c += 2; en.textContent = disp.slice(0, c); if (c < disp.length) setTimeout(step, 28); else setTimeout(() => { if (my === typing) Object.values(actors).forEach(a => { if (!a.classList.contains('out') && !a.classList.contains('talk')) a.classList.add('idle'); }); }, 600); };
       step();
       setProps(disp, sing);
     },

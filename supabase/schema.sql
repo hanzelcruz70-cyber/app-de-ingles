@@ -295,3 +295,24 @@ create policy friendships_accept on public.friendships for update to authenticat
 drop policy if exists friendships_remove on public.friendships;
 create policy friendships_remove on public.friendships for delete to authenticated
   using (from_id = auth.uid() or to_id = auth.uid() or (public.is_admin() and school_id = public.my_school()));
+
+-- ---------- Recordatorios con notificaciones push (la app cerrada también avisa) ----------
+-- Cada fila es un teléfono suscrito. La función «remind» (cada 15 min) manda el aviso a la hora elegida
+-- si ese día el estudiante todavía no practicó. El estudiante solo ve y cambia sus propias filas.
+create table if not exists public.push_subs (
+  endpoint text primary key,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  school_id uuid not null references public.schools(id) on delete cascade,
+  p256dh text not null,
+  auth text not null,
+  remind_at text not null default '17:00',
+  tz_offset int not null default 360,
+  last_sent text,
+  created_at timestamptz not null default now()
+);
+create index if not exists push_subs_user_idx on public.push_subs(user_id);
+alter table public.push_subs enable row level security;
+grant select, insert, update, delete on public.push_subs to authenticated;
+drop policy if exists push_subs_own on public.push_subs;
+create policy push_subs_own on public.push_subs for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid() and school_id = public.my_school());

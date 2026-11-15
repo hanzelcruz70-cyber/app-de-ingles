@@ -7,3 +7,4 @@ tests/e2e/demo_build.html
 tests/e2e/*.png
 tools/pandi/capas/
 tools/voces/.llave
+supabase/.vapid.json

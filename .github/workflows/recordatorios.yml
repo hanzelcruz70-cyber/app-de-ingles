@@ -1,0 +1,15 @@
+# Cada 15 minutos le pide a la función "remind" de Supabase que mande los recordatorios que toquen.
+# Necesita los secrets SUPABASE_PROJECT_REF y PANDI_SETUP_TOKEN (los mismos de la función de cuentas).
+name: Recordatorios (cada 15 min)
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a la función remind
+        run: |
+          curl -fsS -X POST "https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/functions/v1/remind" \
+            -H "x-remind-token: ${{ secrets.PANDI_SETUP_TOKEN }}" -H "Content-Type: application/json" -d '{}'

@@ -50,7 +50,12 @@ En **Authentication → Sign In / Providers → Email**:
 - `SUPABASE_PROJECT_REF`: el código de la URL de tu proyecto (`supabase.com/dashboard/project/ESTE-CODIGO`).
 - `PANDI_SETUP_TOKEN`: un código largo que inventes tú.
 
-Luego ve a **Actions → Publicar función de cuentas (Supabase) → Run workflow**. Cuando salga en verde, la función ya está publicada.
+Para los **recordatorios con la app cerrada** (notificaciones push) agrega dos secrets más, con las llaves que están en el archivo `supabase/.vapid.json` de tu computadora (ese archivo no se sube a GitHub):
+
+- `VAPID_PUBLIC_KEY`: el valor de `publicKey` (es el mismo que ya está en `config.js`).
+- `VAPID_PRIVATE_KEY`: el valor de `privateKey`. **Nunca** lo pongas en `config.js` ni en el código.
+
+Luego ve a **Actions → Publicar función de cuentas (Supabase) → Run workflow**. Cuando salga en verde, las dos funciones (`admin-users` y `remind`) ya están publicadas. La automatización **Recordatorios (cada 15 min)** se enciende sola con el primer push; si GitHub la pausó por inactividad, en **Actions** tócala y elige **Enable workflow**. Vuelve a correr también `supabase/schema.sql` en el SQL Editor (crea la tabla `push_subs`).
 
 **Opción B, desde tu computadora.** Necesitas la [Supabase CLI](https://supabase.com/docs/guides/cli). En la carpeta de este proyecto:
 
@@ -58,7 +63,9 @@ Luego ve a **Actions → Publicar función de cuentas (Supabase) → Run workflo
 supabase login
 supabase link --project-ref TU_PROJECT_REF        # está en la URL del proyecto
 supabase secrets set PANDI_SETUP_TOKEN=inventa-un-codigo-largo-y-secreto
+supabase secrets set VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=...     # de supabase/.vapid.json
 supabase functions deploy admin-users
+supabase functions deploy remind --no-verify-jwt
 ```
 
 `PANDI_SETUP_TOKEN` es un código que solo tú conoces. Sirve para crear escuelas nuevas desde `setup.html`; guárdalo.
