@@ -843,7 +843,6 @@ select.in{appearance:auto;min-width:0}
       <button class="btn" type="submit">Iniciar sesión</button>
     </form>
     <p class="legal">Al entrar aceptas los <a href="terminos.html">Términos y condiciones</a> y el <a href="privacidad.html">Aviso de privacidad</a>.</p>
-    <button class="linkbtn" id="lgAudio" type="button" style="align-self:center;margin:10px auto 0">¿No se oye? Probar audio y micrófono</button>
     <div class="demo">
       <div class="lbl">Cuentas de prueba · toca una para llenar los datos</div>
       <button class="demo-row" type="button" data-fill="estudiante|1234"><span class="tag">ESTUDIANTE</span><span class="r">Ana<small>usuario: estudiante · clave: 1234</small></span></button>
@@ -4115,53 +4114,9 @@ function micErrorMsg(er){
   if (er === 'audio-capture') return 'No encuentro el micrófono de este teléfono.';
   return 'No pude usar el micrófono aquí.';
 }
-function audioTestSheet(){
-  const hasTTS = 'speechSynthesis' in window;
-  if (hasTTS && !voice) pickVoice();
-  const voiceInfo = h('p', {class:'muted', style:'margin:0;font-size:15px'}, !hasTTS ? 'Este teléfono no puede reproducir voz.' : voice ? 'Voz en inglés: ' + voice.name : 'No encontré una voz en inglés. En Android instala “Texto a voz de Google” y descarga inglés (EE. UU.).');
-  const micInfo = h('p', {class:'muted', style:'margin:0;font-size:15px', 'aria-live':'polite'}, SRC ? 'Toca “Probar micrófono” y di: Hello' : 'Este navegador no escucha la voz. En las lecciones de hablar usarás el botón “Ya lo dije”. Para mejor resultado usa Chrome en Android.');
-  const testMic = () => {
-    try {
-      const rec = new SRC(); rec.lang = 'en-US'; rec.interimResults = false;
-      micInfo.textContent = 'Te escucho… di: Hello';
-      let heard = false;
-      setTimeout(() => { if (heard) return; try { rec.abort(); } catch (x) {} micInfo.textContent = 'No escuché nada. Revisa que el navegador tenga permiso para usar el micrófono y que haya internet.'; }, 11000);
-      rec.onresult = e => { heard = true; micInfo.textContent = 'Escuché: “' + e.results[0][0].transcript + '”. ¡El micrófono funciona!'; };
-      rec.onerror = ev => { if (ev && ev.error === 'aborted') return; heard = true; micInfo.textContent = micErrorMsg(ev && ev.error); };
-      rec.start();
-    } catch (e) { micInfo.textContent = 'No pude usar el micrófono aquí.'; }
-  };
-  const list = hasTTS ? enVoices() : [];
-  const vSel = list.length > 1 ? h('select', {class:'in', id:'voiceSel', 'aria-label':'Voz'}, ...list.map(v => h('option', {value:v.name}, v.name.replace(/^Microsoft |^Google /, '').replace(/ - English.*$| \(.*$/, '') + (kidVoice(v) ? ' 🧒' : '')))) : null;
-  if (vSel){ vSel.value = voice ? voice.name : list[0].name; vSel.addEventListener('change', () => { voice = list.find(v => v.name === vSel.value) || voice; try { localStorage.setItem(VOICE_KEY, voice.name); } catch (e) {} voiceInfo.textContent = 'Voz en inglés: ' + voice.name; say('Hello! I am Pandi. Let us learn English!'); }); }
-  const sh = sheet(h('h2', {style:'font-size:24px'}, 'Probar audio y micrófono'), voiceInfo,
-    vSel ? h('label', {class:'field'}, h('span', {class:'lbl'}, 'Escoge la voz que más te guste'), vSel) : null,
-    h('button', {class:'btn', type:'button', onclick:() => say('Hello! I am Pandi. Let us learn English!')}, 'Probar sonido'),
-    h('button', {class:'btn ghost', type:'button', onclick:() => sfx(true)}, 'Probar efectos'),
-    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Si no oyes nada: sube el volumen y quita el modo silencio (en iPhone, el interruptor al lado del teléfono).'),
-    micInfo, SRC ? h('button', {class:'btn blue', type:'button', onclick:testMic}, 'Probar micrófono') : null,
-    h('button', {class:'btn ghost', type:'button', onclick:() => sh.remove()}, 'Cerrar'));
-}
-// Lo que hay que escuchar suena solo al entrar al ejercicio; la bocina sirve para oírlo otra vez
-const autoSay = (el, fn, ms = 550) => setTimeout(() => { if (el.isConnected) fn(); }, ms);
-function audioBtn(text, slow, big, who){
-  return h('button', {class:'abtn' + (slow ? ' slow' : '') + (big ? ' big' : ''), type:'button', 'aria-label': slow ? 'Escuchar lento' : 'Escuchar', html: ICON.speaker + (big ? '' : (slow ? 'Lento' : 'Escuchar')), onclick:() => say(text, slow, null, who)});
-}
-function toast(msg){ $$('.toast').forEach(t => t.remove()); const t = h('div', {class:'toast pop', role:'status'}, msg); document.body.append(t); setTimeout(() => t.remove(), 2600); }
-function sheet(...content){
-  const sh = h('div', {class:'sheet', role:'dialog', 'aria-modal':'true'}, h('div', {}, ...content));
-  sh.addEventListener('click', e => { if (e.target === sh) sh.remove(); });
-  document.body.append(sh); return sh;
-}
-function confirmSheet(title, text, okLabel, onOk){
-  const sh = sheet(h('h2', {style:'font-size:24px;text-align:center'}, title), h('p', {class:'muted', style:'margin:0;text-align:center'}, text),
-    h('button', {class:'btn', type:'button', onclick:() => sh.remove()}, 'Cancelar'),
-    h('button', {class:'btn ghost', type:'button', style:'color:var(--red)', onclick:() => { sh.remove(); onOk(); }}, okLabel));
-}
-
+// (La hoja «Probar audio y micrófono» se quitó el 15 nov 2026 a pedido del dueño; la voz se elige sola con voiceScore.)
 /* ---------- login & routing ---------- */
 function show(id){ $$('.screen').forEach(s => s.hidden = s.id !== id); }
-$('#lgAudio').addEventListener('click', audioTestSheet);
 $$('[data-fill]').forEach(b => b.addEventListener('click', () => { const [u, p] = b.dataset.fill.split('|'); $('#lgUser').value = u; $('#lgPass').value = p; $('#lgErr').hidden = true; }));
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault();

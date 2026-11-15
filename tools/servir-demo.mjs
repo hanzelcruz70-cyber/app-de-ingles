@@ -2,7 +2,7 @@
 import http from 'node:http'; import fs from 'node:fs'; import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'), port = +process.env.PORT || +process.argv[2] || 4320;
-const types = {'.html':'text/html; charset=utf-8', '.js':'text/javascript', '.png':'image/png', '.json':'application/json', '.webmanifest':'application/manifest+json', '.mp3':'audio/mpeg'};
+const types = {'.mp4':'video/mp4', '.html':'text/html; charset=utf-8', '.js':'text/javascript', '.png':'image/png', '.json':'application/json', '.webmanifest':'application/manifest+json', '.mp3':'audio/mpeg'};
 http.createServer((req, res) => {
   const url = decodeURIComponent(req.url.split('?')[0]);
   if (url === '/config.js') { res.writeHead(200, {'content-type':'text/javascript'}); return res.end('window.PANDI_CONFIG = {};'); }

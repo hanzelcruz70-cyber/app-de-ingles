@@ -15,7 +15,7 @@ La interfaz está en español y las lecciones en inglés.
 1. Abre el enlace de la app en el celular o la computadora.
 2. Escribe tu **Usuario** y tu **Contraseña** y toca **Iniciar sesión**.
 3. Si los datos están mal, sale un mensaje rojo: *"El usuario o la contraseña no coinciden. Revisa y prueba otra vez."*
-4. Si no se oye la voz, toca **"¿No se oye? Probar audio y micrófono"** debajo del botón.
+4. Si no se oye la voz, revisa el volumen y el modo silencio del teléfono.
 5. Debajo están los enlaces a los **Términos y condiciones** y al **Aviso de privacidad**. Al entrar se aceptan.
 
 En los ejercicios de escuchar, **la palabra o la frase suena sola** apenas aparece (y otra vez en cada ronda nueva). Si el niño no la oyó, toca la bocina (**Escuchar** / **Lento**) para repetirla. Fuera de los ejercicios la app no habla sola (no hay saludo de voz). Los cuentos, los cantos y las palabras sueltas usan voces de ElevenLabs, con una voz distinta para cada personaje; lo que no tiene audio grabado (por ejemplo, una lección que escribió el profe) suena con la voz del teléfono.
@@ -229,7 +229,7 @@ Si el código está mal: *"Código de configuración incorrecto"*. El código no
 
 | Problema | Qué hacer |
 | --- | --- |
-| No se oye la voz | Subir volumen, quitar modo silencio (iPhone: interruptor lateral). Usar **Probar audio y micrófono**. En Android, instalar "Texto a voz de Google" con inglés (EE. UU.). |
+| No se oye la voz | Subir volumen, quitar modo silencio (iPhone: interruptor lateral). En Android, instalar "Texto a voz de Google" con inglés (EE. UU.). |
 | El micrófono no entiende | Hablar cerca del teléfono. Si falla dos veces, usar **Ya lo dije en voz alta**. Funciona mejor en Chrome de Android. |
 | Un niño olvidó su contraseña | El profe abre su ficha → **Cambiar contraseña**. |
 | Un profe olvidó su contraseña | El dueño la cambia en el panel del dueño. |
@@ -238,4 +238,4 @@ Si el código está mal: *"Código de configuración incorrecto"*. El código no
 
 ### Voz de la app
 
-La app usa la voz en inglés del teléfono, más aguda y alegre para los niños. En **Probar audio y micrófono** (en el inicio de sesión) aparece **Escoge la voz que más te guste** con todas las voces en inglés del teléfono; la elegida se recuerda en ese teléfono. Las voces marcadas con 🧒 son de niño. En Windows, el navegador Edge trae voces naturales (por ejemplo *Ana*, voz de niña); las voces de Windows sin conexión (Zira, David) suenan robóticas. En Android conviene instalar o actualizar **Texto a voz de Google**.
+Casi todo lo que la app lee tiene audio grabado (ElevenLabs). Lo que escribe el profe usa la voz en inglés del teléfono, más aguda y alegre para los niños, y la app escoge sola la mejor. En Windows, el navegador Edge trae voces naturales (por ejemplo *Ana*, voz de niña); las voces de Windows sin conexión (Zira, David) suenan robóticas. En Android conviene instalar o actualizar **Texto a voz de Google**.
