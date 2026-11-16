@@ -44,7 +44,6 @@ Abajo hay cuatro secciones: **Aprender**, **Tareas**, **Ranking** y **Perfil**.
 
 ### 2.1 Aprender (mapa de lecciones)
 
-- Si ese día todavía no practicaste, sale un aviso naranja: *"¡Hoy todavía no has practicado!"* o *"¡Tu racha de N días está en peligro!"*.
 - Las lecciones están agrupadas por **unidades** y las unidades por **nivel**. Solo se pueden jugar las unidades que el profe abrió para tu grupo. Las cerradas dicen que el profe está preparando las lecciones.
   - **Nivel 1:** sigue el libro del Nivel 1 (con Harry, Beth, Cody, la tía Fifi y Waldo, el dragón). Alfabeto (2 lecciones), Bienvenida (4), 8 unidades de 10 lecciones (My birthday, At school, My family, My body, Pets, My house, Food, I'm happy!), 4 repasos de 2, Despedida (4), Festivales (Halloween, Navidad, Día de la Madre y Día del Padre) y Wider World (4 lecturas).
   - **Nivel 2:** sigue el libro del Nivel 2. **Bienvenida** (6 lecciones), 8 unidades de **10 lecciones** cada una (My toys, My family, Move your body, My face, Animals, Food, Clothes, Weather) y un **Repaso** de 2 lecciones cada dos unidades, en el mismo orden del libro. Cada unidad tiene las mismas lecciones que el libro: vocabulario, canto, canción, gramática, cuento, valores, matemática o ciencias, fonética, *I can do it!* y *Have fun!*.

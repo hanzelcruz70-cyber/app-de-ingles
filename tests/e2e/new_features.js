@@ -14,7 +14,7 @@ const fs = require('fs'), path = require('path');
   R.audioSheetLogin = !(await p.isVisible('#lgAudio'));
   // estudiante juega, falla una respuesta
   await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
-  R.nudgeBanner = /Hoy todavía no has practicado|racha/.test(await p.textContent('#tab-learn'));
+  R.nudgeBanner = !/Hoy todavía no has practicado/.test(await p.textContent('#tab-learn')); // la tarjeta naranja se quitó el 16 nov 2026
   await p.click('.node.current', {force:true}); await p.waitForTimeout(300);
   // el primer paso puede ser una escena (sin palabra): avanzar hasta un paso con palabra y fallarlo
   await p.evaluate(() => { while (L.cur && !missKey(L.cur) && L.queue.length){ L.done++; L.cur = L.queue.shift(); } grade(false, 'x'); }); await p.waitForTimeout(100);

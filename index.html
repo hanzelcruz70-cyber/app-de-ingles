@@ -156,21 +156,17 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .pr-g{position:absolute;inset:0}
 .pr-all{transform-origin:133px 340px}.pr-body{transform-origin:133px 340px}
 .pr-arm{transform-origin:194px 170px}.pr-head{transform-origin:104px 170px}
-.pr-mc{opacity:0}
+.pr-mc{display:none}
 .pr-hold{position:absolute;left:216px;top:62px;font-size:38px;line-height:1}
-/* párpados del mismo negro de las manchas; dormido muestra una línea clara de ojo cerrado */
-.pr-lid{position:absolute;display:block;border-radius:50%;background:#151317;transform:scaleY(0);transform-origin:50% 0}
+/* Los párpados y la boca cerrada (capas dibujadas encima de la cara) se veían mal en el teléfono (16 nov 2026): ya no se usan. */
+.pr-lid{display:none}
 .pr-lidL{left:57px;top:80px;width:37px;height:36px}
 .pr-lidR{left:127px;top:66px;width:35px;height:32px}
 .pr-lid::after{content:'';position:absolute;left:18%;right:18%;top:38%;height:30%;border-bottom:3px solid rgba(235,235,240,.75);border-radius:50%;opacity:0}
-.pr-lid{animation:prBlink 4s infinite}
-.pr-lidR{animation-delay:.02s}
 .pr-body{animation:prBob 2.4s ease-in-out infinite}
 .pr-arm{animation:prRest 3s ease-in-out infinite}
-@keyframes prBlink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
 @keyframes prBob{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(2px) scale(1.015,.985)}}
 @keyframes prRest{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
-@keyframes prTalk{0%,50%{opacity:0}55%,65%,75%{opacity:1}60%,70%,80%,100%{opacity:0}}
 @keyframes prTiltR{0%,100%{transform:rotate(1deg)}50%{transform:rotate(3deg)}}
 /* gira el mundo sobre la mano */
 .b-spin .pr-hold{left:214px;top:52px;font-size:40px;animation:prSpin 1s linear infinite}
@@ -190,14 +186,12 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .b-read .pr-arm{animation:none;transform:rotate(-4deg)}
 @keyframes prFlip{0%,80%,100%{transform:scaleX(1)}88%{transform:scaleX(-1)}}
 @keyframes prRead{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg) translateY(2px)}}
-/* mastica: cierra y abre la boca y mueve la cabeza */
-.b-munch .pr-mc{animation:prChew 1.2s steps(1) infinite}
+/* mastica el bambú: mueve la cabeza y el cuerpo */
 .b-munch .pr-head{animation:prNod 1.2s ease-in-out infinite}
-@keyframes prChew{0%,25%{opacity:1}30%,45%{opacity:0}50%,75%{opacity:1}80%,100%{opacity:0}}
+.b-munch .pr-body{animation:prBob 1.2s ease-in-out infinite}
 @keyframes prNod{0%,100%{transform:rotate(0)}50%{transform:rotate(-2deg) translateY(2px)}}
-/* saluda con la mano y habla */
+/* saluda con la mano */
 .b-wave .pr-arm{animation:prWave .9s ease-in-out infinite}
-.b-wave .pr-mc{animation:prTalk 1.8s steps(1) infinite}
 .b-wave .pr-head{animation:prTiltR 1.8s ease-in-out infinite}
 @keyframes prWave{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}}
 /* flota con el globo */
@@ -214,27 +208,20 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 .b-juggle .p1{animation-delay:-.6s}.b-juggle .p2{animation-delay:-1.2s}
 @keyframes prJug{0%,100%{transform:rotate(6deg)}50%{transform:rotate(-10deg) translateY(-4px)}}
 @keyframes prUp{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(-3deg)}}
-/* canta: abre y cierra la boca, se mece y salen notas */
-.b-sing .pr-mc{animation:prSing .8s steps(1) infinite}
+/* canta: se mece y salen notas */
 .b-sing .pr-body{animation:prSway 1.6s ease-in-out infinite}
 .b-sing .pr-arm{animation:prWave 1.6s ease-in-out infinite}
 .b-sing .bprop{left:62px;top:10px;font-size:22px;opacity:0;animation:note 2.4s ease-out infinite}
 .b-sing .p1{animation-delay:.8s}.b-sing .p2{animation-delay:1.6s}
-@keyframes prSing{0%{opacity:0}50%{opacity:1}}
 @keyframes prSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
-/* duerme: ojos y boca cerrados, cabeza caída y respira */
-.b-sleep .pr-lid{animation:none;transform:scaleY(1)}.b-sleep .pr-lid::after{opacity:1}
-.b-sleep .pr-mc{opacity:1}
-.b-sleep .pr-head{animation:prDroop 3s ease-in-out infinite}.b-sleep .pr-body{animation:prBreath 3s ease-in-out infinite}
-.b-sleep .pr-arm{animation:none;transform:rotate(10deg)}
-.b-sleep .bprop{left:66px;top:-4px;font-size:24px;animation:note 2.6s ease-out infinite}
-@keyframes prDroop{0%,100%{transform:rotate(2deg)}50%{transform:rotate(4deg) translateY(2px)}}
-@keyframes prBreath{0%,100%{transform:scale(1)}50%{transform:scale(1.02,1.01)}}
-/* al tocarlo: salta, saluda rápido y se ríe (boca abierta, ojos abiertos) */
+/* celebra: levanta la copa y salta */
+.b-cheer .pr-hold{left:212px;top:44px;font-size:42px;animation:prShake 1.2s ease-in-out infinite}
+.b-cheer .pr-arm{animation:prPump 1.2s ease-in-out infinite}
+.b-cheer .pr-all{animation:prHop 1.2s ease-in-out infinite}
+@keyframes prShake{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+/* al tocarlo: salta y saluda rápido */
 .buddy.hop .pr-all{animation:prHop .5s ease-out 2}
 .buddy.hop .pr-arm{animation:prWave .3s ease-in-out 3}
-.buddy.hop .pr-mc{animation:none;opacity:0}
-.buddy.hop .pr-lid{animation:none;transform:scaleY(0)}
 @keyframes prHop{0%,100%{transform:translateY(0)}40%{transform:translateY(-26px)}}
 @media (prefers-reduced-motion:reduce){.buddy .pr *,.buddy .pr *::after,.buddy .bprop,.lv-pandi{animation:none!important}.buddy .bprop{opacity:1!important}}
 .node-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
@@ -4269,7 +4256,7 @@ let MAPVIEW = 'path'; // 'path' (el camino) o 'levels' (escoger nivel)
 // El dibujo mide 266×343 y se achica con CSS; el brazo gira en el hombro y la cabeza en el cuello.
 const BUDDY = [
   {k:'spin', hold:'🌍'}, {k:'bounce', hold:'⚽'}, {k:'read', hold:'📖'}, {k:'munch'}, {k:'wave'},
-  {k:'float', hold:'🎈'}, {k:'juggle', props:['⭐', '⭐', '⭐']}, {k:'sing', props:['🎵', '🎶', '🎵']}, {k:'sleep', props:['💤']}
+  {k:'float', hold:'🎈'}, {k:'juggle', props:['⭐', '⭐', '⭐']}, {k:'sing', props:['🎵', '🎶', '🎵']}, {k:'cheer', hold:'🏆'}
 ];
 const BUDDY_SAY = ['¡Tú puedes!', '¡Sigue así!', '¡Hello!', '¡Me encanta el inglés!', '¡Una lección más!', '¡Qué bien lo haces!', '¡Vamos!', 'Let’s go!'];
 function pandiRig(b){
@@ -4340,7 +4327,7 @@ function renderMap(){
   applyFreezes(); claimWeekly(); renderStats();
   if (!avNorm(S.avatar) && !S.avatarAsked) setTimeout(() => { if (!document.querySelector('.sheet') && !$('#home').hidden) avatarWelcome(); }, 350);
   const cur = currentLesson();
-  if (cur && !S.days.includes(today())) root.append(h('div', {class:'card', style:'margin-bottom:14px;border-color:var(--orange)'}, h('b', {}, streak() > 0 ? `🔥 ¡Tu racha de ${streak()} día${streak() > 1 ? 's' : ''} está en peligro!` : '🐼 ¡Hoy todavía no has practicado!'), h('div', {class:'muted', style:'font-size:15px'}, 'Con una lección es suficiente.')));
+  // (La tarjeta naranja «¡Hoy todavía no has practicado!» de arriba del mapa se quitó el 16 nov 2026, pedido del dueño.)
   root.append(reviewCard());
   const g = curGroup(), gl = groupLevel(g), acc = accessLevel(g, S), lvAll = levels();
   if (!MAPLV || MAPLV > acc || !lvAll.includes(MAPLV)) MAPLV = lvAll.includes(gl) ? gl : Math.max(...lvAll.filter(n => n <= acc), lvAll[0]);
