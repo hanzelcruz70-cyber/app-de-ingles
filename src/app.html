@@ -6614,6 +6614,12 @@ function vocabIn(text){
   return out;
 }
 const isEmoji = img => img && !/^(sw:|n:|data:|w:|<|panda$)/.test(img);
+// Palabras que no se dibujan en la escena: su emoji del banco ilustra la tarjeta de vocabulario, pero en un cuento confunde
+// («How old are you?» ponía un abuelo 👴; «big» un elefante, «came» una puerta). Solo cosas concretas van de adorno.
+const STAGE_SKIP = new Set(['old','big','small','long','short','tall','fast','slow','hot','cold','warm','wet','feel','head','hair','fun','funny','cool','amazing','important','smart','helpful','easy','tight','baggy','messy',
+  'down','up','high','around','toward','through','came','saw','got','move','touch','climb','jump','run','swim','strong','sick','animal','awake','neck','action','watch','swing','sing','son','want to go','have to go',
+  'today','week','afternoon','morning','cute','sweet','hungry','thirsty','tired','boring','quickly','quietly','slowly','loudly','light hair','dark hair','red hair','blond hair','bald','curly','classroom','kitchen','catching','came']);
+const stageWords = text => vocabIn(text).filter(w => isEmoji(V[w].img) && !STAGE_SKIP.has(w.toLowerCase()));
 function stage(bg0){
   const el = h('div', {class:'stage'}), bgL = h('div', {class:'stage-bg'}), props = h('div', {class:'stage-props', 'aria-hidden':'true'});
   const bub = h('div', {class:'stage-bubble', hidden:true}), tx = h('div', {class:'tx'}), en = h('div', {class:'en'}), au = h('span');
@@ -6630,7 +6636,7 @@ function stage(bg0){
   // dibujos de lo que se dice
   const setProps = (text, sing) => {
     props.innerHTML = '';
-    const pics = vocabIn(text).filter(w => isEmoji(V[w].img)).slice(0, 2);
+    const pics = stageWords(text).slice(0, 2);
     (sing ? ['🎵', ...pics.map(w => V[w].img)] : pics.map(w => V[w].img)).forEach((p, j) => props.append(h('span', {class:'prop', style:`left:${[40, 70, 12][j]}%;top:${[38, 30, 34][j]}%;animation-delay:${j * 0.15}s,${0.5 + j * 0.15}s`}, p)));
   };
   setBg(bg0);
