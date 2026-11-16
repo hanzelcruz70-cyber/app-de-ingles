@@ -20,6 +20,8 @@
   --locked:#334360; --locked-d:#24314A; --ok-bg:#143823; --bad-bg:#3D1A1A; --ok-ink:#6EE08F; --bad-ink:#FF8A80; --yellow-d:#FFC531; color-scheme:dark}
 
 html,body{height:100%}
+#login.booting #loginForm>*,#login.booting .legal{display:none}
+#login.booting #loginForm::after{content:'Conectando…';display:block;text-align:center;color:var(--ink-2);font-size:17px;padding:20px 0}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;font-weight:700;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
@@ -3922,7 +3924,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) remC
 const PUSH_OK = () => REMOTE && CFG.vapidPublicKey && 'serviceWorker' in navigator && 'PushManager' in window;
 function b64ToU8(b64){ const s = atob((b64 + '='.repeat((4 - b64.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(s, c => c.charCodeAt(0)); }
 async function pushSub(create){
-  const reg = await navigator.serviceWorker.ready;
+  const reg = await Promise.race([navigator.serviceWorker.ready, new Promise((_, rej) => setTimeout(() => rej(new Error('sin service worker')), 2000))]);
   let sub = await reg.pushManager.getSubscription();
   if (!sub && create) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:b64ToU8(CFG.vapidPublicKey)});
   return sub;
@@ -4112,13 +4114,15 @@ $('#loginForm').addEventListener('submit', async e => {
 });
 // Cerrar sesión: si el servidor no responde (sin internet), supabase-js deja la sesión guardada en el teléfono y
 // la próxima persona entraría sola con esa cuenta. Por eso, si falla, se borra igual la sesión de este dispositivo.
+// Cada paso tiene tiempo límite: si el servidor o el service worker no responden, igual se cierra la sesión en este teléfono
+const withTimeout = (p, ms) => Promise.race([p, new Promise(res => setTimeout(() => res({timeout:true}), ms))]);
 async function logout(){
   if (REMOTE){
-    try { await syncNow(); } catch (e) {}
-    try { if (U && U.role === 'student') await pushDrop(); } catch (e) {} // el próximo usuario del teléfono no debe recibir avisos de este
+    try { await withTimeout(syncNow(), 6000); } catch (e) {}
+    try { if (U && U.role === 'student') await withTimeout(pushDrop(), 2500); } catch (e) {} // el próximo usuario del teléfono no debe recibir avisos de este
     let failed = false;
-    try { const r = await SB.auth.signOut(); failed = !!(r && r.error); } catch (e) { failed = true; }
-    if (failed){ try { await SB.auth.signOut({scope:'local'}); } catch (e) {} }
+    try { const r = await withTimeout(SB.auth.signOut(), 5000); failed = !!(r && (r.error || r.timeout)); } catch (e) { failed = true; }
+    if (failed){ try { await withTimeout(SB.auth.signOut({scope:'local'}), 2000); } catch (e) {} }
     try { Object.keys(localStorage).filter(k => /^sb-.*-auth-token/.test(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
   }
   DB.session = null; save(); U = S = null; $('#lgUser').value = ''; route();
@@ -5515,6 +5519,8 @@ function loadScript(src){ return new Promise((ok, no) => { const sc = document.c
 function setLoginBusy(on, label){ const b = $('#loginForm button[type=submit]'); b.disabled = on; b.textContent = on ? (label || 'Entrando…') : 'Iniciar sesión'; }
 async function remoteBoot(){
   $('.demo').hidden = true;
+  let saved = false; try { saved = Object.keys(localStorage).some(k => /^sb-.*-auth-token/.test(k)); } catch (e) {}
+  if (saved) $('#login').classList.add('booting'); // hay sesión guardada: no mostrar el formulario mientras se conecta
   show('login'); fillPandas(); setLoginBusy(true, 'Conectando…');
   try {
     if (!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js');
@@ -5522,6 +5528,7 @@ async function remoteBoot(){
     const { data } = await SB.auth.getSession();
     if (data && data.session){ await remoteLoad(data.session.user.id); route(); }
   } catch (e) { const err = $('#lgErr'); err.textContent = 'No hay conexión con el servidor. Revisa tu internet y recarga la página.'; err.hidden = false; console.error(e); }
+  $('#login').classList.remove('booting');
   setLoginBusy(false);
 }
 async function remoteLogin(user, pass){
