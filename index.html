@@ -4120,6 +4120,22 @@ function micErrorMsg(er){
   return 'No pude usar el micrófono aquí.';
 }
 // (La hoja «Probar audio y micrófono» se quitó el 15 nov 2026 a pedido del dueño; la voz se elige sola con voiceScore.)
+// Lo que hay que escuchar suena solo al entrar al ejercicio; la bocina sirve para oírlo otra vez
+const autoSay = (el, fn, ms = 550) => setTimeout(() => { if (el.isConnected) fn(); }, ms);
+function audioBtn(text, slow, big, who){
+  return h('button', {class:'abtn' + (slow ? ' slow' : '') + (big ? ' big' : ''), type:'button', 'aria-label': slow ? 'Escuchar lento' : 'Escuchar', html: ICON.speaker + (big ? '' : (slow ? 'Lento' : 'Escuchar')), onclick:() => say(text, slow, null, who)});
+}
+function toast(msg){ $$('.toast').forEach(t => t.remove()); const t = h('div', {class:'toast pop', role:'status'}, msg); document.body.append(t); setTimeout(() => t.remove(), 2600); }
+function sheet(...content){
+  const sh = h('div', {class:'sheet', role:'dialog', 'aria-modal':'true'}, h('div', {}, ...content));
+  sh.addEventListener('click', e => { if (e.target === sh) sh.remove(); });
+  document.body.append(sh); return sh;
+}
+function confirmSheet(title, text, okLabel, onOk){
+  const sh = sheet(h('h2', {style:'font-size:24px;text-align:center'}, title), h('p', {class:'muted', style:'margin:0;text-align:center'}, text),
+    h('button', {class:'btn', type:'button', onclick:() => sh.remove()}, 'Cancelar'),
+    h('button', {class:'btn ghost', type:'button', style:'color:var(--red)', onclick:() => { sh.remove(); onOk(); }}, okLabel));
+}
 /* ---------- login & routing ---------- */
 function show(id){ $$('.screen').forEach(s => s.hidden = s.id !== id); }
 $$('[data-fill]').forEach(b => b.addEventListener('click', () => { const [u, p] = b.dataset.fill.split('|'); $('#lgUser').value = u; $('#lgPass').value = p; $('#lgErr').hidden = true; }));
