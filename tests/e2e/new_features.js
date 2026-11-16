@@ -10,19 +10,22 @@ const fs = require('fs'), path = require('path');
   await p.route('**/*', r => r.request().url().startsWith('http://localhost:7/') ? r.fulfill({body:'<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"></head><body>' + html + '</body></html>', contentType:'text/html'}) : r.abort());
   await p.goto('http://localhost:7/'); await p.waitForTimeout(400);
   const R = {};
-  // login: prueba de audio
-  await p.click('#lgAudio'); R.audioSheetLogin = await p.isVisible('.sheet h2:has-text("Probar audio")'); await p.click('.sheet button:has-text("Cerrar")');
+  // la hoja «Probar audio y micrófono» se quitó el 15 nov 2026: no debe existir ni en el login ni en el perfil
+  R.audioSheetLogin = !(await p.isVisible('#lgAudio'));
   // estudiante juega, falla una respuesta
   await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
   R.nudgeBanner = /Hoy todavía no has practicado|racha/.test(await p.textContent('#tab-learn'));
   await p.click('.node.current', {force:true}); await p.waitForTimeout(300);
-  await p.evaluate(() => grade(false, 'x')); await p.waitForTimeout(100);
+  // el primer paso puede ser una escena (sin palabra): avanzar hasta un paso con palabra y fallarlo
+  await p.evaluate(() => { while (L.cur && !missKey(L.cur) && L.queue.length){ L.done++; L.cur = L.queue.shift(); } grade(false, 'x'); }); await p.waitForTimeout(100);
   R.missRecorded = await p.evaluate(() => Object.keys(S.miss).length);
   await p.click('#lclose'); await p.click('.sheet button:has-text("Salir")');
   // recordatorio diario
   await p.click('[data-tab="me"]'); await p.waitForTimeout(100);
-  R.audioInMe = await p.isVisible('#tab-me button:has-text("Probar audio y micrófono")');
+  R.audioInMe = !(await p.isVisible('#tab-me button:has-text("Probar audio y micrófono")'));
   await p.click('#tab-me button:has-text("Activar recordatorio")'); await p.waitForTimeout(300);
+  // sin la app instalada, primero pide instalarla (16 nov 2026); «Activar igual» sigue
+  if (await p.isVisible('.sheet button:has-text("Activar igual")')){ await p.click('.sheet button:has-text("Activar igual")'); await p.waitForTimeout(300); }
   R.remindOn = await p.evaluate(() => remGet().on);
   await p.click('#tab-me button:has-text("Apagar recordatorio")'); R.remindOff = await p.evaluate(() => !remGet().on); R.testNotice = await p.evaluate(() => window.__notes.length);
   await p.click('text=Cerrar sesión'); await p.click('.sheet button:has-text("Cerrar sesión")');
@@ -65,7 +68,7 @@ const fs = require('fs'), path = require('path');
   await o.fill('#token', 'bueno'); await o.click('#enter'); await o.waitForTimeout(300);
   R.ownerList = await o.textContent('#list');
   R.ownerNoHtmlInjection = /<b>X<\/b>/.test(R.ownerList);
-  await o.fill('#school', 'Nueva'); await o.fill('#name', 'Ana'); await o.fill('#user', 'profe.ana'); await o.fill('#pass', 'abcdef'); await o.click('#create'); await o.waitForTimeout(300);
+  await o.fill('#school', 'Nueva'); await o.fill('#name', 'Ana'); await o.fill('#user', 'profe.ana'); await o.fill('#pass', 'abcdefgh'); await o.click('#create'); await o.waitForTimeout(900); // mínimo 8 (MIN_PW); crear + recargar la lista tarda más de 300 ms
   R.ownerCreate = await o.textContent('#out');
   console.log(JSON.stringify(R, null, 1), '\nerrors:', errs.concat(oerrs).join('\n') || 'none');
   const bad = [R.audioSheetLogin, R.nudgeBanner, R.missRecorded >= 1, R.audioInMe, R.remindOn, R.remindOff, R.testNotice >= 1, R.missCardHasWords, R.remindBtns >= 1, /Hola/.test(R.remindText || ''), R.reportOk, /wa\.me\/50588887777/.test(R.waUrl || ''), R.phoneSaved, R.noOverflow, /incorrecto/.test(R.ownerBadToken), /7/.test(R.ownerList), R.ownerNoHtmlInjection, /Listo/.test(R.ownerCreate)].some(x => !x);

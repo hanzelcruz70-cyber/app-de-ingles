@@ -14,9 +14,11 @@ const path = require('path');
   R.presetChosen = await p.evaluate(() => S.avatar && S.avatar.v === 2 && S.avatar.hair === 'braids');
   R.legalLinks = await p.locator('.legal a').count() >= 0;
   R.noAutoSpeech = await p.evaluate(() => window.__spoken.length);
-  // jugar una lección completa sin tocar audio: la app no debe hablar
-  await p.evaluate(() => { const u = units()[0]; startLesson(u, u.lessons[0], false); L.graded = 1; finishLesson(); }); await p.waitForTimeout(300);
-  R.noSpeechAfterLesson = await p.evaluate(() => window.__spoken.length);
+  // terminar una lección: la pantalla de resultado y las celebraciones no hablan (los ejercicios sí suenan solos al entrar, decisión del 2 nov 2026)
+  await p.evaluate(() => { const u = units()[0]; startLesson(u, u.lessons[0], false); }); await p.waitForTimeout(2500); // autoSay suena a los 550 ms y, sin voces, el TTS reintenta después
+  const spokenBefore = await p.evaluate(() => window.__spoken.length);
+  await p.evaluate(() => { L.graded = 1; finishLesson(); }); await p.waitForTimeout(300);
+  R.noSpeechAfterLesson = (await p.evaluate(() => window.__spoken.length)) - spokenBefore;
   await p.click('#result button:has-text("Continuar")');
   // ranking sin "null"
   await p.click('[data-tab="rank"]'); R.rankNoNull = !/\bnull\b/.test(await p.innerText('#tab-rank'));

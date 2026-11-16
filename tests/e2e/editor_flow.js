@@ -16,7 +16,7 @@ const { chromium } = require('playwright');
   await p.click('[data-atab="content"]'); await p.waitForTimeout(200);
     // words
   await p.click('#atab-content button:has-text("Abrir")');
-  for (const [en,es,em] of [['uncle','tío','🧔'],['aunt','tía','👩‍🦰'],['cousin','primo','🧒'],['friend','amigo','🧑‍🤝‍🧑']]) {
+  for (const [en,es,em] of [['walrus','morsa','🦭'],['beaver','castor','🦫'],['ferret','hurón','🐾'],['moose','alce','🫎']]) { // palabras que no existen en el banco (uncle, aunt, cousin y friend ya están)
     await p.click('#atab-content button:has-text("+ Nueva")'); await p.fill('.sheet input >> nth=0', en); await p.fill('.sheet input >> nth=1', es); await p.fill('#wEmoji', em); await p.click('.sheet button:has-text("Agregar palabra")'); await p.waitForTimeout(100);
   }
   await p.fill('#wsearch','ma'); await p.waitForTimeout(100);
@@ -41,7 +41,8 @@ const { chromium } = require('playwright');
   await p.click('.row:has-text("My Family") .switch'); await p.waitForTimeout(100);
   await p.click('#admLogout'); await p.click('.sheet button:has-text("Cerrar sesión")');
   await p.click('[data-fill="estudiante|1234"]'); await p.click('#loginForm button'); await p.waitForTimeout(700); if (await p.isVisible('.sheet button:has-text("Ahora no")')) await p.click('.sheet button:has-text("Ahora no")');
-  await p.evaluate(()=>{ const b=[...document.querySelectorAll('.unit-banner')].find(x=>x.textContent.includes('My Family')); b.scrollIntoView(); });
+  // el mapa muestra un nivel a la vez (sin tarjetas .unit-banner): ir al nivel de la unidad nueva y buscarla en el encabezado o en los separadores
+  await p.evaluate(()=>{ const u = units().find(x => /my family/i.test(x.title)); MAPVIEW = 'path'; MAPLV = levelOf(u) || 1; renderMap(); const b=[...document.querySelectorAll('.lv-head, .unit-div')].find(x=>/my family/i.test(x.textContent)); if (b) b.scrollIntoView(); });
   await p.waitForTimeout(200);
     console.log('studentLessonOk',ok1, errs.join('\n')||'no errors');
   await b.close();

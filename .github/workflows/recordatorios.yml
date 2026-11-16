@@ -1,4 +1,5 @@
-# Cada 15 minutos le pide a la función "remind" de Supabase que mande los recordatorios que toquen.
+# Respaldo: le pide a la función "remind" de Supabase que mande los recordatorios que toquen.
+# GitHub no corre estos horarios puntuales (a veces pasan horas), por eso el reloj principal es pg_cron dentro de Supabase (ver supabase/schema.sql).
 # Necesita los secrets SUPABASE_PROJECT_REF y PANDI_SETUP_TOKEN (los mismos de la función de cuentas).
 name: Recordatorios (cada 15 min)
 on:

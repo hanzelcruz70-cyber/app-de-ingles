@@ -316,3 +316,30 @@ grant select, insert, update, delete on public.push_subs to authenticated;
 drop policy if exists push_subs_own on public.push_subs;
 create policy push_subs_own on public.push_subs for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid() and school_id = public.my_school());
+
+-- ---------- Reloj de los recordatorios dentro de Supabase (pg_cron + pg_net) ----------
+-- Las automatizaciones programadas de GitHub no corren puntuales (el 16 nov 2026 corrió 2 veces en 15 horas), así que
+-- la base de datos llama a la función «remind» cada 5 minutos. Antes, UNA sola vez, guarda en el Vault la URL del proyecto
+-- y el código PANDI_SETUP_TOKEN (SQL Editor; el código no va en este archivo porque está en GitHub):
+--   select vault.create_secret('https://TU-PROYECTO.supabase.co', 'pandi_url');
+--   select vault.create_secret('TU_PANDI_SETUP_TOKEN', 'pandi_token');
+-- Si los secretos faltan, el reloj no hace nada. En un Postgres sin pg_cron (las pruebas locales) este bloque solo avisa.
+do $$
+begin
+  begin
+    create extension if not exists pg_cron with schema pg_catalog;
+    create extension if not exists pg_net with schema extensions;
+  exception when others then
+    raise notice 'pg_cron/pg_net no disponibles (%): los recordatorios quedan a cargo de GitHub', sqlerrm;
+    return;
+  end;
+  if exists (select 1 from cron.job where jobname = 'pandi-remind') then perform cron.unschedule('pandi-remind'); end if;
+  perform cron.schedule('pandi-remind', '*/5 * * * *', $job$
+    select net.http_post(
+      url := (select decrypted_secret from vault.decrypted_secrets where name = 'pandi_url') || '/functions/v1/remind',
+      headers := jsonb_build_object('Content-Type', 'application/json', 'x-remind-token', (select decrypted_secret from vault.decrypted_secrets where name = 'pandi_token')),
+      body := '{}'::jsonb,
+      timeout_milliseconds := 30000)
+    where (select count(*) from vault.decrypted_secrets where name in ('pandi_url', 'pandi_token')) = 2
+  $job$);
+end $$;

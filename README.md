@@ -55,7 +55,16 @@ Para los **recordatorios con la app cerrada** (notificaciones push) agrega dos s
 - `VAPID_PUBLIC_KEY`: el valor de `publicKey` (es el mismo que ya está en `config.js`).
 - `VAPID_PRIVATE_KEY`: el valor de `privateKey`. **Nunca** lo pongas en `config.js` ni en el código.
 
-Luego ve a **Actions → Publicar función de cuentas (Supabase) → Run workflow**. Cuando salga en verde, las dos funciones (`admin-users` y `remind`) ya están publicadas. La automatización **Recordatorios (cada 15 min)** se enciende sola con el primer push; si GitHub la pausó por inactividad, en **Actions** tócala y elige **Enable workflow**. Vuelve a correr también `supabase/schema.sql` en el SQL Editor (crea la tabla `push_subs`).
+Luego ve a **Actions → Publicar función de cuentas (Supabase) → Run workflow**. Cuando salga en verde, las dos funciones (`admin-users` y `remind`) ya están publicadas.
+
+**El reloj de los recordatorios vive en Supabase** (GitHub no corre sus horarios a tiempo: puede tardar horas). Una sola vez, en el **SQL Editor**, pega y corre estas dos líneas con tus datos (la URL es la de **Project Settings → API → Project URL**; el código es tu `PANDI_SETUP_TOKEN`):
+
+```sql
+select vault.create_secret('https://TU-PROYECTO.supabase.co', 'pandi_url');
+select vault.create_secret('TU_PANDI_SETUP_TOKEN', 'pandi_token');
+```
+
+Después vuelve a correr `supabase/schema.sql` completo: crea la tabla `push_subs` y programa el aviso cada 5 minutos (`pg_cron`). Para comprobarlo, en el SQL Editor corre `select * from cron.job_run_details order by start_time desc limit 5;` y deberías ver corridas con `succeeded`. La automatización de GitHub **Recordatorios** queda solo de respaldo.
 
 **Opción B, desde tu computadora.** Necesitas la [Supabase CLI](https://supabase.com/docs/guides/cli). En la carpeta de este proyecto:
 

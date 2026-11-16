@@ -51,24 +51,25 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   // create student
   await A.click('[data-atab="stu"]'); await A.click('text=+ Agregar'); await A.fill('#nsName','Ana López'); await A.fill('#nsUser','ana'); await A.fill('#nsPass','123'); await A.check('#nsConsent').catch(()=>{}); await A.click('.sheet button:has-text("Crear cuenta")'); await wait(150);
   R.shortPw = await A.textContent('.sheet .err');
-  await A.fill('#nsPass','ana123'); await A.check('#nsConsent').catch(()=>{}); await A.click('.sheet button:has-text("Crear cuenta")'); await wait(400);
+  await A.fill('#nsPass','ana12345'); await A.check('#nsConsent').catch(()=>{}); await A.click('.sheet button:has-text("Crear cuenta")'); await wait(400);
   R.studentCreated = T.profiles.some(p => p.username === 'ana');
-  await A.click('text=+ Agregar'); await A.fill('#nsName','Ana 2'); await A.fill('#nsUser','ana'); await A.fill('#nsPass','ana123'); await A.check('#nsConsent').catch(()=>{}); await A.click('.sheet button:has-text("Crear cuenta")'); await wait(300);
+  await A.click('text=+ Agregar'); await A.fill('#nsName','Ana 2'); await A.fill('#nsUser','ana'); await A.fill('#nsPass','ana12345'); await A.check('#nsConsent').catch(()=>{}); await A.click('.sheet button:has-text("Crear cuenta")'); await wait(300);
   R.dupError = await A.textContent('.sheet .err'); await A.click('.sheet button:has-text("Cancelar")');
   // open unit 2 and create assignment
-  await A.click('[data-atab="content"]'); await A.click('.row:has-text("Animals") .switch'); await wait(100);
-  await A.click('[data-atab="hw"]'); await A.click('text=+ Nueva tarea'); await A.fill('.sheet input >> nth=0','Semana 1'); await A.check('#al-u1l1'); await A.fill('.sheet input[placeholder="Ej. Mi familia"]','Mi animal'); await A.fill('.sheet textarea','Escribe sobre tu animal favorito.');
+  await A.click('[data-atab="content"]'); await A.click('.row:has-text("Animals") .switch >> nth=0'); await wait(100);
+  const AN = await A.evaluate(() => { const u = units().find(x => x.title === 'Animals'); return {id:u.id, l:u.lessons[0].id}; }); // ids reales (antes u2/u1l1, del curso provisional)
+  await A.click('[data-atab="hw"]'); await A.click('text=+ Nueva tarea'); await A.fill('.sheet input >> nth=0','Semana 1'); await A.check('#al-' + AN.l); await A.fill('.sheet input[placeholder="Ej. Mi familia"]','Mi animal'); await A.fill('.sheet textarea','Escribe sobre tu animal favorito.');
   await A.click('.sheet button:has-text("Asignar tarea")'); await wait(1200);
-  R.server1 = {groupsOpenU2: T.groups[0] && T.groups[0].open.u2, assignments:T.assignments.length};
+  R.server1 = {groupsOpenU2: T.groups[0] && T.groups[0].open[AN.id], assignments:T.assignments.length};
   // student device
   const B = await device(b);
   const savedFr = T.friendships; delete T.friendships; // schema.sql viejo, sin la tabla de amigos
-  await B.fill('#lgUser','ana'); await B.fill('#lgPass','ana123'); await B.click('#loginForm button'); await wait(700);
+  await B.fill('#lgUser','ana'); await B.fill('#lgPass','ana12345'); await B.click('#loginForm button'); await wait(700);
   R.welcomeShown = await B.isVisible('.sheet h2:has-text("Crea tu personaje")'); if (R.welcomeShown){ await B.click('.sheet .av-grid button >> nth=5'); await B.click('.sheet button:has-text("Usar este personaje")'); await wait(1200); }
   R.avatarSynced = !!((T.progress.find(x => x.user_id === 'st1') || {data:{}}).data.avatar || {}).v;
   R.studentIn = await B.isVisible('#home'); R.loginWithoutFriendsTable = R.studentIn; T.friendships = savedFr;
-  R.openUnits = await B.$$eval('.unit-banner', els => els.filter(e => !e.classList.contains('locked')).length);
-  await B.evaluate(() => { S.xp += 60; S.done.u1l1 = 3; S.xpDays[new Date().toISOString().slice(0,10)] = 60; save(); });
+  R.openUnits = await B.evaluate(() => units().filter(u => unitOpenFor(curGroup(), u, S)).length);
+  await B.evaluate(l => { S.xp += 60; S.done[l] = 3; S.xpDays[new Date().toISOString().slice(0,10)] = 60; save(); }, AN.l);
   await B.click('[data-tab="work"]'); await wait(200);
   R.taskSeen = await B.isVisible('text=Semana 1');
   await B.fill('#tab-work textarea','My favorite animal is a dog. It is brown.'); await B.click('text=Enviar a mi profe'); await wait(1200);

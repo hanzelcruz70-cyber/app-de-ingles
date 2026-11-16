@@ -22,7 +22,7 @@ head = '''<!doctype html>
 <meta name="apple-mobile-web-app-title" content="Pandi English">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script src="config.js"></script>
-<script src="audio/indice.js"></script>
+<script src="audio/indice.js" defer></script>
 </head>
 <body>
 '''

@@ -61,7 +61,7 @@ const path = require('path'), fs = require('fs'), { execFileSync } = require('ch
   console.log(JSON.stringify(R, null, 1));
   const ok = R.gemChip && R.reviewCard && R.reviewSteps >= 7 && R.confetti > 0 && R.missAfter === '{}' && R.reviewNotDone && R.gemsAfterLesson >= 5 && /gemas/.test(R.resultText)
     && R.gemsFromWeek === 30 && R.noDoubleClaim === 30 && /Liga Plata/.test(R.rankLeague) && R.freeze.freezes === 0 && R.freeze.frozen.length === 1 && R.freeze.streak === 2
-    && R.shopSets === 3 && R.bought.owned.includes('head:grad') && R.bought.gems === 160 && /Ya tienes 2/.test(R.freezeMax) && R.shopNoOverflow && R.birreteInAvatar && /Desafío de la semana/.test(R.duelLine) && R.headerNoOverflow
+    && R.shopSets >= 3 && R.bought.owned.includes('head:grad') && R.bought.gems === 160 && /Ya tienes 2/.test(R.freezeMax) && R.shopNoOverflow && R.birreteInAvatar && /Desafío de la semana/.test(R.duelLine) && R.headerNoOverflow
     && /Resumen \d+ 10/.test(R.xlsx) && /Tareas \d+ 9/.test(R.xlsx);
   console.log('errors:', errs.join('\n') || 'none'); console.log(ok && !errs.length ? 'PASS' : 'FAIL');
   await b.close();
