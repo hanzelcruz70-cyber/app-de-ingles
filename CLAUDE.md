@@ -7,7 +7,7 @@ Guía para cualquier modelo o persona que trabaje en este repositorio. Léela co
 **Pandi English** es una app (PWA) para que niños de hasta 14 años practiquen inglés entre clases, al estilo Duolingo. La mascota es **Pandi**, un oso panda.
 
 - **Cliente inicial:** un profesor de una academia de inglés que da clases con la serie *Poptropica English* (Pearson). Sus alumnos practican en la app los temas vistos en clase.
-- **Producto:** el dueño (Hanzel) lo quiere **vender a varias escuelas**. Por eso es multi-escuela y **no lleva el nombre ni la marca de la academia del cliente** (no usar "Smart Kids").
+- **Producto:** el dueño (Hanzel) lo quiere **vender a varias escuelas**. Por eso es multi-escuela y **no lleva el nombre ni la marca de la academia del cliente** (no usar "Smart Kids" en el código). Cada escuela pone su propio nombre y logo desde **🏫 Nombre y logo de la escuela** en Contenido (`DB.course.brand = {name, logo}`, logo PNG 160×160 en `data:`; `brand()` lo valida, `applyBrand()` lo pinta en la barra de arriba y en el título al entrar, `brandCard()` es el editor; el perfil del estudiante muestra «Con la tecnología de Pandi English»). La pantalla de entrada, el manifest y el ícono siguen siendo de Pandi English.
 - **Dos roles:** *estudiante* (mapa de lecciones, tareas, ranking, perfil) y *admin/profe* (resumen, estudiantes y grupos, editor de contenido, tareas y calificación).
 
 ## Reglas que no se rompen

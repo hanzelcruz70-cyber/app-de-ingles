@@ -61,12 +61,15 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   await A.click('[data-atab="hw"]'); await A.click('text=+ Nueva tarea'); await A.fill('.sheet input >> nth=0','Semana 1'); await A.check('#al-' + AN.l); await A.fill('.sheet input[placeholder="Ej. Mi familia"]','Mi animal'); await A.fill('.sheet textarea','Escribe sobre tu animal favorito.');
   await A.click('.sheet button:has-text("Asignar tarea")'); await wait(1200);
   R.server1 = {groupsOpenU2: T.groups[0] && T.groups[0].open[AN.id], assignments:T.assignments.length};
+  // marca de la escuela: el profe la pone y el estudiante la ve al entrar (viaja dentro del curso)
+  await A.evaluate(() => { DB.course.brand = {name:'Escuela Sol', logo:''}; save(); }); await wait(1200);
   // student device
   const B = await device(b);
   const savedFr = T.friendships; delete T.friendships; // schema.sql viejo, sin la tabla de amigos
   await B.fill('#lgUser','ana'); await B.fill('#lgPass','ana12345'); await B.click('#loginForm button'); await wait(700);
   R.welcomeShown = await B.isVisible('.sheet h2:has-text("Crea tu personaje")'); if (R.welcomeShown){ await B.click('.sheet .av-grid button >> nth=5'); await B.click('.sheet button:has-text("Usar este personaje")'); await wait(1200); }
   R.avatarSynced = !!((T.progress.find(x => x.user_id === 'st1') || {data:{}}).data.avatar || {}).v;
+  R.brandSeen = (await B.textContent('#home .topbar .name')) === 'Escuela Sol';
   R.studentIn = await B.isVisible('#home'); R.loginWithoutFriendsTable = R.studentIn; T.friendships = savedFr;
   R.openUnits = await B.evaluate(() => units().filter(u => unitOpenFor(curGroup(), u, S)).length);
   await B.evaluate(l => { S.xp += 60; S.done[l] = 3; S.xpDays[new Date().toISOString().slice(0,10)] = 60; save(); }, AN.l);

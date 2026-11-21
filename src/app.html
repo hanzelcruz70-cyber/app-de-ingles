@@ -68,6 +68,10 @@ h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
 /* top bar + tabs */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--bg);border-bottom:2px solid var(--line)}
 .topbar .logo{width:42px;flex:none}
+.topbar .name.long{font-size:16px;white-space:normal;line-height:1.1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.topbar .logo .brand-logo{display:block;width:100%;height:42px;object-fit:contain;border-radius:10px}
+.brand-prev{width:72px;height:72px;border-radius:14px;border:2px dashed var(--line);display:grid;place-items:center;flex:none;overflow:hidden;background:var(--surface)}
+.brand-prev img{width:100%;height:100%;object-fit:contain}
 .topbar .name{font-family:var(--display);font-size:20px;font-weight:700;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #home .topbar{gap:8px;padding:8px 12px}
 #home .topbar .chip{font-size:16px;gap:2px}
@@ -1207,7 +1211,7 @@ const EN = {
   'Primer paso':'First step', 'Di 5 frases en voz alta':'Say 5 sentences out loud', 'Junta 100 puntos':'Collect 100 points', 'Mi familia':'My family', 'Mi clase':'My class', 'Hora guardada':'Time saved', 'Recordatorio apagado':'Reminder off', 'Recordatorio activado':'Reminder on',
   'Apagar recordatorio':'Turn off reminder', 'Activar recordatorio':'Turn on reminder', '⏰ Recordatorio diario':'⏰ Daily reminder', 'Te escucho… di: Hello':"I'm listening… say: Hello", 'Te escucho…':"I'm listening…", 'Probar efectos':'Test sound effects', 'Escuchar lento':'Listen slowly', 'Ya lo empezaste':'You already started it',
   'WORKBOOK · ESCRITURA':'WORKBOOK · WRITING', 'Usar este personaje':'Use this character', 'Lo llevas puesto':"You're wearing it", '🧸 Trajes':'🧸 Costumes', 'Ya tienes 2':'You already have 2', 'Nota (0-100)':'Grade (0-100)', 'Rechazar a':'Decline', 'Quitar amigo':'Remove friend', '🎨 Mi avatar':'🎨 My avatar', 'Mi avatar':'My avatar',
-  'Reiniciar demo':'Reset demo', '¡Subiste de liga!':'League up!', '¡Medalla nueva!':'New medal!', '¡Logro nuevo!':'New achievement!', '¡Logro subió de nivel!':'Achievement leveled up!', '¡Reto del mes cumplido!':'Monthly quest complete!', 'Toca para continuar':'Tap to continue', '+20 💎 gemas':'+20 💎 gems', '⚡ Modo ligero':'⚡ Lite mode', 'Menos animaciones para que la app corra fluida en teléfonos viejos.':'Fewer animations so the app runs smoothly on older phones.', 'Menos animaciones para que la app corra fluida en teléfonos viejos. Se encendió solo por tu teléfono.':'Fewer animations so the app runs smoothly on older phones. It turned on by itself for your phone.', 'Modo ligero activado':'Lite mode on', 'Modo ligero apagado':'Lite mode off', 'Instala Pandi English primero':'Install Pandi English first', 'Activar igual':'Turn on anyway', 'Ej. Carlos P.':'E.g. Carlos P.', 'Ej. carlos':'E.g. carlos', 'Creando cuenta…':'Creating account…', 'Ej. 8888 8888 (opcional)':'E.g. 8888 8888 (optional)', 'Compartir…':'Share…', 'Mensaje copiado':'Message copied', 'Copiar mensaje':'Copy message',
+  'Reiniciar demo':'Reset demo', 'Nombre y logo de la escuela':'School name and logo', 'Aparecen arriba en la app de tus estudiantes y en tu panel, en lugar de «Pandi English». Déjalo vacío para usar Pandi English.':'They appear at the top of your students’ app and your panel instead of “Pandi English”. Leave it empty to use Pandi English.', 'Ej. Academia Sol':'E.g. Sunshine Academy', 'Subir logo':'Upload logo', 'Quitar logo':'Remove logo', 'Nombre y logo guardados':'Name and logo saved', 'Con la tecnología de 🐼 Pandi English':'Powered by 🐼 Pandi English', '¡Subiste de liga!':'League up!', '¡Medalla nueva!':'New medal!', '¡Logro nuevo!':'New achievement!', '¡Logro subió de nivel!':'Achievement leveled up!', '¡Reto del mes cumplido!':'Monthly quest complete!', 'Toca para continuar':'Tap to continue', '+20 💎 gemas':'+20 💎 gems', '⚡ Modo ligero':'⚡ Lite mode', 'Menos animaciones para que la app corra fluida en teléfonos viejos.':'Fewer animations so the app runs smoothly on older phones.', 'Menos animaciones para que la app corra fluida en teléfonos viejos. Se encendió solo por tu teléfono.':'Fewer animations so the app runs smoothly on older phones. It turned on by itself for your phone.', 'Modo ligero activado':'Lite mode on', 'Modo ligero apagado':'Lite mode off', 'Instala Pandi English primero':'Install Pandi English first', 'Activar igual':'Turn on anyway', 'Ej. Carlos P.':'E.g. Carlos P.', 'Ej. carlos':'E.g. carlos', 'Creando cuenta…':'Creating account…', 'Ej. 8888 8888 (opcional)':'E.g. 8888 8888 (optional)', 'Compartir…':'Share…', 'Mensaje copiado':'Message copied', 'Copiar mensaje':'Copy message',
   'escritura revisada':'writing checked', 'escritura entregada':'writing sent', 'sin escritura':'no writing', '· 1 escritura':'· 1 writing', 'Ej. 95':'E.g. 95', 'Nota (0 a 100, opcional)':'Grade (0 to 100, optional)', 'Nota actualizada':'Grade updated', 'Ej. Mi familia':'E.g. My family', 'Unir parejas':'Match pairs', 'Pandi (mascota)':'Pandi (mascot)',
   'Mezclar ejercicios':'Shuffle exercises', 'Ejercicio duplicado':'Exercise duplicated', 'Ejercicio eliminado':'Exercise deleted', '+ Agregar ejercicio':'+ Add exercise', 'Ej. dad, sad':'E.g. dad, sad', 'Ej. dog':'E.g. dog', 'Quitar ejemplo':'Remove example', '+ Agregar ejemplo':'+ Add example', 'Ej. Yes':'E.g. Yes',
   'Ejercicio agregado':'Exercise added', 'Cambios guardados':'Changes saved', 'Ej. apple':'E.g. apple', 'Ej. manzana':'E.g. manzana', 'Respuesta correcta:':'Correct answer:', 'Vista previa terminada':'Preview finished', 'Volver al editor':'Back to the editor', 'Ya lo dije en voz alta':'I said it out loud', 'Duplicar':'Duplicate',
@@ -4206,6 +4210,7 @@ function route(){
   fillPandas();
   V = DB.course.vocab;
   if (DB.session) setLang(DB.course.lang || 'es'); // el idioma lo escoge el profe para toda la escuela
+  applyBrand();
   U = DB.users.find(u => u.id === DB.session) || null;
   if (!U){ show('login'); return; }
   if (U.role === 'admin'){ S = null; show('admin'); setATab('sum'); }
@@ -4815,6 +4820,7 @@ function renderMe(){
     friendsCard(),
     remindCard(), liteCard(),
     h('div', {class:'stack', style:'margin-top:24px'},
+      brand().name ? h('p', {class:'legal', style:'margin-bottom:0'}, 'Con la tecnología de 🐼 Pandi English') : null,
       h('p', {class:'legal'}, h('a', {href:'privacidad.html'}, 'Aviso de privacidad'), ' · ', h('a', {href:'terminos.html'}, 'Términos y condiciones')),
       h('button', {class:'btn ghost', type:'button', onclick:() => confirmSheet('¿Cerrar sesión?', 'Volverás a la pantalla de inicio de sesión.', 'Cerrar sesión', logout)}, 'Cerrar sesión')));
 }
@@ -5264,6 +5270,61 @@ function summary(it){
   return '';
 }
 
+// Marca de la escuela (16 nov 2026): nombre y logo propios que reemplazan «Pandi English» en la barra de arriba
+// después de iniciar sesión. Se guardan en el curso (DB.course.brand), así cada escuela tiene la suya y los estudiantes
+// la reciben al entrar. La pantalla de entrada y el ícono instalado siguen siendo de Pandi English (aún no se sabe la escuela).
+const BRAND_MAX = 30;
+function brand(){
+  const b = DB.course && DB.course.brand && typeof DB.course.brand === 'object' ? DB.course.brand : {};
+  const name = typeof b.name === 'string' ? b.name.trim().slice(0, BRAND_MAX) : '';
+  const logo = typeof b.logo === 'string' && /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(b.logo) && b.logo.length < 200000 ? b.logo : '';
+  return {name, logo};
+}
+function applyBrand(){
+  const b = brand();
+  [['#home', false], ['#admin', true]].forEach(([sel, isAdmin]) => {
+    const bar = $(sel + ' .topbar'); if (!bar) return;
+    const nm = $('.name', bar), lg = $('.logo', bar);
+    if (nm){
+      nm.replaceChildren(...(b.name ? [h('span', {'data-notr':'', style:'color:var(--ink)'}, b.name)] : [h('span', {}, 'Pandi'), ' English']), ...(isAdmin ? [h('span', {class:'role-pill'}, 'ADMIN')] : []));
+      nm.title = b.name || 'Pandi English'; nm.classList.toggle('long', b.name.length > 16); // los nombres largos se achican para que quepan junto a los contadores
+    }
+    if (lg) lg.replaceChildren(b.logo ? h('img', {class:'brand-logo', src:b.logo, alt:''}) : panda('head'));
+  });
+  document.title = b.name || 'Pandi English';
+}
+// Achica el logo a 160×160 sin recortarlo y conserva la transparencia (PNG)
+function shrinkLogo(file, cb){
+  const fr = new FileReader();
+  fr.onload = () => { const im = new Image(); im.onload = () => {
+    const S2 = 160, c = document.createElement('canvas'); c.width = c.height = S2;
+    const k = Math.min(S2 / im.width, S2 / im.height), w = im.width * k, hh = im.height * k;
+    c.getContext('2d').drawImage(im, (S2 - w) / 2, (S2 - hh) / 2, w, hh);
+    cb(c.toDataURL('image/png'));
+  }; im.onerror = () => toast('No pude leer esa imagen. Prueba con otra.'); im.src = fr.result; };
+  fr.readAsDataURL(file);
+}
+function brandCard(){
+  const b = brand(); let logo = b.logo;
+  const name = h('input', {class:'in', id:'brandName', maxlength:String(BRAND_MAX), placeholder:'Ej. Academia Sol', value:b.name, 'aria-label':'Nombre de la escuela'});
+  const prev = h('div', {class:'brand-prev', 'aria-hidden':'true'});
+  const paint = () => prev.replaceChildren(logo ? h('img', {src:logo, alt:''}) : panda('head'));
+  const file = h('input', {type:'file', accept:'image/png,image/jpeg,image/webp', hidden:true});
+  file.addEventListener('change', () => { const f = file.files && file.files[0]; if (!f) return; shrinkLogo(f, d => { logo = d; paint(); rm.hidden = false; }); file.value = ''; });
+  const rm = h('button', {class:'btn small ghost', type:'button', style:'width:auto', hidden:!logo, onclick:() => { logo = ''; paint(); rm.hidden = true; }}, 'Quitar logo');
+  paint();
+  return h('div', {class:'card', style:'padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px'},
+    h('b', {}, '🏫 ', 'Nombre y logo de la escuela'),
+    h('p', {class:'muted', style:'margin:0;font-size:14px'}, 'Aparecen arriba en la app de tus estudiantes y en tu panel, en lugar de «Pandi English». Déjalo vacío para usar Pandi English.'),
+    name,
+    h('div', {style:'display:flex;align-items:center;gap:12px;flex-wrap:wrap'}, prev,
+      h('div', {style:'display:flex;gap:8px;flex-wrap:wrap'}, h('button', {class:'btn small ghost', type:'button', style:'width:auto', onclick:() => file.click()}, 'Subir logo'), rm), file),
+    h('button', {class:'btn small', type:'button', onclick:() => {
+      DB.course.brand = {name:name.value.trim().slice(0, BRAND_MAX), logo};
+      if (!DB.course.brand.name && !logo) delete DB.course.brand;
+      save(); applyBrand(); toast('Nombre y logo guardados');
+    }}, 'Guardar'));
+}
 // Idioma de toda la app para la escuela: se guarda en el curso, así los estudiantes lo reciben al entrar
 function langCard(){
   const cur = DB.course.lang === 'en' ? 'en' : 'es';
@@ -5280,7 +5341,7 @@ function renderContent(){
   if (ED.view === 'lesson' && curLesson()) return renderLessonEd(root);
   if (ED.view === 'words') return renderWordsEd(root);
   ED.view = 'root';
-  root.append(langCard(), h('h2', {class:'section-title', style:'margin-bottom:4px'}, 'Contenido del curso'),
+  root.append(brandCard(), langCard(), h('h2', {class:'section-title', style:'margin-bottom:4px'}, 'Contenido del curso'),
     h('p', {class:'muted', style:'margin:0 0 12px'}, 'Con el interruptor abres la unidad para el grupo elegido; toca una unidad para editar sus lecciones.'), groupBar(),
     levels().length > 1 ? (() => { const g = curGroup(), sel = levelSelect('grpLevel', groupLevel(g));
       sel.addEventListener('change', () => { setGroupLevel(g, +sel.value); save(); toast(`${g.name} ahora está en el Nivel ${sel.value}`); renderContent(); });

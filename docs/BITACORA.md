@@ -29,6 +29,13 @@ Historia del proyecto, decisiones y pendientes. Escribe arriba lo más nuevo. Ca
 
 ---
 
+## 2026-11-21 · Marca de cada escuela (nombre y logo)
+
+- **Pedido:** el cliente quiere que la app diga «Smart Kids», pero el dueño la vende a varias escuelas. Se explicaron dos opciones (marca dentro de la app para todas las escuelas, o un enlace propio por cliente con su ícono y pantalla de entrada) y el dueño eligió la **opción 1**.
+- **Hecho:** tarjeta **🏫 Nombre y logo de la escuela** arriba de Contenido (`brandCard`). Se guarda en el curso (`DB.course.brand`), así viaja con `doSync` sin cambiar la base de datos y cada escuela tiene la suya. `applyBrand()` (en `route()`) cambia el nombre y el logo de la barra de arriba del estudiante y del profe, y el título de la pestaña; los nombres de más de 16 letras bajan a dos renglones más chicos. El logo se achica a 160×160 PNG con transparencia (`shrinkLogo`); `brand()` solo acepta `data:image/png|jpeg` y el nombre se pinta como texto (probado con un nombre que trae HTML). En el perfil del estudiante sale «Con la tecnología de 🐼 Pandi English».
+- **Límite:** la pantalla de entrada, el nombre de la app instalada y su ícono siguen siendo de Pandi English (antes de entrar no se sabe la escuela). Si un cliente quiere eso, es la opción 2 (copia con su propio enlace y `config.js`).
+- **Pruebas:** revisado a 390 px (profe y estudiante, nombre largo, quitar la marca). `remote_two_devices.js` ahora comprueba que el estudiante ve el nombre que puso el profe en el servidor. Pasan las 5 suites.
+
 ## 2026-11-16 · Reloj de los recordatorios en Supabase, pantalla de desbloqueo y modo ligero
 
 - **Pedidos del dueño (tarde):** se quitó la tarjeta naranja «¡Hoy todavía no has practicado!» de arriba del mapa. El Pandi dormido y los que movían la boca se veían mal en el teléfono (los párpados y la boca cerrada son capas dibujadas encima de la cara): ya no se usan `.pr-lid` ni `.pr-mc`; *munch*, *wave* y *sing* se mueven sin boca y *sleep* se cambió por *cheer* (levanta la copa y salta).
